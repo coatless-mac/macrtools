@@ -138,7 +138,7 @@ recipes_binary_install = function(
                 )
 
             nd <-
-                na.omit(unique(c(pkgs, unlist(
+                stats::na.omit(unique(c(pkgs, unlist(
                     strsplit(db[pkgs, "BuiltWith"], "[, ]+")
                 ))))
             if (length(unique(pkgs)) < length(nd))
@@ -164,15 +164,16 @@ recipes_binary_install = function(
         paste(db[, "Package"], db[, "Version"], sep = '-')
 
     if (identical(pkgs, "all"))
-        pkgs <- na.omit(db[, "Package"])
+        pkgs <- stats::na.omit(db[, "Package"])
     need <- deps(pkgs, db)
     ## remove bundles as they have no binary
     if ("Bundle" %in% colnames(db) &&
-        any(rem <- need %in% na.omit(db[, "Bundle"])))
+        any(rem <- need %in% stats::na.omit(db[, "Bundle"])))
         need <- need[!rem]
     urls <- up(url, os.arch, db[need, "Binary"])
 
     if (action == "install")
+
         for (u in urls) {
             cat("Downloading + installing ", u, "...\n")
             cmd = paste("curl", "-sSL", shQuote(u), "|", "tar fxj - -C /")
@@ -184,3 +185,4 @@ recipes_binary_install = function(
         } else
             urls
 }
+
