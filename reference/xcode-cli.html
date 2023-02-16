@@ -49,7 +49,9 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
 <span></span>
 <span><span class="fu">xcode_cli_install</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">xcode_cli_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">xcode_cli_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -70,6 +72,16 @@ Otherwise, the return value will be 2 indicating that the tools are missing.</p>
 <p><a href="https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed" class="external-link">https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed</a></p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
+<span class="r-in"><span><span class="fu">is_xcode_cli_installed</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in assert(is_macos(), "On macOS"):</span> On macOSis not TRUE</span>
+<span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
+<span class="r-in"><span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Failed to execute 'xcode-select' (No such file or directory)</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
