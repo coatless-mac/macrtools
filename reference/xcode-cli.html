@@ -61,7 +61,7 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
 
 </dl></div>
     <div class="section level2">
-    <h2 id="xcode-cli-installation-check">XCode CLI Installation Check<a class="anchor" aria-label="anchor" href="#xcode-cli-installation-check"></a></h2>
+    <h2 id="check-if-xcode-cli-is-installed">Check if XCode CLI is installed<a class="anchor" aria-label="anchor" href="#check-if-xcode-cli-is-installed"></a></h2>
     
 
 
@@ -71,15 +71,25 @@ Otherwise, the return value will be 2 indicating that the tools are missing.</p>
 <p>Implementation is based on:</p>
 <p><a href="https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed" class="external-link">https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed</a></p>
     </div>
+    <div class="section level2">
+    <h2 id="xcode-cli-installation">XCode CLI Installation<a class="anchor" aria-label="anchor" href="#xcode-cli-installation"></a></h2>
+    
+
+
+<p>Checks using the <code>xcode-select -p</code> command to obtain the relevant
+the directory. If the status code returned is 0, then the tools exist.
+Otherwise, the return value will be 2 indicating that the tools are missing.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
 <span class="r-in"><span><span class="fu">is_xcode_cli_installed</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> System failure for: waitpid() (No child processes)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
 <span class="r-in"><span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> System failure for: waitpid() (No child processes)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Output:  /Applications/Xcode_14.2.app/Contents/Developer </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Status:  0 </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
