@@ -17,7 +17,7 @@ shell_sudo_command = function(cmd, prefix = "sudo -kS ") {
 
 password_prompt = function(msg) {
     if(interactive()) {
-        if(rstudioapi::isAvailable()) {
+        if(requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
             rstudioapi::askForPassword(msg)
         } else {
             readline(msg)
