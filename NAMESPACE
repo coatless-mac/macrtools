@@ -2,4 +2,5 @@
 
 export(is_xcode_cli_installed)
 export(xcode_cli_install)
+export(xcode_cli_path)
 export(xcode_cli_uninstall)

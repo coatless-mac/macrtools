@@ -14,6 +14,9 @@
 #' <https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed>
 #' @rdname xcode-cli
 #' @export
+#' @examples
+#' # Check if Xcode CLI is installed
+#' is_xcode_cli_installed()
 is_xcode_cli_installed = function() {
     assert_mac()
     identical(xcode_select_path()$status_code, 0L)
@@ -55,6 +58,15 @@ xcode_cli_uninstall = function(verbose = TRUE){
     # file.unlink("")
 }
 
+#' @rdname xcode-cli
+#' @export
+#' @examples
+#' # Check if Xcode CLI is installed
+#' xcode_cli_path()
+xcode_cli_path = function() {
+    xcode_select_path()
+}
+
 xcode_select_path = function() {
     xcode_select("--print-path")
 }
@@ -65,7 +77,7 @@ xcode_select_version = function() {
 
 xcode_select = function(args) {
     out = sys::exec_internal("xcode-select", args = args)
-    status_code = sys::exec_status(pid)
+    status_code = sys::exec_status(out)
 
     structure(
         list(
@@ -74,4 +86,8 @@ xcode_select = function(args) {
         ),
         class = "xcodeselect"
     )
+}
+
+print.xcodeselect = function(x, ...) {
+
 }

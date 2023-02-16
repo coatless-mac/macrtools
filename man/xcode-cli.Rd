@@ -4,6 +4,7 @@
 \alias{is_xcode_cli_installed}
 \alias{xcode_cli_install}
 \alias{xcode_cli_uninstall}
+\alias{xcode_cli_path}
 \title{Find, Install, or Uninstall XCode CLI}
 \usage{
 is_xcode_cli_installed()
@@ -11,6 +12,8 @@ is_xcode_cli_installed()
 xcode_cli_install(verbose = TRUE)
 
 xcode_cli_uninstall(verbose = TRUE)
+
+xcode_cli_path()
 }
 \arguments{
 \item{verbose}{Display status messages}
@@ -31,3 +34,9 @@ Implementation is based on:
 \url{https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed}
 }
 
+\examples{
+# Check if Xcode CLI is installed
+is_xcode_cli_installed()
+# Check if Xcode CLI is installed
+xcode_cli_path()
+}
