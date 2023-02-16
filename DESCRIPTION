@@ -12,5 +12,6 @@ RoxygenNote: 7.2.3
 OS_type: unix
 SystemRequirements: macOS
 Imports: 
+    sys,
     utils
 URL: https://rmacoslib.github.io/macrtools/
