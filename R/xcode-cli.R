@@ -2,9 +2,7 @@
 #'
 #' Set of functions that seek to identify whether XCode CLI was installed,
 #' allow XCode CLI to be installed, and removing XCode CLI.
-#' @rdname xcode-cli
-
-
+#'
 #' @section XCode CLI Installation Check:
 #'
 #' Checks using the `xcode-select -p` command to obtain the relevant
@@ -14,6 +12,8 @@
 #' Implementation is based on:
 #'
 #' <https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed>
+#' @rdname xcode-cli
+#' @export
 is_xcode_cli_installed = function() {
     assert_mac()
     identical(xcode_select_path()$status_code, 0L)
