@@ -13,7 +13,7 @@ recipes_binary_install(
   os.arch = "auto",
   dependencies = TRUE,
   action = c("install", "list"),
-  sudo = FALSE
+  sudo = TRUE
 )
 }
 \arguments{
@@ -35,7 +35,7 @@ Default \code{"auto"}.}
 or displayed (\code{"list"}). Default \code{"install"} to download and install the binaries.}
 
 \item{sudo}{Attempt to install the binaries using \code{sudo} permissions.
-Default \code{FALSE}.}
+Default \code{TRUE}.}
 }
 \description{
 Convenience function that seeks to install pre-built binary libraries

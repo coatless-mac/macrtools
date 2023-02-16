@@ -22,7 +22,7 @@
 #' @param action  Determine if the binary should be downloaded and installed (`"install"`)
 #'                or displayed (`"list"`). Default `"install"` to download and install the binaries.
 #' @param sudo    Attempt to install the binaries using `sudo` permissions.
-#'                Default `FALSE`.
+#'                Default `TRUE`.
 #'
 #' @export
 #' @author
@@ -64,7 +64,7 @@ recipes_binary_install = function(
     os.arch = "auto",
     dependencies = TRUE,
     action = c("install", "list"),
-    sudo = FALSE) {
+    sudo = TRUE) {
 
     up <- function(...)
         paste(..., sep = '/')
@@ -172,17 +172,20 @@ recipes_binary_install = function(
         need <- need[!rem]
     urls <- up(url, os.arch, db[need, "Binary"])
 
-    if (action == "install")
-
+    if (action == "install") {
+        if (sudo)
+            password = password_prompt("Please enter the user password: ")
         for (u in urls) {
             cat("Downloading + installing ", u, "...\n")
+
             cmd = paste("curl", "-sSL", shQuote(u), "|", "tar fxj - -C /")
 
-            status = shell_execute(cmd, sudo = sudo)
+            status = shell_execute(cmd, sudo = sudo, password = password)
 
             if (status < 0)
                 stop("Failed to install from ", u)
-        } else
-            urls
+        }
+    } else
+        urls
 }
 

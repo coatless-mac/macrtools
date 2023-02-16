@@ -1,6 +1,6 @@
-shell_execute = function(cmd, sudo = FALSE) {
+shell_execute = function(cmd, sudo = FALSE, password = NULL) {
     if (sudo) {
-        shell_sudo_command(cmd)
+        shell_sudo_command(cmd, password)
     } else {
         shell_command(cmd)
     }
@@ -10,9 +10,13 @@ shell_command = function(cmd) {
     system(cmd)
 }
 
-shell_sudo_command = function(cmd, prefix = "sudo -kS ") {
+shell_sudo_command = function(cmd, password, prefix = "sudo -kS ") {
     cmd_with_sudo = paste0(prefix, cmd)
-    system(cmd_with_sudo, input = password_prompt("Enter user password to run command:"))
+    if (is.null(password)) {
+        system(cmd_with_sudo, input = password_prompt("Enter user password to run command:"))
+    } else {
+        system(cmd_with_sudo, input = password)
+    }
 }
 
 password_prompt = function(msg) {
