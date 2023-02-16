@@ -5,9 +5,10 @@ Authors@R:
     person("James Joseph", "Balamuta", , "balamut2@illinois.edu", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-2826-8458"))
 Description: Sets up the macOS Rtools compiled code toolchain.
-License: GPL (>= 2)
+License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
     utils
+URL: https://rmacoslib.github.io/macrtools/
