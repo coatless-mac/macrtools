@@ -52,7 +52,7 @@ version_between = function(software_version, lower, greater_strict) {
 #' @noRd
 assert = function(condition, message = NULL) {
     if(isFALSE(condition)) {
-        stop(paste0(message, "is not TRUE"))
+        stop(paste0(message, " is not TRUE"))
     }
 }
 
