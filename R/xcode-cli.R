@@ -88,6 +88,8 @@ xcode_select = function(args) {
     )
 }
 
+#' @export
 print.xcodeselect = function(x, ...) {
-
+    message(x$output)
+    message(x$status)
 }
