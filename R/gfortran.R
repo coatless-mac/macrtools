@@ -17,6 +17,7 @@ is_gfortran_installed = function() {
     identical(xcode_select_path()$status, 0L)
 }
 
+#' @param verbose Display messages indicating status
 #' @export
 #' @rdname gfortran
 gfortran_install = function(verbose = TRUE) {

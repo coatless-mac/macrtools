@@ -15,6 +15,9 @@ gfortran_uninstall(verbose = TRUE)
 
 gfortran_update(verbose = TRUE)
 }
+\arguments{
+\item{verbose}{Display messages indicating status}
+}
 \description{
 Set of functions that seek to identify whether gfortran was installed,
 allow gfortran to be installed, and removing gfortran.
