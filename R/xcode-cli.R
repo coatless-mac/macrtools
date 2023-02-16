@@ -3,7 +3,7 @@
 #' Set of functions that seek to identify whether XCode CLI was installed,
 #' allow XCode CLI to be installed, and removing XCode CLI.
 #'
-#' @section XCode CLI Installation Check:
+#' @section Check if XCode CLI is installed:
 #'
 #' Checks using the `xcode-select -p` command to obtain the relevant
 #' the directory. If the status code returned is 0, then the tools exist.
@@ -19,9 +19,14 @@
 #' is_xcode_cli_installed()
 is_xcode_cli_installed = function() {
     assert_mac()
-    identical(xcode_select_path()$status_code, 0L)
+    identical(xcode_select_path()$status, 0L)
 }
 
+#' @section XCode CLI Installation:
+#'
+#' Checks using the `xcode-select -p` command to obtain the relevant
+#' the directory. If the status code returned is 0, then the tools exist.
+#' Otherwise, the return value will be 2 indicating that the tools are missing.
 #' @export
 #' @rdname xcode-cli
 #' @param verbose    Display status messages
@@ -78,12 +83,11 @@ xcode_cli_path = function() {
 #' @rdname xcode-select
 xcode_select = function(args) {
     out = sys::exec_internal("xcode-select", args = args)
-    status_code = sys::exec_status(out)
 
     structure(
         list(
             output = sys::as_text(out$stdout),
-            status = status_code
+            status = out$status
         ),
         class = "xcodeselect"
     )

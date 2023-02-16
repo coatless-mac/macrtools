@@ -22,7 +22,7 @@ xcode_cli_path()
 Set of functions that seek to identify whether XCode CLI was installed,
 allow XCode CLI to be installed, and removing XCode CLI.
 }
-\section{XCode CLI Installation Check}{
+\section{Check if XCode CLI is installed}{
 
 
 Checks using the \code{xcode-select -p} command to obtain the relevant
@@ -32,6 +32,14 @@ Otherwise, the return value will be 2 indicating that the tools are missing.
 Implementation is based on:
 
 \url{https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed}
+}
+
+\section{XCode CLI Installation}{
+
+
+Checks using the \code{xcode-select -p} command to obtain the relevant
+the directory. If the status code returned is 0, then the tools exist.
+Otherwise, the return value will be 2 indicating that the tools are missing.
 }
 
 \examples{
