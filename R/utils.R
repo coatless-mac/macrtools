@@ -18,7 +18,7 @@ is_macos_ventura = function() {
 
 
 is_macos = function() {
-    system_os() == "mac"
+    system_os() == "darwin"
 }
 
 is_aarch64 = function() {
