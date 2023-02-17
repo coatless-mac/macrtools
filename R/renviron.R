@@ -1,3 +1,6 @@
+#' @include blocks.R
+NULL
+
 use_r_environ = function(option, value, path = "~/.Renviron",
                          block_start = "## macrtools: start",
                          block_end = "## macrtools: stop") {

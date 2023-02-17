@@ -5,6 +5,9 @@
 #
 # Barely modified for formatting
 
+#' @include shell.R utils.R installers.R
+NULL
+
 #' Install Binary Library from Recipes Project
 #'
 #' Convenience function that seeks to install pre-built binary libraries

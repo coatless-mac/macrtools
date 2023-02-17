@@ -20,3 +20,12 @@ Imports:
 URL: https://rmacoslib.github.io/macrtools/
 Suggests: 
     rstudioapi
+Collate: 
+    'blocks.R'
+    'renviron.R'
+    'shell.R'
+    'utils.R'
+    'installers.R'
+    'gfortran.R'
+    'recipes.R'
+    'xcode-cli.R'

@@ -1,3 +1,7 @@
+#' @include shell.R utils.R installers.R renviron.R
+NULL
+
+
 #' Find, Install, or Uninstall gfortran
 #'
 #' Set of functions that seek to identify whether gfortran was installed,
@@ -133,7 +137,15 @@ gfortran_update = function(verbose = TRUE, password = NULL) {
 
 
 gfortran = function(args) {
-    out = sys::exec_internal("gfortran", args = args)
+    out = tryCatch(
+        sys::exec_internal("gfortran", args = args, error = FALSE),
+        error = function(e) {
+            list(
+                output = e,
+                status = -127L
+            )
+        }
+    )
 
     structure(
         list(

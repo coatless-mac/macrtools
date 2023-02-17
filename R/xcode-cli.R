@@ -1,3 +1,6 @@
+#' @include utils.R shell.R installers.R
+NULL
+
 #' Find, Install, or Uninstall XCode CLI
 #'
 #' Set of functions that seek to identify whether XCode CLI was installed,
@@ -143,13 +146,4 @@ xcode_select_path = function() {
 #' @rdname xcode-select
 xcode_select_version = function() {
     xcode_select("--version")
-}
-
-#' Print CLI Responses
-#' @param x   An object with class `cli`
-#' @param ... Additional parameters
-#' @export
-print.cli = function(x, ...) {
-    cat("Output:\n", paste(x$output, collapse = "\n"), "\n")
-    cat("Status:\n", paste(x$status, collapse = "\n"), "\n")
 }
