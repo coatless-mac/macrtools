@@ -13,7 +13,7 @@ gfortran_install(verbose = TRUE, password = NULL)
 
 gfortran_uninstall(verbose = TRUE, password = NULL)
 
-gfortran_update(verbose = TRUE)
+gfortran_update(verbose = TRUE, password = NULL)
 }
 \arguments{
 \item{verbose}{Display messages indicating status}
