@@ -28,7 +28,21 @@ gfortran_version = function() {
 }
 
 #' @section Install `gfortran`:
+#' The `gfortran_install()` function aims to install `gfortran` into
+#' two locations:
 #'
+#' - Intel (`x86_64`)
+#'   - `/usr/local/gfortran`
+#'   - `/usr/local/bin/gfortran`
+#' - M1/M2 (`aarch64`)
+#'   - `/opt/r/arm64/gfortran/`
+#'   - `/opt/r/arm64/bin/gfortran`
+#'
+#' The Intel `gfortran` installer is a DMG image that is mounted, installed,
+#' and unmounted.
+#'
+#' The M1/M2 `gfortran` installer is a tar file that is unpacked into the
+#' directory.
 #'
 #' @param verbose  Display messages indicating status
 #' @param password Password for user account to install software. Default is

@@ -36,6 +36,26 @@ Checks using the \code{gfortran --version} command to see if a response is prese
 
 \section{Install \code{gfortran}}{
 
+The \code{gfortran_install()} function aims to install \code{gfortran} into
+two locations:
+\itemize{
+\item Intel (\code{x86_64})
+\itemize{
+\item \verb{/usr/local/gfortran}
+\item \verb{/usr/local/bin/gfortran}
+}
+\item M1/M2 (\code{aarch64})
+\itemize{
+\item \verb{/opt/r/arm64/gfortran/}
+\item \verb{/opt/r/arm64/bin/gfortran}
+}
+}
+
+The Intel \code{gfortran} installer is a DMG image that is mounted, installed,
+and unmounted.
+
+The M1/M2 \code{gfortran} installer is a tar file that is unpacked into the
+directory.
 }
 
 \section{Uninstalling \code{gfortran}}{
@@ -72,6 +92,14 @@ These uninstall steps are based on:
 And the desired path for \code{aarch64}:
 
 \url{https://mac.r-project.org/tools/}
+}
+
+\section{Update \code{gfortran}}{
+
+The \code{gfortran_update()} attempts to update the version of \code{gfortran} installed
+using the provided \code{gfortran-update-sdk} inside of \verb{/opt/R/arm64/gfortran/bin}.
+
+Note: This update command only works for M1/M2 (\code{arm64}) users.
 }
 
 \examples{
