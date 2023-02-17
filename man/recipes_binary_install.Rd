@@ -14,11 +14,12 @@ recipes_binary_install(
   dependencies = TRUE,
   action = c("install", "list"),
   sudo = TRUE,
-  password = NULL
+  password = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
-\item{pkgs}{character vector, names of binaries to install (or "all" to install all)}
+\item{pkgs}{Character vector of binary names to install, \code{"all"} for all binaries, or \code{"r-base-dev"} for \emph{R} binaries.}
 
 \item{url}{URL of the repository root. Default \url{https://mac.R-project.org/bin}}
 
@@ -39,6 +40,8 @@ or displayed (\code{"list"}). Default \code{"install"} to download and install t
 Default \code{TRUE}.}
 
 \item{password}{User password to switch into the \code{sudo} user. Default \code{NULL}.}
+
+\item{verbose}{Describe the steps being taken. Default \code{TRUE}}
 }
 \description{
 Convenience function that seeks to install pre-built binary libraries

@@ -36,8 +36,16 @@ Checks using the \code{gfortran --version} command to see if a response is prese
 The \code{gfortran_uninstall()} attempts to remove \code{gfortran} from
 two locations:
 \itemize{
+\item Intel (\code{x86_64})
+\itemize{
 \item \verb{/usr/local/gfortran}
-\item \verb{/user/local/bin/gfortran}
+\item \verb{/usr/local/bin/gfortran}
+}
+\item M1/M2 (\code{aarch64})
+\itemize{
+\item \verb{/opt/r/arm64/gfortran/}
+\item \verb{/opt/r/arm64/bin/gfortran}
+}
 }
 
 Using the \emph{R} sanitized \emph{shell} command of:
@@ -45,9 +53,18 @@ Using the \emph{R} sanitized \emph{shell} command of:
 \if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo -kS rm -r /usr/local/gfortran /usr/local/bin/gfortran
 }\if{html}{\out{</div>}}
 
+Or:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo -kS rm -r /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
+}\if{html}{\out{</div>}}
+
 These uninstall steps are based on:
 
 \url{https://gcc.gnu.org/wiki/GFortranBinariesMacOS}
+
+And the desired path for \code{aarch64}:
+
+\url{https://mac.r-project.org/tools/}
 }
 
 \examples{

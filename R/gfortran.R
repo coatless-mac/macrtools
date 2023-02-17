@@ -33,9 +33,18 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
 
     if (is_macos_r_supported()) {
         if (is_x86_64()) {
-            return(install_gfortran_82_mojave())
+
+            status = install_gfortran_82_mojave()
+            renviron_gfortran_path("$PATH:/usr/local/gfortran/bin")
+
+            return( status )
+        } else if (is_aarch64()) {
+            status = install_gfortran_12_arm()
+            renviron_gfortran_path("$PATH:/opt/R/arm64/gfortran/bin")
+
+            return( status )
         } else {
-            message("We do not have support for macOS M1/M2 (ARM) architecture yet.")
+            message("We do not have support for macOS architecture yet.")
             return(FALSE)
         }
     } else {
@@ -50,18 +59,31 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
 #' The `gfortran_uninstall()` attempts to remove `gfortran` from
 #' two locations:
 #'
-#' - `/usr/local/gfortran`
-#' - `/user/local/bin/gfortran`
+#' - Intel (`x86_64`)
+#'   - `/usr/local/gfortran`
+#'   - `/usr/local/bin/gfortran`
+#' - M1/M2 (`aarch64`)
+#'   - `/opt/r/arm64/gfortran/`
+#'   - `/opt/r/arm64/bin/gfortran`
 #'
 #' Using the _R_ sanitized _shell_ command of:
 #'
 #' ```sh
 #' sudo -kS rm -r /usr/local/gfortran /usr/local/bin/gfortran
 #' ```
+#' Or:
+#'
+#' ```sh
+#' sudo -kS rm -r /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
+#' ```
 #'
 #' These uninstall steps are based on:
 #'
 #' <https://gcc.gnu.org/wiki/GFortranBinariesMacOS>
+#'
+#' And the desired path for `aarch64`:
+#'
+#' <https://mac.r-project.org/tools/>
 #'
 #' @export
 #' @rdname gfortran
@@ -73,6 +95,20 @@ gfortran_uninstall = function(verbose = TRUE, password = NULL) {
             message("gfortran is not installed.")
         }
         return(TRUE)
+    }
+
+
+    if (is_x86_64()) {
+        status = install_gfortran_82_mojave()
+        renviron_gfortran_path("$PATH:/usr/local/gfortran/bin")
+        return( status )
+    } else if (is_aarch64()) {
+        status = install_gfortran_12_arm()
+        renviron_gfortran_path("$PATH:/opt/R/arm64/gfortran/bin")
+        return( status )
+    } else {
+        message("We do not have support for macOS architecture yet.")
+        return(FALSE)
     }
 
     shell_execute("rm -rf /usr/local/gfortran /usr/local/bin/gfortran",
@@ -133,38 +169,22 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
 }
 
 
-install_dmg_package = function(path_to_dmg,
-                               pkg_location_in_dmg,
-                               password = NULL,
-                               verbose = TRUE) {
+install_gfortran_12_arm = function(password = askpass::askpass(),
+                                   verbose = TRUE) {
 
-    volume_name = basename(path_to_dmg)
+    gfortran_12_url = "https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"
 
-    if (verbose) message("Mounting ", volume_name)
+    # Figure out installation directories
+    installation_data = install_location()
 
-    cmd = paste("hdiutil attach", shQuote(path_to_dmg), "-nobrowse -quiet")
-    shell_execute(cmd, sudo = FALSE)
+    # Download tar
+    path_to_tar = download_tar_package(gfortran_12_url)
 
-    if (verbose) {
-        message("Installing ", volume_name, "...")
-        message("You may be prompted for your password ...")
-    }
-    cmd = paste(
-        "sudo",
-        "-kS",
-        "installer",
-        "-pkg",
-        paste0("'/Volumes/", pkg_location_in_dmg, "'"),
-        "-target",
-        "/"
-    )
-    shell_execute(cmd, sudo = TRUE, password = password)
+    # Install tar into the appropriate location
+    install_tar_package(path_to_tar,
+                        installation_data$install_directory,
+                        installation_data$strip_levels,
+                        password = password,
+                        verbose = verbose)
 
-    if (verbose) {
-        message("Unmounting ", volume_name, "...")
-    }
-    cmd = paste("hdiutil", "detach", paste0("'/Volumes/", volume_name, "'"))
-    status = shell_execute(cmd, sudo = FALSE)
-
-    status == 0
 }
