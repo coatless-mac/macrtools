@@ -78,7 +78,17 @@ allow gfortran to be installed, and removing gfortran.</p>
     <h2 id="install-gfortran">Install <code>gfortran</code><a class="anchor" aria-label="anchor" href="#install-gfortran"></a></h2>
     
 
-
+<p>The <code>gfortran_install()</code> function aims to install <code>gfortran</code> into
+two locations:</p><ul><li><p>Intel (<code>x86_64</code>)</p><ul><li><p><code>/usr/local/gfortran</code></p></li>
+<li><p><code>/usr/local/bin/gfortran</code></p></li>
+</ul></li>
+<li><p>M1/M2 (<code>aarch64</code>)</p><ul><li><p><code>/opt/r/arm64/gfortran/</code></p></li>
+<li><p><code>/opt/r/arm64/bin/gfortran</code></p></li>
+</ul></li>
+</ul><p>The Intel <code>gfortran</code> installer is a DMG image that is mounted, installed,
+and unmounted.</p>
+<p>The M1/M2 <code>gfortran</code> installer is a tar file that is unpacked into the
+directory.</p>
     </div>
     <div class="section level2">
     <h2 id="uninstalling-gfortran">Uninstalling <code>gfortran</code><a class="anchor" aria-label="anchor" href="#uninstalling-gfortran"></a></h2>
@@ -99,6 +109,14 @@ two locations:</p><ul><li><p>Intel (<code>x86_64</code>)</p><ul><li><p><code>/us
 <p><a href="https://gcc.gnu.org/wiki/GFortranBinariesMacOS" class="external-link">https://gcc.gnu.org/wiki/GFortranBinariesMacOS</a></p>
 <p>And the desired path for <code>aarch64</code>:</p>
 <p><a href="https://mac.r-project.org/tools/" class="external-link">https://mac.r-project.org/tools/</a></p>
+    </div>
+    <div class="section level2">
+    <h2 id="update-gfortran">Update <code>gfortran</code><a class="anchor" aria-label="anchor" href="#update-gfortran"></a></h2>
+    
+
+<p>The <code>gfortran_update()</code> attempts to update the version of <code>gfortran</code> installed
+using the provided <code>gfortran-update-sdk</code> inside of <code>/opt/R/arm64/gfortran/bin</code>.</p>
+<p>Note: This update command only works for M1/M2 (<code>arm64</code>) users.</p>
     </div>
 
     <div class="section level2">
