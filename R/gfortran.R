@@ -75,14 +75,14 @@ gfortran_uninstall = function(verbose = TRUE, password = NULL) {
         return(TRUE)
     }
 
-    shell_execute("rm -r /usr/local/gfortran /usr/local/bin/gfortran",
+    shell_execute("rm -rf /usr/local/gfortran /usr/local/bin/gfortran",
                   sudo = TRUE,
                   password = password)
 }
 
 #' @export
 #' @rdname gfortran
-gfortran_update = function(verbose = TRUE) {
+gfortran_update = function(verbose = TRUE, password = NULL) {
     assert_mac()
     assert(is_gfortran_installed(), "On gfortran")
 
@@ -100,7 +100,7 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
     gfortran_path = file.path(tempdir(), gfortran_dmg_name)
 
     # Download the dmg file
-    utils::file.download(
+    utils::download.file(
         gfortran_82_url,
         gfortran_path
     )
@@ -115,8 +115,8 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
 
     # Install the dmg package
     success = install_dmg_package(
-        dmg_package_name,
-        pkg_location = path_to_pkg,
+        path_to_dmg = gfortran_path,
+        pkg_location_in_dmg = path_to_pkg,
         password = password,
         verbose = verbose
     )
@@ -134,7 +134,7 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
 
 
 install_dmg_package = function(path_to_dmg,
-                               pkg_location,
+                               pkg_location_in_dmg,
                                password = NULL,
                                verbose = TRUE) {
 
@@ -154,7 +154,7 @@ install_dmg_package = function(path_to_dmg,
         "-kS",
         "installer",
         "-pkg",
-        paste0("'/Volumes/", pkg_location, "'"),
+        paste0("'/Volumes/", pkg_location_in_dmg, "'"),
         "-target",
         "/"
     )
