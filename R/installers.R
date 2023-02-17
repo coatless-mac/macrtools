@@ -6,10 +6,10 @@ install_location = function(arch) {
     # Determine the correct installation path based on arch type
     if( grepl("(arm64)|(aarch64)", arch, fixed = TRUE)) {
         strip_levels = 3
-        install_directory = shQuote("/opt/R/arm64/")
+        install_directory = "/opt/R/arm64"
     } else if (grepl("x86_64", arch, fixed = TRUE)) {
         strip_levels = 2
-        install_directory = shQuote("/usr/local/")
+        install_directory = "/usr/local"
     } else {
         stop("Arch type not recognized. Please make sure you are on either an `arm64` or `x86_64` system.")
     }
@@ -42,6 +42,8 @@ install_tar_package = function(path_to_tar,
                                sudo = TRUE,
                                password = NULL,
                                verbose = TRUE) {
+
+    install_directory = shQuote(normalizePath(install_directory))
 
     binary_file_name = basename(path_to_tar)
 
