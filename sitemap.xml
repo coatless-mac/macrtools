@@ -13,6 +13,9 @@
     <loc>https://rmacoslib.github.io/macrtools/reference/assert.html</loc>
   </url>
   <url>
+    <loc>https://rmacoslib.github.io/macrtools/reference/binary_download.html</loc>
+  </url>
+  <url>
     <loc>https://rmacoslib.github.io/macrtools/reference/gfortran.html</loc>
   </url>
   <url>
@@ -25,7 +28,7 @@
     <loc>https://rmacoslib.github.io/macrtools/reference/recipes_binary_install.html</loc>
   </url>
   <url>
-    <loc>https://rmacoslib.github.io/macrtools/reference/tar-package.html</loc>
+    <loc>https://rmacoslib.github.io/macrtools/reference/tar_package_install.html</loc>
   </url>
   <url>
     <loc>https://rmacoslib.github.io/macrtools/reference/xcode-cli.html</loc>
