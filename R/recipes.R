@@ -185,8 +185,9 @@ recipes_binary_install = function(
             password = askpass::askpass()
 
         # Determine the correct installation path based on arch type
-
-        installation_data = install_location(os.arch)
+        supplied_arch = strsplit(os.arch, "/")[[1]][2]
+        installation_directory = install_location(supplied_arch)
+        installation_strip_level = install_strip_level(supplied_arch)
 
         for (binary_url in urls) {
 
@@ -195,8 +196,8 @@ recipes_binary_install = function(
 
             # Install tar into the appropriate location
             install_tar_package(path_to_tar,
-                                installation_data$install_directory,
-                                installation_data$strip_levels,
+                                installation_directory,
+                                installation_strip_level,
                                 sudo    = sudo,
                                 password = password,
                                 verbose = verbose)
