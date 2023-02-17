@@ -18,7 +18,16 @@ NULL
 #' is_gfortran_installed()
 is_gfortran_installed = function() {
     assert_mac()
-    identical(gfortran_version()$status, 0L)
+
+    # For this option, we have to be careful with homebrew installations
+    # So, let's aim to check a hard coded path
+
+    # Figure out installation directory
+    install_dir = install_location()
+    path_gfortran = file.path(install_dir, "gfortran")
+
+    # Check if the directory is present
+    dir.exists(path_gfortran)
 }
 
 #' @export
@@ -60,9 +69,10 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
 
     if (is_macos_r_supported()) {
 
-        # Figure out installation directories
-        install_dir = install_location()$install_directory
+        # Figure out installation directory
+        install_dir = install_location()
 
+        # Establish a path
         path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
         path_variable = paste0("${PATH}:", path_gfortran_bin)
 
@@ -130,7 +140,7 @@ gfortran_uninstall = function(verbose = TRUE, password = NULL) {
     }
 
     # Figure out installation directories
-    install_dir = install_location()$install_directory
+    install_dir = install_location()
 
     path_gfortran = file.path(install_dir, "gfortran")
     path_bin_gfortran =file.path(install_dir, "bin", "gfortran")
@@ -155,7 +165,7 @@ gfortran_update = function(verbose = TRUE, password = NULL) {
     assert(is_gfortran_installed(), "On gfortran")
 
     # Figure out installation directory
-    install_dir = install_location()$install_directory
+    install_dir = install_location()
 
     path_gfortran_update = file.path(install_dir, "gfortran", "bin", "gfortran-update-sdk")
 
@@ -214,7 +224,7 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
         )
 
     # Install the dmg package
-    success = install_dmg_package(
+    success = dmg_package_install(
         path_to_dmg = gfortran_path,
         pkg_location_in_dmg = path_to_pkg,
         password = password,
@@ -239,15 +249,16 @@ install_gfortran_12_arm = function(password = askpass::askpass(),
     gfortran_12_url = "https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"
 
     # Figure out installation directories
-    installation_data = install_location()
+    install_directory = install_location()
+    strip_levels = install_strip_level()
 
     # Download tar
-    path_to_tar = download_tar_package(gfortran_12_url)
+    path_to_tar = tar_package_download(gfortran_12_url, verbose = verbose)
 
     # Install tar into the appropriate location
-    install_tar_package(path_to_tar,
-                        installation_data$install_directory,
-                        installation_data$strip_levels,
+    tar_package_install(path_to_tar,
+                        install_directory,
+                        strip_levels,
                         password = password,
                         verbose = verbose)
 
