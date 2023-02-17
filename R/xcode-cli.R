@@ -79,8 +79,9 @@ xcode_cli_install = function(verbose = TRUE){
 #'
 #' @export
 #' @rdname xcode-cli
+#' @param password   User password to access `sudo`.
 #' @param verbose    Display status messages
-xcode_cli_uninstall = function(verbose = TRUE){
+xcode_cli_uninstall = function(verbose = TRUE, password = NULL){
     assert_mac()
     if(isFALSE(is_xcode_cli_installed())) {
         if(verbose) {

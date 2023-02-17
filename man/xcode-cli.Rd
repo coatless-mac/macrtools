@@ -11,12 +11,14 @@ is_xcode_cli_installed()
 
 xcode_cli_install(verbose = TRUE)
 
-xcode_cli_uninstall(verbose = TRUE)
+xcode_cli_uninstall(verbose = TRUE, password = NULL)
 
 xcode_cli_path()
 }
 \arguments{
 \item{verbose}{Display status messages}
+
+\item{password}{User password to access \code{sudo}.}
 }
 \description{
 Set of functions that seek to identify whether XCode CLI was installed,
