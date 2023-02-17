@@ -67,6 +67,21 @@ is_x86_64 = function() {
     system_arch() == "x86_64"
 }
 
+is_r_version = function(target_version, compare_major_minor = TRUE) {
+
+    minor_value = if (compare_major_minor) {
+        strsplit(R.version$minor, ".", fixed = TRUE)[[1]][1]
+    } else {
+        R.version$minor
+    }
+
+    version_string = paste(R.version$major, minor_value)
+    return(version_string == target_version)
+}
+
+
+
+
 version_above = function(software_version, than) {
     utils::compareVersion(software_version, than) == 1L
 }
@@ -77,6 +92,7 @@ version_between = function(software_version, lower, greater_strict) {
     above && below
 }
 
+# Assertions ----
 
 #' Assert a condition
 #'
@@ -113,6 +129,7 @@ assert_x86_64 = function(){
     assert(is_x86_64(), "On x86_64")
 }
 
+# Custom CLI Printing -----
 
 #' Print CLI Responses
 #' @param x   An object with class `cli`

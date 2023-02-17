@@ -19,7 +19,8 @@ Imports:
     utils
 URL: https://rmacoslib.github.io/macrtools/
 Suggests: 
-    rstudioapi
+    rstudioapi,
+    testthat (>= 3.0.0)
 Collate: 
     'blocks.R'
     'renviron.R'
@@ -29,3 +30,4 @@ Collate:
     'gfortran.R'
     'recipes.R'
     'xcode-cli.R'
+Config/testthat/edition: 3
