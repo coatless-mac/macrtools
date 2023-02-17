@@ -48,6 +48,35 @@ xcode_cli_install = function(verbose = TRUE){
 
 
 
+#' @section Uninstalling Xcode CLI:
+#'
+#' The `xcode_cli_uninstall()` attempts to remove _only_ the Xcode CLI tools.
+#'
+#' Per the [Apple Technical Note TN2339](https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_):
+#'
+#' - Xcode includes all of the command-line tools. If it is installed on your system, remove it to uninstall the command-line tools.
+#' - If the `/Library/Developer/CommandLineTools` directory exists on your system, remove it to uninstall the command-line tools
+#'
+#' Thus, the `xcode_cli_uninstall()` opts to perform the second step **only**.
+#' We use an _R_ sanitized _shell_ version of:
+#'
+#' ```sh
+#' sudo -kS rm -rf /Library/Developer/CommandLineTools
+#' ```
+#'
+#' If the Xcode application is detect, we note that we did not install the
+#' Xcode application. Instead, we request the user uninstall the Xcode
+#' app using the following steps:
+#'
+#' 1. Make sure that Xcode is closed. Quit Xcode if needed.
+#' 2. Open Finder > Applications, select Xcode and move it to Trash.
+#' 3. Empty the trash.
+#' 4. In addition, open Terminal and run:
+#'
+#' ```sh
+#' sudo /Developer/Library/uninstall-devtools --mode=all
+#' ```
+#'
 #' @export
 #' @rdname xcode-cli
 #' @param verbose    Display status messages
@@ -60,7 +89,18 @@ xcode_cli_uninstall = function(verbose = TRUE){
         return(TRUE)
     }
 
-    # file.unlink("")
+    if(xcode_cli_path != "/Library/Developer/CommandLineTools") {
+        message("We detected the full Xcode application in use at: ", xcode_cli_path)
+        message("Please uninstall it using the App store.")
+        return(TRUE)
+    }
+
+    # Remove the shell execution script
+    status = shell_execute("rm -rf /Library/Developer/CommandLineTools",
+                  sudo = TRUE,
+                  password = password)
+
+    status == 0
 }
 
 #' @rdname xcode-cli
@@ -69,7 +109,7 @@ xcode_cli_uninstall = function(verbose = TRUE){
 #' # Check if Xcode CLI is installed
 #' xcode_cli_path()
 xcode_cli_path = function() {
-    xcode_select_path()
+    xcode_select_path()$output
 }
 
 

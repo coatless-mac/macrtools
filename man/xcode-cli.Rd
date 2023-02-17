@@ -42,6 +42,37 @@ the directory. If the status code returned is 0, then the tools exist.
 Otherwise, the return value will be 2 indicating that the tools are missing.
 }
 
+\section{Uninstalling Xcode CLI}{
+
+
+The \code{xcode_cli_uninstall()} attempts to remove \emph{only} the Xcode CLI tools.
+
+Per the \href{https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_}{Apple Technical Note TN2339}:
+\itemize{
+\item Xcode includes all of the command-line tools. If it is installed on your system, remove it to uninstall the command-line tools.
+\item If the \verb{/Library/Developer/CommandLineTools} directory exists on your system, remove it to uninstall the command-line tools
+}
+
+Thus, the \code{xcode_cli_uninstall()} opts to perform the second step \strong{only}.
+We use an \emph{R} sanitized \emph{shell} version of:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo -kS rm -rf /Library/Developer/CommandLineTools
+}\if{html}{\out{</div>}}
+
+If the Xcode application is detect, we note that we did not install the
+Xcode application. Instead, we request the user uninstall the Xcode
+app using the following steps:
+\enumerate{
+\item Make sure that Xcode is closed. Quit Xcode if needed.
+\item Open Finder > Applications, select Xcode and move it to Trash.
+\item Empty the trash.
+\item In addition, open Terminal and run:
+}
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo /Developer/Library/uninstall-devtools --mode=all
+}\if{html}{\out{</div>}}
+}
+
 \examples{
 # Check if Xcode CLI is installed
 is_xcode_cli_installed()
