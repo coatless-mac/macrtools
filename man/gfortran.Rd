@@ -9,14 +9,17 @@
 \usage{
 is_gfortran_installed()
 
-gfortran_install(verbose = TRUE)
+gfortran_install(verbose = TRUE, password = NULL)
 
-gfortran_uninstall(verbose = TRUE, password = askpass::askpass())
+gfortran_uninstall(verbose = TRUE, password = NULL)
 
 gfortran_update(verbose = TRUE)
 }
 \arguments{
 \item{verbose}{Display messages indicating status}
+
+\item{password}{Password for user account to install software. Default is
+\code{NULL}.}
 }
 \description{
 Set of functions that seek to identify whether gfortran was installed,

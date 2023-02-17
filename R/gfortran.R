@@ -17,10 +17,12 @@ is_gfortran_installed = function() {
     identical(xcode_select_path()$status, 0L)
 }
 
-#' @param verbose Display messages indicating status
+#' @param verbose  Display messages indicating status
+#' @param password Password for user account to install software. Default is
+#'                 `NULL`.
 #' @export
 #' @rdname gfortran
-gfortran_install = function(verbose = TRUE) {
+gfortran_install = function(verbose = TRUE, password = NULL) {
     assert_mac()
     if(isTRUE(is_gfortran_installed())) {
         if(verbose) {
@@ -63,7 +65,7 @@ gfortran_install = function(verbose = TRUE) {
 #'
 #' @export
 #' @rdname gfortran
-gfortran_uninstall = function(verbose = TRUE, password = askpass::askpass()) {
+gfortran_uninstall = function(verbose = TRUE, password = NULL) {
     assert_mac()
 
     if(isFALSE(is_gfortran_installed())) {
@@ -98,7 +100,7 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
     gfortran_path = file.path(tempdir(), gfortran_dmg_name)
 
     # Download the dmg file
-    file.download(
+    utils::file.download(
         gfortran_82_url,
         gfortran_path
     )
@@ -133,7 +135,7 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
 
 install_dmg_package = function(path_to_dmg,
                                pkg_location,
-                               password = password_prompt("Enter your user password: "),
+                               password = NULL,
                                verbose = TRUE) {
 
     if (verbose) message("Mounting ", volume_name)
