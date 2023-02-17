@@ -23,6 +23,9 @@ gfortran_version = function() {
     gfortran("--version")
 }
 
+#' @section Install `gfortran`:
+#'
+#'
 #' @param verbose  Display messages indicating status
 #' @param password Password for user account to install software. Default is
 #'                 `NULL`.

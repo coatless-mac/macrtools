@@ -34,6 +34,10 @@ allow gfortran to be installed, and removing gfortran.
 Checks using the \code{gfortran --version} command to see if a response is present.
 }
 
+\section{Install \code{gfortran}}{
+
+}
+
 \section{Uninstalling \code{gfortran}}{
 
 The \code{gfortran_uninstall()} attempts to remove \code{gfortran} from
