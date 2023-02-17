@@ -23,6 +23,7 @@
 #'                or displayed (`"list"`). Default `"install"` to download and install the binaries.
 #' @param sudo    Attempt to install the binaries using `sudo` permissions.
 #'                Default `TRUE`.
+#' @param password User password to switch into the `sudo` user. Default `NULL`.
 #'
 #' @export
 #' @author
@@ -64,7 +65,8 @@ recipes_binary_install = function(
     os.arch = "auto",
     dependencies = TRUE,
     action = c("install", "list"),
-    sudo = TRUE) {
+    sudo = TRUE,
+    password = NULL) {
 
     up <- function(...)
         paste(..., sep = '/')
@@ -173,17 +175,35 @@ recipes_binary_install = function(
     urls <- up(url, os.arch, db[need, "Binary"])
 
     if (action == "install") {
-        if (sudo)
-            password = password_prompt("Please enter the user password: ")
-        for (u in urls) {
-            cat("Downloading + installing ", u, "...\n")
+        if (sudo && is.null(password))
+            password = askpass::askpass()
+        for (binary_url in urls) {
+            cat("Downloading + installing ", binary_url, "...\n")
 
-            cmd = paste("curl", "-sSL", shQuote(u), "|", "tar fxj - -C /")
+            # Three step procedure:
+            cat("Downloading tar: ", binary_url, "...\n")
 
+            # Step One:Download the package into the temporary directory
+            save_location = file.path(tempdir(), basename(binary_url))
+            download.file(
+                binary_url,
+                save_location
+            )
+
+            cat("Installing: ", basename(binary_url), " into /usr/local/ ...\n")
+
+            # Step Two: Install the package using tar with stdin redirect
+            cmd = paste0("tar fxj ", save_location," -C /usr/local/ --strip 2")
             status = shell_execute(cmd, sudo = sudo, password = password)
 
+            # Verify installation is okay:
             if (status < 0)
                 stop("Failed to install from ", u)
+
+            cat("Removing temporary tar file: ", basename(binary_url), "...\n")
+
+            # Step Three: Remove the tar package
+            unlink(save_location)
         }
     } else
         urls
