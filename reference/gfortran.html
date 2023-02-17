@@ -49,7 +49,7 @@ allow gfortran to be installed, and removing gfortran.</p>
 <span></span>
 <span><span class="fu">gfortran_install</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">gfortran_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">gfortran_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="fu">askpass</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/askpass/man/askpass.html" class="external-link">askpass</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">gfortran_update</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -66,6 +66,18 @@ allow gfortran to be installed, and removing gfortran.</p>
 
 
 <p>Checks using the <code>gfortran --version</code> command to see if a response is present.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="uninstalling-gfortran">Uninstalling <code>gfortran</code><a class="anchor" aria-label="anchor" href="#uninstalling-gfortran"></a></h2>
+    
+
+<p>The <code>gfortran_uninstall()</code> attempts to remove <code>gfortran</code> from
+two locations:</p><ul><li><p><code>/usr/local/gfortran</code></p></li>
+<li><p><code>/user/local/bin/gfortran</code></p></li>
+</ul><p>Using the <em>R</em> sanitized <em>shell</em> command of:</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-kS</span> rm <span class="at">-r</span> /usr/local/gfortran /usr/local/bin/gfortran</span></code></pre><p></p></div>
+<p>These uninstall steps are based on:</p>
+<p><a href="https://gcc.gnu.org/wiki/GFortranBinariesMacOS" class="external-link">https://gcc.gnu.org/wiki/GFortranBinariesMacOS</a></p>
     </div>
 
     <div class="section level2">
