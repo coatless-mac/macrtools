@@ -80,6 +80,25 @@ Otherwise, the return value will be 2 indicating that the tools are missing.</p>
 the directory. If the status code returned is 0, then the tools exist.
 Otherwise, the return value will be 2 indicating that the tools are missing.</p>
     </div>
+    <div class="section level2">
+    <h2 id="uninstalling-xcode-cli">Uninstalling Xcode CLI<a class="anchor" aria-label="anchor" href="#uninstalling-xcode-cli"></a></h2>
+    
+
+
+<p>The <code>xcode_cli_uninstall()</code> attempts to remove <em>only</em> the Xcode CLI tools.</p>
+<p>Per the <a href="https://developer.apple.com/library/archive/technotes/tn2339/_index.html#//apple_ref/doc/uid/DTS40014588-CH1-HOW_CAN_I_UNINSTALL_THE_COMMAND_LINE_TOOLS_" class="external-link">Apple Technical Note TN2339</a>:</p><ul><li><p>Xcode includes all of the command-line tools. If it is installed on your system, remove it to uninstall the command-line tools.</p></li>
+<li><p>If the <code>/Library/Developer/CommandLineTools</code> directory exists on your system, remove it to uninstall the command-line tools</p></li>
+</ul><p>Thus, the <code>xcode_cli_uninstall()</code> opts to perform the second step <strong>only</strong>.
+We use an <em>R</em> sanitized <em>shell</em> version of:</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-kS</span> rm <span class="at">-rf</span> /Library/Developer/CommandLineTools</span></code></pre><p></p></div>
+<p>If the Xcode application is detect, we note that we did not install the
+Xcode application. Instead, we request the user uninstall the Xcode
+app using the following steps:</p><ol><li><p>Make sure that Xcode is closed. Quit Xcode if needed.</p></li>
+<li><p>Open Finder &gt; Applications, select Xcode and move it to Trash.</p></li>
+<li><p>Empty the trash.</p></li>
+<li><p>In addition, open Terminal and run:</p></li>
+</ol><p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> /Developer/Library/uninstall-devtools <span class="at">--mode</span><span class="op">=</span>all</span></code></pre><p></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -88,8 +107,7 @@ Otherwise, the return value will be 2 indicating that the tools are missing.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
 <span class="r-in"><span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Output:  /Applications/Xcode_14.2.app/Contents/Developer </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Status:  0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Applications/Xcode_14.2.app/Contents/Developer"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
