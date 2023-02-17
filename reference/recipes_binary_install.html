@@ -58,14 +58,15 @@ used on <a href="https://cran.r-project.org/" class="external-link">CRAN</a> for
 <span>  dependencies <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  action <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"install"</span>, <span class="st">"list"</span><span class="op">)</span>,</span>
 <span>  sudo <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  password <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>pkgs</dt>
-<dd><p>character vector, names of binaries to install (or "all" to install all)</p></dd>
+<dd><p>Character vector of binary names to install, <code>"all"</code> for all binaries, or <code>"r-base-dev"</code> for <em>R</em> binaries.</p></dd>
 
 
 <dt>url</dt>
@@ -102,6 +103,10 @@ Default <code>TRUE</code>.</p></dd>
 
 <dt>password</dt>
 <dd><p>User password to switch into the <code>sudo</code> user. Default <code>NULL</code>.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>Describe the steps being taken. Default <code>TRUE</code></p></dd>
 
 </dl></div>
     <div class="section level2">

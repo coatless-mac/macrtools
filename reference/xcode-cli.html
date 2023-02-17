@@ -49,7 +49,7 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
 <span></span>
 <span><span class="fu">xcode_cli_install</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">xcode_cli_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">xcode_cli_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -58,6 +58,10 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>verbose</dt>
 <dd><p>Display status messages</p></dd>
+
+
+<dt>password</dt>
+<dd><p>User password to access <code>sudo</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
