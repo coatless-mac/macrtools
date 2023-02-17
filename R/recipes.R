@@ -11,7 +11,7 @@
 #' used on [CRAN](https://cran.r-project.org/) for macOS through the
 #' [recipes](https://github.com/s-u/recipes) system designed by Simon Urbanek.
 #'
-#' @param pkgs    character vector, names of binaries to install (or "all" to install all)
+#' @param pkgs    Character vector of binary names to install, `"all"` for all binaries, or `"r-base-dev"` for _R_ binaries.
 #' @param url     URL of the repository root. Default <https://mac.R-project.org/bin>
 #' @param os      Name and version of the OS, e.g. `"darwin22"` where `"darwin"`
 #'                refers to macOS and `22` is the kernel version number.
@@ -24,7 +24,7 @@
 #' @param sudo    Attempt to install the binaries using `sudo` permissions.
 #'                Default `TRUE`.
 #' @param password User password to switch into the `sudo` user. Default `NULL`.
-#'
+#' @param verbose Describe the steps being taken. Default `TRUE`
 #' @export
 #' @author
 #' Simon Urbanek wrote the function and made it available at
@@ -66,7 +66,8 @@ recipes_binary_install = function(
     dependencies = TRUE,
     action = c("install", "list"),
     sudo = TRUE,
-    password = NULL) {
+    password = NULL,
+    verbose = TRUE) {
 
     up <- function(...)
         paste(..., sep = '/')
@@ -181,44 +182,21 @@ recipes_binary_install = function(
             password = askpass::askpass()
 
         # Determine the correct installation path based on arch type
-        if( grepl("arm64", os.arch, fixed = TRUE)) {
-            strip_levels = 3
-            install_directory = shQuote("/opt/R/arm64/")
-        } else if (grepl("x86_64", os.arch, fixed = TRUE)) {
-            strip_levels = 2
-            install_directory = shQuote("/usr/local/")
-        } else {
-            stop("Arch type not recognized. Please make sure you are on either an `arm64` or `x86_64` system.")
-        }
+
+        installation_data = install_location(os.arch)
 
         for (binary_url in urls) {
-            binary_file_name = basename(binary_url)
-            cat("Downloading + installing ", binary_file_name, "...\n")
 
-            # Three step procedure:
-            cat("Downloading tar: ", binary_url, "...\n")
+            # Download tar
+            path_to_tar = download_tar_package(binary_url)
 
-            # Step One:Download the package into the temporary directory
-            save_location = file.path(tempdir(), binary_file_name)
-            utils::download.file(
-                binary_url,
-                save_location
-            )
-
-            cat("Installing: ", binary_file_name, " into ", install_directory ," ...\n")
-
-            # Step Two: Install the package using tar with stdin redirect
-            cmd = paste0("tar fxj ", save_location," -C ", install_directory, " --strip ", strip_levels)
-            status = shell_execute(cmd, sudo = sudo, password = password)
-
-            # Verify installation is okay:
-            if (status < 0)
-                stop("Failed to install from ", save_location)
-
-            cat("\nRemoving temporary tar file: ", binary_file_name, "...\n")
-
-            # Step Three: Remove the tar package
-            unlink(save_location)
+            # Install tar into the appropriate location
+            install_tar_package(path_to_tar,
+                                installation_data$install_directory,
+                                installation_data$strip_levels,
+                                sudo    = sudo,
+                                password = password,
+                                verbose = verbose)
         }
     } else
         urls
