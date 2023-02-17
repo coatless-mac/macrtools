@@ -149,7 +149,6 @@ xcode_select_version = function() {
 #' @param x   An object with class `cli`
 #' @param ... Additional parameters
 #' @export
-#' @rdname xcode-select
 print.cli = function(x, ...) {
     cat("Output:\n", paste(x$output, collapse = "\n"), "\n")
     cat("Status:\n", paste(x$status, collapse = "\n"), "\n")

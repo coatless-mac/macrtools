@@ -76,6 +76,6 @@ app using the following steps:
 \examples{
 # Check if Xcode CLI is installed
 is_xcode_cli_installed()
-# Check if Xcode CLI is installed
+# Determine the path location of Xcode CLI
 xcode_cli_path()
 }
