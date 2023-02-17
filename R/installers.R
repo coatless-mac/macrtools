@@ -32,28 +32,24 @@ install_location = function(arch = system_arch()) {
 
 # Tar Installation ----
 
-#' Download and Install Tar Packages
+#' Download Binary Packages
 #'
-#' Downloads or installs a tar package onto a user's computer.
+#' Downloads a binary package onto a user's computer into the temporary directory.
 #'
-#' @param url              A link containing the binary tar file to download.
+#' @param url              A link containing the binary file to download.
 #' @param binary_file_name Name of the binary file to save
 #'
 #' @return
-#' The downloaded tar file path
+#' The file path for the binary file in the temporary _R_ directory
 #'
 #' @description
 #' The _R_ temporary directory is created using [tempdir()] that
-#' consults the environment values of [TMPDIR], [TMP], or [TEMP] to establish
+#' consults the environment values of [TMPDIR], [TMP](TMPDIR), or [TEMP](TMPDIR) to establish
 #' the path. We need to use a temporary directory as `root` is not guaranteed
 #' to have access to user's files.
 #'
-#' We need to use `sudo` access to unpack the binary into the low-level system
-#' holding area.
-#'
 #' @export
-#' @rdname tar-package
-tar_package_download = function(url,  binary_file_name = basename(url), verbose = TRUE) {
+binary_download = function(url,  binary_file_name = basename(url), verbose = TRUE) {
 
     # Three step procedure:
     cat("Downloading tar: ", url, "...\n")
@@ -70,6 +66,9 @@ tar_package_download = function(url,  binary_file_name = basename(url), verbose 
 }
 
 
+#' Install Binary Package in a Tar Format
+#'
+#' Unpacks the Tar package and places it into a system library
 #'
 #' @param path_to_tar Location of where the tar file is
 #' @param install_directory Location of where to unpack or extract the tar file.
@@ -77,8 +76,12 @@ tar_package_download = function(url,  binary_file_name = basename(url), verbose 
 #' @param sudo     Run the command as `root` through `sudo`. Default `TRUE`
 #' @param password User password to use to enter `sudo` mode.
 #' @param verbose  Display status messages
+#'
+#' @description
+#' The use of `sudo` is required to unpack the binary file
+#' into the low-level system area.
+#'
 #' @export
-#' @rdname tar-package
 tar_package_install = function(path_to_tar,
                                install_directory,
                                strip_levels,
