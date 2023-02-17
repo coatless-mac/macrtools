@@ -99,7 +99,8 @@ And the desired path for \code{aarch64}:
 The \code{gfortran_update()} attempts to update the version of \code{gfortran} installed
 using the provided \code{gfortran-update-sdk} inside of \verb{/opt/R/arm64/gfortran/bin}.
 
-Note: This update command only works for M1/M2 (\code{arm64}) users.
+Note: This update command only works for M1/M2 (\code{arm64}) users on \emph{R} 4.2
+or above.
 }
 
 \examples{

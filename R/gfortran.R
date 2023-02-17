@@ -64,7 +64,7 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
         if(verbose) {
             message("gfortran is already installed.")
         }
-        return(TRUE)
+        return(invisible(TRUE))
     }
 
     if (is_macos_r_supported()) {
@@ -76,25 +76,35 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
         path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
         path_variable = paste0("${PATH}:", path_gfortran_bin)
 
-        status = FALSE
         if (is_x86_64()) {
             status = install_gfortran_82_mojave()
         } else if (is_aarch64()) {
-            status = install_gfortran_12_arm()
+            status =
+            if (is_r_version("4.2")) {
+                install_gfortran_12_arm()
+            }
+            else if(is_r_version("4.1")) {
+                install_gfortran_11_arm()
+            } else {
+                FALSE
+            }
         } else {
             message("We do not have support for that macOS architecture yet.")
-            return( status )
+        }
+
+        if(!isTRUE(status)) {
+            return(invisible(FALSE))
         }
 
         renviron_gfortran_path(path_variable)
 
-        return( status )
+        return( invisible(status) )
     } else {
         message("Your version of macOS is not supported.")
-        return(FALSE)
+        return(invisible(FALSE))
     }
 
-    return(TRUE)
+    return(invisible(TRUE) )
 }
 
 #' @section Uninstalling `gfortran`:
@@ -136,7 +146,7 @@ gfortran_uninstall = function(verbose = TRUE, password = NULL) {
         if(verbose) {
             message("gfortran is not installed.")
         }
-        return(TRUE)
+        return(invisible(TRUE))
     }
 
     # Figure out installation directories
@@ -145,17 +155,20 @@ gfortran_uninstall = function(verbose = TRUE, password = NULL) {
     path_gfortran = file.path(install_dir, "gfortran")
     path_bin_gfortran =file.path(install_dir, "bin", "gfortran")
 
-    shell_execute(
+    status = shell_execute(
         paste0("rm -rf ", path_gfortran, " ", path_bin_gfortran ),
         sudo = TRUE,
         password = password)
+
+    return( invisible(status == 0) )
 }
 
 #' @section Update `gfortran`:
 #' The `gfortran_update()` attempts to update the version of `gfortran` installed
 #' using the provided `gfortran-update-sdk` inside of `/opt/R/arm64/gfortran/bin`.
 #'
-#' Note: This update command only works for M1/M2 (`arm64`) users.
+#' Note: This update command only works for M1/M2 (`arm64`) users on _R_ 4.2
+#' or above.
 #'
 #' @export
 #' @rdname gfortran
@@ -163,16 +176,22 @@ gfortran_update = function(verbose = TRUE, password = NULL) {
     assert_mac()
     assert_aarch64()
     assert(is_gfortran_installed(), "On gfortran")
+    assert(is_r_version("4.2") || is_r_version("4.3"), "On R 4.2 or above")
 
     # Figure out installation directory
     install_dir = install_location()
 
     path_gfortran_update = file.path(install_dir, "gfortran", "bin", "gfortran-update-sdk")
 
-    shell_execute(
+    # Verify that the tool exists
+    assert(!file.exists(path_gfortran_update), "Found gfortran-update-sdk")
+
+    status = shell_execute(
         path_gfortran_update,
         sudo = TRUE,
         password = password)
+
+    return( invisible(status == 0) )
 }
 
 
@@ -233,7 +252,7 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
     # Remove unused gfortran file
     unlink(gfortran_path)
 
-    return(TRUE)
+    return( invisible(TRUE) )
 }
 
 
@@ -248,6 +267,28 @@ install_gfortran_12_arm = function(password = askpass::askpass(),
 
     # Download tar
     path_to_tar = binary_download(gfortran_12_url, verbose = verbose)
+
+    # Install tar into the appropriate location
+    tar_package_install(path_to_tar,
+                        install_directory,
+                        strip_levels,
+                        password = password,
+                        verbose = verbose)
+
+}
+
+
+install_gfortran_11_arm = function(password = askpass::askpass(),
+                                   verbose = TRUE) {
+
+    gfortran_11_url = "https://mac.r-project.org/libs-arm64/gfortran-f51f1da0-darwin20.0-arm64.tar.gz"
+
+    # Figure out installation directories
+    install_directory = install_location()
+    strip_levels = install_strip_level()
+
+    # Download tar
+    path_to_tar = binary_download(gfortran_11_url, verbose = verbose)
 
     # Install tar into the appropriate location
     tar_package_install(path_to_tar,
