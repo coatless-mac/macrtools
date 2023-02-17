@@ -89,7 +89,7 @@ xcode_cli_uninstall = function(verbose = TRUE, password = NULL){
         return(TRUE)
     }
 
-    if(xcode_cli_path != "/Library/Developer/CommandLineTools") {
+    if(xcode_cli_path() != "/Library/Developer/CommandLineTools") {
         message("We detected the full Xcode application in use at: ", xcode_cli_path)
         message("Please uninstall it using the App store.")
         return(TRUE)
@@ -106,7 +106,7 @@ xcode_cli_uninstall = function(verbose = TRUE, password = NULL){
 #' @rdname xcode-cli
 #' @export
 #' @examples
-#' # Check if Xcode CLI is installed
+#' # Determine the path location of Xcode CLI
 #' xcode_cli_path()
 xcode_cli_path = function() {
     xcode_select_path()$output
@@ -129,7 +129,7 @@ xcode_select = function(args) {
             output = sys::as_text(out$stdout),
             status = out$status
         ),
-        class = "xcodeselect"
+        class = c("xcodeselect", "cli")
     )
 }
 
@@ -145,11 +145,12 @@ xcode_select_version = function() {
     xcode_select("--version")
 }
 
-#' @param x   An object with class `xcodeselect`
+#' Print CLI Responses
+#' @param x   An object with class `cli`
 #' @param ... Additional parameters
 #' @export
 #' @rdname xcode-select
-print.xcodeselect = function(x, ...) {
-    cat("Output: ", x$output, "\n")
-    cat("Status: ", x$status, "\n")
+print.cli = function(x, ...) {
+    cat("Output:\n", paste(x$output, collapse = "\n"), "\n")
+    cat("Status:\n", paste(x$status, collapse = "\n"), "\n")
 }
