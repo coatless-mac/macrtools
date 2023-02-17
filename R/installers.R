@@ -1,3 +1,7 @@
+#' @include utils.R shell.R
+NULL
+
+
 install_location = function(arch) {
     if (missing(arch)) {
         arch = system_arch()
@@ -71,15 +75,16 @@ install_dmg_package = function(path_to_dmg,
                                password = NULL,
                                verbose = TRUE) {
 
-    volume_name = basename(path_to_dmg)
+    volume_with_extension = basename(path_to_dmg)
+    bare_volume = tools::file_path_sans_ext(volume_with_extension)
 
-    if (verbose) message("Mounting ", volume_name)
+    if (verbose) message("Mounting ", volume_with_extension)
 
     cmd = paste("hdiutil attach", shQuote(path_to_dmg), "-nobrowse -quiet")
     shell_execute(cmd, sudo = FALSE)
 
     if (verbose) {
-        message("Installing ", volume_name, "...")
+        message("Installing ", bare_volume, "...")
         message("You may be prompted for your password ...")
     }
     cmd = paste(
@@ -94,9 +99,9 @@ install_dmg_package = function(path_to_dmg,
     shell_execute(cmd, sudo = TRUE, password = password)
 
     if (verbose) {
-        message("Unmounting ", volume_name, "...")
+        message("Unmounting ", bare_volume, "...")
     }
-    cmd = paste("hdiutil", "detach", paste0("'/Volumes/", volume_name, "'"))
+    cmd = paste("hdiutil", "detach", shQuote(file.path("/Volumes", bare_volume)))
     status = shell_execute(cmd, sudo = FALSE)
 
     status == 0
