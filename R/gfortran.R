@@ -205,15 +205,9 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
     # Key the necessary download steps
     gfortran_82_url = "https://mac.r-project.org/tools/gfortran-8.2-Mojave.dmg"
     gfortran_dmg_name = basename(gfortran_82_url)
-    gfortran_path = file.path(tempdir(), gfortran_dmg_name)
-
-    if (verbose) message("Downloading ", gfortran_82_url, " ...")
 
     # Download the dmg file
-    utils::download.file(
-        gfortran_82_url,
-        gfortran_path
-    )
+    gfortran_path = binary_download(gfortran_82_url, verbose = verbose)
 
     # Establish where in the dmg the installer package is
     path_to_pkg =
@@ -253,7 +247,7 @@ install_gfortran_12_arm = function(password = askpass::askpass(),
     strip_levels = install_strip_level()
 
     # Download tar
-    path_to_tar = tar_package_download(gfortran_12_url, verbose = verbose)
+    path_to_tar = binary_download(gfortran_12_url, verbose = verbose)
 
     # Install tar into the appropriate location
     tar_package_install(path_to_tar,

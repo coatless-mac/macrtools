@@ -192,10 +192,10 @@ recipes_binary_install = function(
         for (binary_url in urls) {
 
             # Download tar
-            path_to_tar = download_tar_package(binary_url)
+            path_to_tar = binary_download(binary_url, verbose = verbose)
 
             # Install tar into the appropriate location
-            install_tar_package(path_to_tar,
+            tar_package_install(path_to_tar,
                                 installation_directory,
                                 installation_strip_level,
                                 sudo    = sudo,
