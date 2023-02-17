@@ -36,13 +36,13 @@ write_utf8 = function(path, lines, append = FALSE, line_ending = NULL) {
 seq2 = function (from, to)
 {
     if (length(from) != 1) {
-        abort(sprintf("%s must be length one.", format_arg("from")))
+        stop(sprintf("%s must be length one.", from))
     }
     if (length(to) != 1) {
-        abort(sprintf("%s must be length one.", format_arg("to")))
+        stop(sprintf("%s must be length one.", to))
     }
     if (from > to) {
-        int()
+        integer(0)
     }
     else {
         seq.int(from, to)
@@ -57,35 +57,36 @@ block_append = function(desc, value, path,
                          block_suffix = NULL,
                          sort = FALSE) {
 
-    if (!is.null(path) && file_exists(path)) {
+    if (!is.null(path) && file.exists(path)) {
         lines = read_utf8(path)
         if (all(value %in% lines)) {
             return(FALSE)
         }
 
-        block_lines <- block_find(lines, block_start, block_end)
+        block_lines = block_find(lines, block_start, block_end)
     } else {
-        block_lines <- NULL
-    }
-
-    if (is.null(block_lines)) {
-        message("Copy and paste the following lines into ", path, ":")
-        paste0(c(block_prefix, block_start, value, block_end, block_suffix), collapse = "\n")
-        return(FALSE)
+        block_lines = NULL
     }
 
     message("Adding ", desc, " to ", path)
 
-    start <- block_lines[[1]]
-    end <- block_lines[[2]]
-    block <- lines[seq2(start, end)]
-
-    new_lines <- union(block, value)
-    if (sort) {
-        new_lines <- sort(new_lines)
+    if (is.null(block_lines)) {
+        # changed as we have a cold start and want to enforce a block being present
+        write_utf8(path, block_create(shQuote(value), block_start, block_end), append = TRUE)
+        return(TRUE)
     }
 
-    lines <- c(
+
+    start = block_lines[[1]]
+    end = block_lines[[2]]
+    block = lines[seq2(start, end)]
+
+    new_lines = union(block, value)
+    if (sort) {
+        new_lines = sort(new_lines)
+    }
+
+    lines = c(
         lines[seq2(1, start - 1L)],
         new_lines,
         lines[seq2(end + 1L, length(lines))]
@@ -95,14 +96,14 @@ block_append = function(desc, value, path,
     TRUE
 }
 
-block_replace <- function(desc, value, path,
+block_replace = function(desc, value, path,
                           block_start = "# <<<",
                           block_end = "# >>>") {
-    if (!is.null(path) && file_exists(path)) {
-        lines <- read_utf8(path)
-        block_lines <- block_find(lines, block_start, block_end)
+    if (!is.null(path) && file.exists(path)) {
+        lines = read_utf8(path)
+        block_lines = block_find(lines, block_start, block_end)
     } else {
-        block_lines <- NULL
+        block_lines = NULL
     }
 
     if (is.null(block_lines)) {
@@ -111,9 +112,9 @@ block_replace <- function(desc, value, path,
         return(invisible(FALSE))
     }
 
-    start <- block_lines[[1]]
-    end <- block_lines[[2]]
-    block <- lines[seq2(start, end)]
+    start = block_lines[[1]]
+    end = block_lines[[2]]
+    block = lines[seq2(start, end)]
 
     if (identical(value, block)) {
         return(invisible(FALSE))
@@ -121,7 +122,7 @@ block_replace <- function(desc, value, path,
 
     message("Replacing ", desc, " in ", path)
 
-    lines <- c(
+    lines = c(
         lines[seq2(1, start - 1L)],
         value,
         lines[seq2(end + 1L, length(lines))]
@@ -130,13 +131,13 @@ block_replace <- function(desc, value, path,
 }
 
 
-block_show <- function(path, block_start = "# <<<", block_end = "# >>>") {
-    lines <- read_utf8(path)
-    block <- block_find(lines, block_start, block_end)
+block_show = function(path, block_start = "# <<<", block_end = "# >>>") {
+    lines = read_utf8(path)
+    block = block_find(lines, block_start, block_end)
     lines[seq2(block[[1]], block[[2]])]
 }
 
-block_find <- function(lines, block_start = "# <<<", block_end = "# >>>") {
+block_find = function(lines, block_start = "# <<<", block_end = "# >>>") {
     # No file
     if (is.null(lines)) {
         return(NULL)
@@ -157,6 +158,6 @@ block_find <- function(lines, block_start = "# <<<", block_end = "# >>>") {
     c(start + 1L, end - 1L)
 }
 
-block_create <- function(lines = character(), block_start = "# <<<", block_end = "# >>>") {
+block_create = function(lines = character(), block_start = "# <<<", block_end = "# >>>") {
     c(block_start, unique(lines), block_end)
 }
