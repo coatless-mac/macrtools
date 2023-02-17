@@ -9,7 +9,9 @@ binary_download(url, binary_file_name = basename(url), verbose = TRUE)
 \arguments{
 \item{url}{A link containing the binary file to download.}
 
-\item{binary_file_name}{Name of the binary file to save}
+\item{binary_file_name}{Name of the binary file to save. Default \code{basname(url)}}
+
+\item{verbose}{Display a status messages. Default \code{true}}
 }
 \value{
 The file path for the binary file in the temporary \emph{R} directory

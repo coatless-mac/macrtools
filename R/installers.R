@@ -37,7 +37,8 @@ install_location = function(arch = system_arch()) {
 #' Downloads a binary package onto a user's computer into the temporary directory.
 #'
 #' @param url              A link containing the binary file to download.
-#' @param binary_file_name Name of the binary file to save
+#' @param binary_file_name Name of the binary file to save. Default `basname(url)`
+#' @param verbose          Display a status messages. Default `true`
 #'
 #' @return
 #' The file path for the binary file in the temporary _R_ directory
@@ -130,7 +131,6 @@ dmg_package_install = function(path_to_dmg,
 
     if (verbose) {
         message("Installing ", bare_volume, "...")
-        message("You may be prompted for your password ...")
     }
     cmd = paste(
         "sudo",
