@@ -13,20 +13,8 @@ shell_command = function(cmd) {
 shell_sudo_command = function(cmd, password, prefix = "sudo -kS ") {
     cmd_with_sudo = paste0(prefix, cmd)
     if (is.null(password)) {
-        system(cmd_with_sudo, input = password_prompt("Enter user password to run command:"))
+        system(cmd_with_sudo, input = askpass::askpass("Please enter your password:"))
     } else {
         system(cmd_with_sudo, input = password)
-    }
-}
-
-password_prompt = function(msg) {
-    if(interactive()) {
-        if(requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
-            rstudioapi::askForPassword(msg)
-        } else {
-            readline(msg)
-        }
-    } else {
-        stop("Unable to request password as the session is not being run interactively.")
     }
 }

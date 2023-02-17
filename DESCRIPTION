@@ -12,8 +12,10 @@ RoxygenNote: 7.2.3
 OS_type: unix
 SystemRequirements: macOS
 Imports: 
+    askpass,
     stats,
     sys,
+    tools,
     utils
 URL: https://rmacoslib.github.io/macrtools/
 Suggests: 
