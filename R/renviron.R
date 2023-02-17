@@ -12,7 +12,7 @@ use_r_environ = function(option, value, path = "~/.Renviron",
     }
 
     changed = block_append(
-        desc = paste0("setting of ", option, "=", value, " into ", path),
+        desc = paste0("setting of ", option, "=", value),
         value = paste0(option, "=", value),
         path = path,
         block_start = block_start,
