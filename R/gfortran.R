@@ -138,6 +138,8 @@ install_dmg_package = function(path_to_dmg,
                                password = NULL,
                                verbose = TRUE) {
 
+    volume_name = basename(path_to_dmg)
+
     if (verbose) message("Mounting ", volume_name)
 
     cmd = paste("hdiutil attach", shQuote(path_to_dmg), "-nobrowse -quiet")
