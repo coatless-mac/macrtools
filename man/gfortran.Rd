@@ -11,7 +11,7 @@ is_gfortran_installed()
 
 gfortran_install(verbose = TRUE)
 
-gfortran_uninstall(verbose = TRUE)
+gfortran_uninstall(verbose = TRUE, password = askpass::askpass())
 
 gfortran_update(verbose = TRUE)
 }
@@ -26,6 +26,25 @@ allow gfortran to be installed, and removing gfortran.
 
 
 Checks using the \code{gfortran --version} command to see if a response is present.
+}
+
+\section{Uninstalling \code{gfortran}}{
+
+The \code{gfortran_uninstall()} attempts to remove \code{gfortran} from
+two locations:
+\itemize{
+\item \verb{/usr/local/gfortran}
+\item \verb{/user/local/bin/gfortran}
+}
+
+Using the \emph{R} sanitized \emph{shell} command of:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo -kS rm -r /usr/local/gfortran /usr/local/bin/gfortran
+}\if{html}{\out{</div>}}
+
+These uninstall steps are based on:
+
+\url{https://gcc.gnu.org/wiki/GFortranBinariesMacOS}
 }
 
 \examples{
