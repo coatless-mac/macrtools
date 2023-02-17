@@ -127,12 +127,28 @@ gfortran_uninstall = function(verbose = TRUE, password = NULL) {
         password = password)
 }
 
+#' @section Update `gfortran`:
+#' The `gfortran_update()` attempts to update the version of `gfortran` installed
+#' using the provided `gfortran-update-sdk` inside of `/opt/R/arm64/gfortran/bin`.
+#'
+#' Note: This update command only works for M1/M2 (`arm64`) users.
+#'
 #' @export
 #' @rdname gfortran
 gfortran_update = function(verbose = TRUE, password = NULL) {
     assert_mac()
+    assert_aarch64()
     assert(is_gfortran_installed(), "On gfortran")
 
+    # Figure out installation directory
+    install_dir = install_location()$install_directory
+
+    path_gfortran_update = file.path(install_dir, "gfortran", "bin", "gfortran-update-sdk")
+
+    shell_execute(
+        path_gfortran_update,
+        sudo = TRUE,
+        password = password)
 }
 
 
