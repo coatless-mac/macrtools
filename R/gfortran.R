@@ -14,7 +14,13 @@
 #' is_gfortran_installed()
 is_gfortran_installed = function() {
     assert_mac()
-    identical(xcode_select_path()$status, 0L)
+    identical(gfortran_version()$status, 0L)
+}
+
+#' @export
+#' @rdname gfortran
+gfortran_version = function() {
+    gfortran("--version")
 }
 
 #' @param verbose  Display messages indicating status
@@ -32,21 +38,26 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
     }
 
     if (is_macos_r_supported()) {
+
+        # Figure out installation directories
+        install_dir = install_location()$install_directory
+
+        path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
+        path_variable = paste0("$PATH:", path_gfortran_bin)
+
+        status = FALSE
         if (is_x86_64()) {
-
             status = install_gfortran_82_mojave()
-            renviron_gfortran_path("$PATH:/usr/local/gfortran/bin")
-
-            return( status )
         } else if (is_aarch64()) {
             status = install_gfortran_12_arm()
-            renviron_gfortran_path("$PATH:/opt/R/arm64/gfortran/bin")
-
-            return( status )
         } else {
-            message("We do not have support for macOS architecture yet.")
-            return(FALSE)
+            message("We do not have support for that macOS architecture yet.")
+            return( status )
         }
+
+        renviron_gfortran_path(path_variable)
+
+        return( status )
     } else {
         message("Your version of macOS is not supported.")
         return(FALSE)
@@ -97,23 +108,16 @@ gfortran_uninstall = function(verbose = TRUE, password = NULL) {
         return(TRUE)
     }
 
+    # Figure out installation directories
+    install_dir = install_location()$install_directory
 
-    if (is_x86_64()) {
-        status = install_gfortran_82_mojave()
-        renviron_gfortran_path("$PATH:/usr/local/gfortran/bin")
-        return( status )
-    } else if (is_aarch64()) {
-        status = install_gfortran_12_arm()
-        renviron_gfortran_path("$PATH:/opt/R/arm64/gfortran/bin")
-        return( status )
-    } else {
-        message("We do not have support for macOS architecture yet.")
-        return(FALSE)
-    }
+    path_gfortran = file.path(install_dir, "gfortran")
+    path_bin_gfortran =file.path(install_dir, "bin", "gfortran")
 
-    shell_execute("rm -rf /usr/local/gfortran /usr/local/bin/gfortran",
-                  sudo = TRUE,
-                  password = password)
+    shell_execute(
+        paste0("rm -rf ", path_gfortran, " ", path_bin_gfortran ),
+        sudo = TRUE,
+        password = password)
 }
 
 #' @export
@@ -122,6 +126,19 @@ gfortran_update = function(verbose = TRUE, password = NULL) {
     assert_mac()
     assert(is_gfortran_installed(), "On gfortran")
 
+}
+
+
+gfortran = function(args) {
+    out = sys::exec_internal("gfortran", args = args)
+
+    structure(
+        list(
+            output = sys::as_text(out$stdout),
+            status = out$status
+        ),
+        class = c("gfortran", "cli")
+    )
 }
 
 #' Download and Install gfortran 8.2 for Intel Macs

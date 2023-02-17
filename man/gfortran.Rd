@@ -2,12 +2,15 @@
 % Please edit documentation in R/gfortran.R
 \name{is_gfortran_installed}
 \alias{is_gfortran_installed}
+\alias{gfortran_version}
 \alias{gfortran_install}
 \alias{gfortran_uninstall}
 \alias{gfortran_update}
 \title{Find, Install, or Uninstall gfortran}
 \usage{
 is_gfortran_installed()
+
+gfortran_version()
 
 gfortran_install(verbose = TRUE, password = NULL)
 
