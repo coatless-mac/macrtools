@@ -72,7 +72,7 @@ block_append = function(desc, value, path,
 
     if (is.null(block_lines)) {
         # changed as we have a cold start and want to enforce a block being present
-        write_utf8(path, block_create(shQuote(value), block_start, block_end), append = TRUE)
+        write_utf8(path, block_create(value, block_start, block_end), append = TRUE)
         return(TRUE)
     }
 
