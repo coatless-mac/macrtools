@@ -185,7 +185,7 @@ recipes_binary_install = function(
 
             # Step One:Download the package into the temporary directory
             save_location = file.path(tempdir(), basename(binary_url))
-            download.file(
+            utils::download.file(
                 binary_url,
                 save_location
             )
@@ -198,7 +198,7 @@ recipes_binary_install = function(
 
             # Verify installation is okay:
             if (status < 0)
-                stop("Failed to install from ", u)
+                stop("Failed to install from ", save_location)
 
             cat("Removing temporary tar file: ", basename(binary_url), "...\n")
 
