@@ -55,6 +55,7 @@
 </h1></div>
 <!-- badges: start -->
 
+<p><strong>This is a work in progress package. Features may be unstable.</strong></p>
 <p>The repository contains the <code>macrtools</code>, which is a macOS-only <em>R</em> package. The package is setup to re-create the compiled code toolchain for the <a href="https://cran.r-project.org/bin/macosx/" class="external-link">CRAN official macOS <em>R</em> binary</a> that handles setting up the macOS R development toolchain as described on the <a href="https://mac.r-project.org/tools/" class="external-link">macOS <code>tools</code> r-project developer page</a>.</p>
 <p><strong>Note:</strong> The installer package was developed by <a href="https://thecoatlessprofessor.com/" class="external-link">James Joseph Balamuta</a> and has no connection with the R project’s macOS CRAN maintainers.</p>
 <div class="section level2">
@@ -64,6 +65,48 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"rmacoslib/macrtools"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h2>
+<p>The package is designed to help diagnose, install, and uninstall different parts of the macOS R compilation toolchain.</p>
+<div class="section level3">
+<h3 id="diagnose">Diagnose<a class="anchor" aria-label="anchor" href="#diagnose"></a>
+</h3>
+<p>The package features two tools that seek to identify if core components are installed:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># We can check if Xcode CLI is present using:</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-cli.html">is_xcode_cli_installed</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># We can verify gfortran is present as well</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/gfortran.html">is_gfortran_installed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="installation-1">Installation<a class="anchor" aria-label="anchor" href="#installation-1"></a>
+</h3>
+<p>The next set of functions focus primarily on installing different binary packages into the required locations.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># todo: finish xcode_cli headless install</span></span>
+<span><span class="co"># macrtools::xcode_cli_install() # not available</span></span>
+<span></span>
+<span><span class="co"># We can install gfortran using:</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/gfortran.html">gfortran_install</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># And other binaries required for compiling R using:</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/recipes_binary_install.html">recipes_binary_install</a></span><span class="op">(</span><span class="st">'r-base-dev'</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="uninstall">Uninstall<a class="anchor" aria-label="anchor" href="#uninstall"></a>
+</h3>
+<p>If we no longer have interest in having development tools present, we can remove the development tools using:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># We can remove Xcode CLI using</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-cli.html">xcode_cli_uninstall</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Note: To remove Xcode app, you must manually do it! </span></span>
+<span></span>
+<span><span class="co"># We can uninstall gfortran using:</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/gfortran.html">gfortran_uninstall</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
