@@ -64,7 +64,7 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
         install_dir = install_location()$install_directory
 
         path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
-        path_variable = paste0("$PATH:", path_gfortran_bin)
+        path_variable = paste0("${PATH}:", path_gfortran_bin)
 
         status = FALSE
         if (is_x86_64()) {
@@ -196,6 +196,8 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
     gfortran_82_url = "https://mac.r-project.org/tools/gfortran-8.2-Mojave.dmg"
     gfortran_dmg_name = basename(gfortran_82_url)
     gfortran_path = file.path(tempdir(), gfortran_dmg_name)
+
+    if (verbose) message("Downloading ", gfortran_82_url, " ...")
 
     # Download the dmg file
     utils::download.file(
