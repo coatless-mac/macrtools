@@ -9,7 +9,7 @@
 \usage{
 is_xcode_cli_installed()
 
-xcode_cli_install(verbose = TRUE)
+xcode_cli_install(verbose = TRUE, password = NULL)
 
 xcode_cli_uninstall(verbose = TRUE, password = NULL)
 
@@ -39,9 +39,7 @@ Implementation is based on:
 \section{XCode CLI Installation}{
 
 
-Checks using the \code{xcode-select -p} command to obtain the relevant
-the directory. If the status code returned is 0, then the tools exist.
-Otherwise, the return value will be 2 indicating that the tools are missing.
+Attempts to perform a headless Xcode CLI installation.
 }
 
 \section{Uninstalling Xcode CLI}{

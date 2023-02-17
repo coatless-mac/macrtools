@@ -24,13 +24,11 @@ is_xcode_cli_installed = function() {
 
 #' @section XCode CLI Installation:
 #'
-#' Checks using the `xcode-select -p` command to obtain the relevant
-#' the directory. If the status code returned is 0, then the tools exist.
-#' Otherwise, the return value will be 2 indicating that the tools are missing.
+#' Attempts to perform a headless Xcode CLI installation.
 #' @export
 #' @rdname xcode-cli
 #' @param verbose    Display status messages
-xcode_cli_install = function(verbose = TRUE){
+xcode_cli_install = function(verbose = TRUE, password = NULL){
     assert_mac()
     if(isTRUE(is_xcode_cli_installed())) {
         if(verbose) {
@@ -38,6 +36,8 @@ xcode_cli_install = function(verbose = TRUE){
         }
         return(TRUE)
     }
+
+    stop("Still a work in progress! Sorry.")
 
     # Create a temporary in-progress file
     file.create("/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress")
@@ -80,7 +80,6 @@ xcode_cli_install = function(verbose = TRUE){
 #' @export
 #' @rdname xcode-cli
 #' @param password   User password to access `sudo`.
-#' @param verbose    Display status messages
 xcode_cli_uninstall = function(verbose = TRUE, password = NULL){
     assert_mac()
     if(isFALSE(is_xcode_cli_installed())) {
