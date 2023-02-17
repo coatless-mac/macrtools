@@ -219,7 +219,7 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
         verbose = verbose
     )
 
-    if (success) {
+    if (!success) {
         message("Error installing the gfortran package")
         return(FALSE)
     }
