@@ -47,7 +47,7 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">is_xcode_cli_installed</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">xcode_cli_install</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">xcode_cli_install</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">xcode_cli_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
@@ -80,9 +80,7 @@ Otherwise, the return value will be 2 indicating that the tools are missing.</p>
     
 
 
-<p>Checks using the <code>xcode-select -p</code> command to obtain the relevant
-the directory. If the status code returned is 0, then the tools exist.
-Otherwise, the return value will be 2 indicating that the tools are missing.</p>
+<p>Attempts to perform a headless Xcode CLI installation.</p>
     </div>
     <div class="section level2">
     <h2 id="uninstalling-xcode-cli">Uninstalling Xcode CLI<a class="anchor" aria-label="anchor" href="#uninstalling-xcode-cli"></a></h2>
@@ -109,7 +107,7 @@ app using the following steps:</p><ol><li><p>Make sure that Xcode is closed. Qui
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
 <span class="r-in"><span><span class="fu">is_xcode_cli_installed</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
+<span class="r-in"><span><span class="co"># Determine the path location of Xcode CLI</span></span></span>
 <span class="r-in"><span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Applications/Xcode_14.2.app/Contents/Developer"</span>
 </code></pre></div>
