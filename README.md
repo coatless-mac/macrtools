@@ -10,12 +10,14 @@
 
 **This is a work in progress package. Features may be unstable.**
 
-The repository contains the `macrtools`, which is a macOS-only *R*
-package. The package is setup to re-create the compiled code toolchain
-for the [CRAN official macOS *R*
-binary](https://cran.r-project.org/bin/macosx/) that handles setting up
-the macOS R development toolchain as described on the [macOS `tools`
-r-project developer page](https://mac.r-project.org/tools/).
+**This is an *unofficial* project to support users on macOS.**
+
+The repository contains `macrtools` a macOS-only *R* package. The
+package is setup to re-create the compiled code toolchain for the [CRAN
+official macOS *R* binary](https://cran.r-project.org/bin/macosx/) that
+handles setting up the macOS R development toolchain as described on the
+[macOS `tools` r-project developer
+page](https://mac.r-project.org/tools/).
 
 **Note:** The installer package was developed by [James Joseph
 Balamuta](https://thecoatlessprofessor.com/) and has no connection with
