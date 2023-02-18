@@ -124,13 +124,13 @@ dmg_package_install = function(path_to_dmg,
     volume_with_extension = basename(path_to_dmg)
     bare_volume = tools::file_path_sans_ext(volume_with_extension)
 
-    if (verbose) message("Mounting ", volume_with_extension)
+    if (verbose) message("Mounting ", volume_with_extension, " ...")
 
     cmd = paste("hdiutil attach", shQuote(path_to_dmg), "-nobrowse -quiet")
     shell_execute(cmd, sudo = FALSE)
 
     if (verbose) {
-        message("Installing ", bare_volume, "...")
+        message("Installing ", bare_volume, " ...")
     }
     cmd = paste(
         "sudo",
