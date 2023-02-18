@@ -1,3 +1,4 @@
+# System functions ----
 system_os = function() {
     tolower(Sys.info()[["sysname"]])
 }
@@ -6,10 +7,11 @@ system_arch = function() {
     R.version$arch
 }
 
+# Detect macOS Operating System ----
+
 shell_mac_version = function() {
     sys::as_text(sys::exec_internal("sw_vers", "-productVersion")$stdout)
 }
-
 
 
 is_macos_r_supported = function() {
@@ -54,10 +56,11 @@ is_macos_high_sierra = function() {
     version_between(mac_version, "10.13.0", "10.14.0")
 }
 
-
 is_macos = function() {
     system_os() == "darwin"
 }
+
+# Architecture Checks ----
 
 is_aarch64 = function() {
     system_arch() == "aarch64"
@@ -66,6 +69,9 @@ is_aarch64 = function() {
 is_x86_64 = function() {
     system_arch() == "x86_64"
 }
+
+
+# Version Checks ----
 
 is_r_version = function(target_version, compare_major_minor = TRUE) {
 
