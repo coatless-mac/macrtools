@@ -68,24 +68,29 @@ allow gfortran to be installed, and removing gfortran.</p>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The <code>gfortran</code> suite of functions attempts to locate, install, and uninstall
+<code>gfortran</code> based the default installation locations that depend on architecture:</p><ul><li><p>Intel (<code>x86_64</code>)</p><ul><li><p><code>/usr/local/gfortran</code></p></li>
+<li><p><code>/usr/local/bin/gfortran</code></p></li>
+</ul></li>
+<li><p>M1/M2 (<code>arm64</code> or <code>aarch64</code>)</p><ul><li><p><code>/opt/r/arm64/gfortran/</code></p></li>
+<li><p><code>/opt/r/arm64/bin/gfortran</code></p></li>
+</ul></li>
+</ul></div>
+    <div class="section level2">
     <h2 id="check-if-gfortran-is-installed">Check if <code>gfortran</code> is installed<a class="anchor" aria-label="anchor" href="#check-if-gfortran-is-installed"></a></h2>
     
 
 
-<p>Checks using the <code>gfortran --version</code> command to see if a response is present.</p>
+<p>Checks the local file system for whether <code>gfortran</code> is installed in
+the default installation location.</p>
     </div>
     <div class="section level2">
-    <h2 id="install-gfortran">Install <code>gfortran</code><a class="anchor" aria-label="anchor" href="#install-gfortran"></a></h2>
+    <h2 id="installing-gfortran">Installing <code>gfortran</code><a class="anchor" aria-label="anchor" href="#installing-gfortran"></a></h2>
     
 
-<p>The <code>gfortran_install()</code> function aims to install <code>gfortran</code> into
-two locations:</p><ul><li><p>Intel (<code>x86_64</code>)</p><ul><li><p><code>/usr/local/gfortran</code></p></li>
-<li><p><code>/usr/local/bin/gfortran</code></p></li>
-</ul></li>
-<li><p>M1/M2 (<code>aarch64</code>)</p><ul><li><p><code>/opt/r/arm64/gfortran/</code></p></li>
-<li><p><code>/opt/r/arm64/bin/gfortran</code></p></li>
-</ul></li>
-</ul><div class="section">
+<p>The <code>gfortran_install()</code> function aims to install <code>gfortran</code> into the
+appropriate location for Intel (<code>x86_64</code>) or M1/M2 (<code>arm64</code>/<code>aarch64</code>).</p><div class="section">
 <h3 id="gfortran-installation-for-intel-macs-x-">gfortran Installation for Intel Macs (<code>x86_64</code>)<a class="anchor" aria-label="anchor" href="#gfortran-installation-for-intel-macs-x-"></a></h3>
 
 
@@ -112,7 +117,7 @@ installed software by adding into the <code>~/.Renviron</code> file the followin
 </div>
 
 <div class="section">
-<h3 id="gfortran-installation-for-m-or-m-macs-x-">gfortran Installation for M1 or M2 Macs (<code>x86_64</code>)<a class="anchor" aria-label="anchor" href="#gfortran-installation-for-m-or-m-macs-x-"></a></h3>
+<h3 id="gfortran-installation-for-m-or-m-macs-arm-">gfortran Installation for M1 or M2 Macs (<code>arm64</code>)<a class="anchor" aria-label="anchor" href="#gfortran-installation-for-m-or-m-macs-arm-"></a></h3>
 
 
 <p>The M1 or M2 <code>gfortran</code> installer is a tar file that is unpacked into the
@@ -148,23 +153,29 @@ installed software by adding into the <code>~/.Renviron</code> file the followin
     
 
 <p>The <code>gfortran_uninstall()</code> attempts to remove <code>gfortran</code> from
-two locations:</p><ul><li><p>Intel (<code>x86_64</code>)</p><ul><li><p><code>/usr/local/gfortran</code></p></li>
-<li><p><code>/usr/local/bin/gfortran</code></p></li>
-</ul></li>
-<li><p>M1/M2 (<code>aarch64</code>)</p><ul><li><p><code>/opt/r/arm64/gfortran/</code></p></li>
-<li><p><code>/opt/r/arm64/bin/gfortran</code></p></li>
-</ul></li>
-</ul><p>Using the <em>R</em> sanitized <em>shell</em> command of:</p>
+the default installation locations described in the details section.</p><div class="section">
+<h3 id="uninstalling-gfortran-for-intel-macs">Uninstalling gfortran for Intel Macs<a class="anchor" aria-label="anchor" href="#uninstalling-gfortran-for-intel-macs"></a></h3>
+
+
+<p>We use the <em>R</em> sanitized <em>shell</em> command of:</p>
 <p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> rm <span class="at">-rf</span> /usr/local/gfortran /usr/local/bin/gfortran</span></code></pre><p></p></div>
-<p>Or:</p>
-<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> rm <span class="at">-rf</span> /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran</span></code></pre><p></p></div>
 <p>These uninstall steps are based on:</p>
 <p><a href="https://gcc.gnu.org/wiki/GFortranBinariesMacOS" class="external-link">https://gcc.gnu.org/wiki/GFortranBinariesMacOS</a></p>
-<p>And the desired path for <code>aarch64</code>:</p>
+</div>
+
+<div class="section">
+<h3 id="uninstalling-gfortran-for-m-or-m-macs-arm-">Uninstalling gfortran for M1 or M2 Macs (<code>arm64</code>)<a class="anchor" aria-label="anchor" href="#uninstalling-gfortran-for-m-or-m-macs-arm-"></a></h3>
+
+
+<p>For M1 or M2 Macs (<code>arm64</code>), we use the <em>R</em> sanitized <em>shell</em> command of:</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> rm <span class="at">-rf</span> /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran</span></code></pre><p></p></div>
+<p>This aligns with the default path used by CRAN for <code>arm64</code>:</p>
 <p><a href="https://mac.r-project.org/tools/" class="external-link">https://mac.r-project.org/tools/</a></p>
+</div>
+
     </div>
     <div class="section level2">
-    <h2 id="update-gfortran">Update <code>gfortran</code><a class="anchor" aria-label="anchor" href="#update-gfortran"></a></h2>
+    <h2 id="updating-gfortran">Updating <code>gfortran</code><a class="anchor" aria-label="anchor" href="#updating-gfortran"></a></h2>
     
 
 <p>The <code>gfortran_update()</code> attempts to update the version of <code>gfortran</code> installed
