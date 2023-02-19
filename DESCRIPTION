@@ -28,6 +28,8 @@ Collate:
     'utils.R'
     'installers.R'
     'gfortran.R'
+    'paths.R'
     'recipes.R'
     'xcode-cli.R'
+    'toolchain.R'
 Config/testthat/edition: 3
