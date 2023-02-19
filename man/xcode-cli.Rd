@@ -54,15 +54,25 @@ three steps:
 \item Install the latest version using \code{softwareupdate} with \code{sudo}.
 }
 
-The temporary file is placed at:
+The alternative approach would be an interactive installation of Xcode CLI
+by typing into Terminal:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo xcode-select --install
+}\if{html}{\out{</div>}}
+
+This command will trigger a pop up window that will walk through the
+package installation.
+\subsection{Steps of the Headless CLI Installation}{
+
+The temporary file is created using:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
 }\if{html}{\out{</div>}}
 
 From there, we deduce the latest version of Xcode available to the user
 through an \emph{R} sanitized version of the chained \emph{shell} commands:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{softwareupdate -l |
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{product_information=softwareupdate -l |
    grep '\\\\*.*Command Line' |
    tail -n 1 |
    awk -F"*" '\{print $2\}' |
@@ -71,18 +81,22 @@ through an \emph{R} sanitized version of the chained \emph{shell} commands:
    tr -d '\\n'
 }\if{html}{\out{</div>}}
 
-Then, we trigger the installation process using:
+Then, we trigger the installation process with \code{sudo} using:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{softwareupdate -i "$product_information" --verbose
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo softwareupdate -i "$product_information" --verbose
 }\if{html}{\out{</div>}}
 
 where \verb{$product_information} is obtained from the previous command.
 
 Finally, we remove the temporary installation file.
 
-These steps were obtained from Timothy Sutton (2013 - 2014, MIT license)'s
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+}\if{html}{\out{</div>}}
+
+These steps were obtained from Timothy Sutton's
 \href{https://github.com/timsutton/osx-vm-templates/blob/ce8df8a7468faa7c5312444ece1b977c1b2f77a4/scripts/xcode-cli-tools.sh#L8-L14}{xcode-cli-tools.sh}
-and, slightly modernized.
+script and, slightly modernized.
+}
 }
 
 \section{Uninstalling Xcode CLI}{

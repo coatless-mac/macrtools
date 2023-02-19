@@ -40,17 +40,29 @@ is_xcode_cli_installed = function() {
 #' 2. Determine the latest version of Xcode CLI by running `softwareupdate`
 #' 3. Install the latest version using `softwareupdate` with `sudo`.
 #'
-#' The temporary file is placed at:
+#' The alternative approach would be an interactive installation of Xcode CLI
+#' by typing into Terminal:
 #'
 #' ```sh
-#' /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+#' sudo xcode-select --install
+#' ```
+#'
+#' This command will trigger a pop up window that will walk through the
+#' package installation.
+#'
+#' ### Steps of the Headless CLI Installation
+#'
+#' The temporary file is created using:
+#'
+#' ```sh
+#' touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
 #' ```
 #'
 #' From there, we deduce the latest version of Xcode available to the user
 #' through an _R_ sanitized version of the chained _shell_ commands:
 #'
 #' ```sh
-#' softwareupdate -l |
+#' product_information=softwareupdate -l |
 #'    grep '\\*.*Command Line' |
 #'    tail -n 1 |
 #'    awk -F"*" '{print $2}' |
@@ -59,19 +71,23 @@ is_xcode_cli_installed = function() {
 #'    tr -d '\n'
 #' ```
 #'
-#' Then, we trigger the installation process using:
+#' Then, we trigger the installation process with `sudo` using:
 #'
 #' ```sh
-#' softwareupdate -i "$product_information" --verbose
+#' sudo softwareupdate -i "$product_information" --verbose
 #' ```
 #'
 #' where `$product_information` is obtained from the previous command.
 #'
 #' Finally, we remove the temporary installation file.
 #'
-#' These steps were obtained from Timothy Sutton (2013 - 2014, MIT license)'s
+#' ```sh
+#' touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+#' ```
+#'
+#' These steps were obtained from Timothy Sutton's
 #' [xcode-cli-tools.sh](https://github.com/timsutton/osx-vm-templates/blob/ce8df8a7468faa7c5312444ece1b977c1b2f77a4/scripts/xcode-cli-tools.sh#L8-L14)
-#' and, slightly modernized.
+#' script and, slightly modernized.
 #'
 #' @export
 #' @rdname xcode-cli
