@@ -27,26 +27,95 @@ is_xcode_cli_installed = function() {
 
 #' @section XCode CLI Installation:
 #'
-#' Attempts to perform a headless Xcode CLI installation.
+#' The `xcode_cli_install()` function performs a headless or non-interactive
+#' installation of the Xcode CLI tools. This installation process requires
+#' three steps:
+#'
+#' 1. Place a temporary file indicating the need to download Xcode CLI
+#' 2. Determine the latest version of Xcode CLI by running `softwareupdate`
+#' 3. Install the latest version using `softwareupdate` with `sudo`.
+#'
+#' The temporary file is placed at:
+#'
+#' ```sh
+#' /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+#' ```
+#'
+#' From there, we deduce the latest version of Xcode available to the user
+#' through an _R_ sanitized version of the chained _shell_ commands:
+#'
+#' ```sh
+#' softwareupdate -l |
+#'    grep '\\*.*Command Line' |
+#'    tail -n 1 |
+#'    awk -F"*" '{print $2}' |
+#'    sed -e 's/^ *//' |
+#'    sed 's/Label: //g' |
+#'    tr -d '\n'
+#' ```
+#'
+#' Then, we trigger the installation process using:
+#'
+#' ```sh
+#' softwareupdate -i "$product_information" --verbose
+#' ```
+#'
+#' where `$product_information` is obtained from the previous command.
+#'
+#' Finally, we remove the temporary installation file.
+#'
+#' These steps were obtained from Timothy Sutton (2013 - 2014, MIT license)'s
+#' [xcode-cli-tools.sh](https://github.com/timsutton/osx-vm-templates/blob/ce8df8a7468faa7c5312444ece1b977c1b2f77a4/scripts/xcode-cli-tools.sh#L8-L14)
+#' and, slightly modernized.
+#'
 #' @export
 #' @rdname xcode-cli
 #' @param verbose    Display status messages
 xcode_cli_install = function(verbose = TRUE, password = NULL){
     assert_mac()
     if(isTRUE(is_xcode_cli_installed())) {
-        if(verbose) {
-            message("Xcode CLI is already installed.")
-        }
-        return(TRUE)
+
+        if(verbose) message("Xcode CLI is already installed.")
+
+        return( invisible(TRUE) )
     }
 
-    stop("Still a work in progress! Sorry.")
+    temporary_xcli_file = "/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress"
 
     # Create a temporary in-progress file
-    file.create("/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress")
+    file.create(temporary_xcli_file)
 
-    # Remove temporary in-progress file
-    file.remove("/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress")
+    product_information =
+        system("softwareupdate -l |
+          grep '\\*.*Command Line' |
+          tail -n 1 |
+          awk -F\"*\" '{print $2}' |
+          sed -e 's/^ *//' |
+          sed 's/Label: //g' |
+          tr -d '\n'", intern = TRUE)
+
+    if (verbose) {
+        cat("Attempting to install Xcode CLI version:", product_information, "...\n")
+        cat("Please be patient or grab a cup of coffee as Xcode CLI installs.\n")
+        cat("\nWe expect the installation to take between 10 to 15 minutes.\n\n")
+    }
+
+    user_password = password
+    describe_everything = isTRUE(verbose)
+
+    cmd = paste("softwareupdate", "-i", shQuote(product_information), "--verbose")
+
+    xcli_status = shell_execute(cmd,
+                           sudo = TRUE, password = user_password, verbose = describe_everything)
+
+    # Remove temporary in-progress file if left in place
+    if(file.exists(temporary_xcli_file)) {
+        file.remove(temporary_xcli_file)
+    }
+
+    xcli_clean = identical(xcli_status, 0L)
+
+    return( invisible( xcli_clean ) )
 }
 
 

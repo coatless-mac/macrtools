@@ -25,3 +25,8 @@ Files: recipes.R:
 Copyright:
   Copyright 2020-Present, Simon Urbanek
 License: MIT
+
+Files: xcode-cli.R
+Copyright:
+  Copyright 2013-2014, Timothy Sutton
+License: MIT

@@ -9,7 +9,7 @@
 \usage{
 is_xcode_cli_installed()
 
-xcode_cli_install(verbose = TRUE, password = NULL)
+xcode_cli_install(password = getOption("macrtools.password"), verbose = TRUE)
 
 xcode_cli_uninstall(verbose = TRUE, password = NULL)
 
@@ -70,6 +70,33 @@ app using the following steps:
 }
 
 \if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo /Developer/Library/uninstall-devtools --mode=all
+}\if{html}{\out{</div>}}
+}
+
+\section{Change Xcode CLI Location}{
+
+If the Xcode Application has been previously installed, the underlying
+path reported by \code{xcode-select} may not reflect the Xcode CLI location.
+The situation can be rectified by using the \code{\link[=xcode_cli_switch]{xcode_cli_switch()}} function,
+which changes the command line tool directory away from the Xcode application
+location to the Xcode CLI location. This uses the \emph{default} Xcode CLI
+path.
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo xcode-select --switch /Library/Developer/CommandLineTools
+}\if{html}{\out{</div>}}
+
+If this does not fix the issue, we recommend using the \code{\link[=xcode_cli_reset]{xcode_cli_reset()}}
+function.
+}
+
+\section{Reset Xcode CLI}{
+
+The \code{\link[=xcode_cli_reset]{xcode_cli_reset()}} function uses \code{xcode-select} to restore
+the default Xcode CLI settings.
+
+We use an \emph{R} sanitized \emph{shell} version of:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo xcode-select --reset
 }\if{html}{\out{</div>}}
 }
 

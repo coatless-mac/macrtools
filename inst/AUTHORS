@@ -4,6 +4,7 @@ file:
   Copyright 2017-Present, usethis authors
   Copyright 2017-Present, rlang authors
   Copyright 2020-Present, Simon Urbanek
+  Copyright 2013-2014, Timothy Sutton
 
 The macrtools package integrates these code routines to establish a way to
 setup the R toolchain directly inside of R without needing to expose users to
