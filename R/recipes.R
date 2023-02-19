@@ -189,6 +189,9 @@ recipes_binary_install = function(
         installation_directory = install_location(supplied_arch)
         installation_strip_level = install_strip_level(supplied_arch)
 
+        # Verify installation directory exists. If it doesn't, create it.
+        if (!dir.exists(installation_directory)) dir.create(installation_directory)
+
         for (binary_url in urls) {
 
             # Download tar

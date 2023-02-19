@@ -81,6 +81,9 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
         path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
         path_variable = paste0("${PATH}:", path_gfortran_bin)
 
+        # Verify installation directory exists. If it doesn't, create it.
+        if (!dir.exists(install_dir)) dir.create(install_dir)
+
         if (is_x86_64()) {
             status = install_gfortran_82_mojave(password = password,
                                                 verbose = verbose)
