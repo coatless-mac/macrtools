@@ -45,7 +45,44 @@ Implementation is based on:
 \section{XCode CLI Installation}{
 
 
-Attempts to perform a headless Xcode CLI installation.
+The \code{xcode_cli_install()} function performs a headless or non-interactive
+installation of the Xcode CLI tools. This installation process requires
+three steps:
+\enumerate{
+\item Place a temporary file indicating the need to download Xcode CLI
+\item Determine the latest version of Xcode CLI by running \code{softwareupdate}
+\item Install the latest version using \code{softwareupdate} with \code{sudo}.
+}
+
+The temporary file is placed at:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+}\if{html}{\out{</div>}}
+
+From there, we deduce the latest version of Xcode available to the user
+through an \emph{R} sanitized version of the chained \emph{shell} commands:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{softwareupdate -l |
+   grep '\\\\*.*Command Line' |
+   tail -n 1 |
+   awk -F"*" '\{print $2\}' |
+   sed -e 's/^ *//' |
+   sed 's/Label: //g' |
+   tr -d '\\n'
+}\if{html}{\out{</div>}}
+
+Then, we trigger the installation process using:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{softwareupdate -i "$product_information" --verbose
+}\if{html}{\out{</div>}}
+
+where \verb{$product_information} is obtained from the previous command.
+
+Finally, we remove the temporary installation file.
+
+These steps were obtained from Timothy Sutton (2013 - 2014, MIT license)'s
+\href{https://github.com/timsutton/osx-vm-templates/blob/ce8df8a7468faa7c5312444ece1b977c1b2f77a4/scripts/xcode-cli-tools.sh#L8-L14}{xcode-cli-tools.sh}
+and, slightly modernized.
 }
 
 \section{Uninstalling Xcode CLI}{

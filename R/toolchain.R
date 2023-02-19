@@ -68,6 +68,8 @@ macos_rtools_install = function(
     if(!is_xcode_cli_installed()) {
         result_xcode = xcode_cli_install(password = entered_password, verbose = describe_steps)
         if(!result_xcode) stop("Failed to install Xcode CLI. Please see manual steps.")
+    } else {
+        if(describe_steps) cat("Xcode CLI was already installed! ...\n")
     }
 
     result_gfortran = TRUE
@@ -75,21 +77,21 @@ macos_rtools_install = function(
         result_gfortran = gfortran_install(password = entered_password, verbose = describe_steps)
         if(!result_gfortran) stop("Failed to install gfortran. Please see manual steps.")
     } else {
-        if(verbose) cat("gfortran was already installed! ...\n")
+        if(describe_steps) cat("gfortran was already installed! ...\n")
     }
 
     result_base_dev = recipes_binary_install(
         "r-base-dev", sudo = TRUE, password = entered_password, verbose = verbose
     )
 
-    clean = result_gfortran && result_xcode && isTRUE(result_base_dev)
+    rtools_install_clean = result_gfortran && result_xcode && isTRUE(result_base_dev)
 
-    if(clean) {
+    if(rtools_install_clean) {
         cat("\n\nCongratulations! \n")
         cat("Xcode CLI, Gfortran, and R developer binaries have been installed successfully.\n")
     }
 
-    invisible(clean)
+    invisible(rtools_install_clean)
 }
 
 #' @rdname macos-rtools
