@@ -76,7 +76,7 @@ is_xcode_cli_installed = function() {
 #' @export
 #' @rdname xcode-cli
 #' @param verbose    Display status messages
-xcode_cli_install = function(verbose = TRUE, password = NULL){
+xcode_cli_install = function(password = getOption("macrtools.password"), verbose = TRUE){
     assert_mac()
     if(isTRUE(is_xcode_cli_installed())) {
 
@@ -138,10 +138,10 @@ xcode_cli_install = function(verbose = TRUE, password = NULL){
 #' We use an _R_ sanitized _shell_ version of:
 #'
 #' ```sh
-#' sudo -kS rm -rf /Library/Developer/CommandLineTools
+#' sudo rm -rf /Library/Developer/CommandLineTools
 #' ```
 #'
-#' If the Xcode application is detect, we note that we did not install the
+#' If the Xcode application is detect, we note that we did not uninstall the
 #' Xcode application. Instead, we request the user uninstall the Xcode
 #' app using the following steps:
 #'
@@ -157,27 +157,31 @@ xcode_cli_install = function(verbose = TRUE, password = NULL){
 #' @export
 #' @rdname xcode-cli
 #' @param password   User password to access `sudo`.
-xcode_cli_uninstall = function(verbose = TRUE, password = NULL){
+xcode_cli_uninstall = function(password = getOption("macrtools.password"), verbose = TRUE){
     assert_mac()
     if(isFALSE(is_xcode_cli_installed())) {
-        if(verbose) {
-            message("Xcode CLI is not installed.")
-        }
-        return(TRUE)
+        if(verbose) message("Xcode CLI is not installed.")
+        return( invisible(TRUE) )
     }
 
-    if(xcode_cli_path() != "/Library/Developer/CommandLineTools") {
+    xcli_path = xcode_cli_path()
+
+    # We should never hit this line of code as the is_xcode_cli_installed() now
+    # focuses on only CLI. But, we might want to change that.
+    if(xcli_path == install_directory_xcode_app()) {
         message("We detected the full Xcode application in use at: ", xcode_cli_path)
         message("Please uninstall it using the App store.")
-        return(TRUE)
+        return( invisible(TRUE) )
     }
 
     # Remove the shell execution script
-    status = shell_execute("rm -rf /Library/Developer/CommandLineTools",
+    xcli_uninstall_status = shell_execute("rm -rf /Library/Developer/CommandLineTools",
                   sudo = TRUE,
                   password = password)
 
-    status == 0
+    xcli_uninstall_clean = identical(xcli_uninstall_status, 0L)
+
+    invisible(xcli_uninstall_clean)
 }
 
 #' @rdname xcode-cli
