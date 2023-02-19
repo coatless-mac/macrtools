@@ -186,10 +186,84 @@ xcode_cli_uninstall = function(verbose = TRUE, password = NULL){
 #' # Determine the path location of Xcode CLI
 #' xcode_cli_path()
 xcode_cli_path = function() {
-    xcode_select_path()$output
+    inquiry_on_path = xcode_select_path()
+    if (identical(inquiry_on_path$status, 0L)) {
+        inquiry_on_path$output
+    } else {
+        ""
+    }
 }
 
+#' @section Change Xcode CLI Location:
+#' If the Xcode Application has been previously installed, the underlying
+#' path reported by `xcode-select` may not reflect the Xcode CLI location.
+#' The situation can be rectified by using the [xcode_cli_switch()] function,
+#' which changes the command line tool directory away from the Xcode application
+#' location to the Xcode CLI location. This uses the _default_ Xcode CLI
+#' path.
+#'
+#' ```sh
+#' sudo xcode-select --switch /Library/Developer/CommandLineTools
+#' ```
+#'
+#' If this does not fix the issue, we recommend using the [xcode_cli_reset()]
+#' function.
+#' @export
+#' @rdname xcode-cli
+xcode_cli_switch = function(password = getOption("macrtools.password"), verbose = TRUE) {
 
+    # The path matches with the default install directory location.
+    if (xcode_cli_path() == install_directory_xcode_cli()) {
+        if (verbose) cat("Xcode CLI path is correctly set ...\n")
+        return( invisible(TRUE) )
+    }
+
+    # Need to modify the location to the current CLI path
+    if (verbose) cat("Setting the Xcode CLI path ...\n")
+
+    cmd = paste("xcode-select", "--switch", install_directory_xcode_cli())
+
+    # Change the directory
+    xcli_switch_status = shell_execute(cmd,
+                           sudo = TRUE,
+                           password = password,
+                           verbose = verbose)
+
+    xcli_switch_clean = identical(xcli_switch_status, 0L)
+
+    return(invisible(xcli_switch_clean))
+}
+
+#' @section Reset Xcode CLI:
+#' The [xcode_cli_reset()] function uses `xcode-select` to restore
+#' the default Xcode CLI settings.
+#'
+#' We use an _R_ sanitized _shell_ version of:
+#'
+#' ```sh
+#' sudo xcode-select --reset
+#' ```
+#'
+#' @export
+#' @rdname xcode-cli
+xcode_cli_reset = function(password = getOption("macrtools.password"), verbose = TRUE) {
+
+    if (verbose) cat("Attempting to reset Xcode CLI to default settings ...\n")
+
+    cmd = paste("xcode-select", "--reset")
+
+    # Change the directory
+    xcli_reset_status = shell_execute(cmd,
+                           sudo = TRUE,
+                           password = password,
+                           verbose = verbose)
+
+    xcli_reset_clean = xcli_reset_status == 0L
+
+    if(verbose && xcli_reset_clean) cat("Successfully reset Xcode CLI settings ...\n")
+
+    return(invisible(xcli_reset_clean))
+}
 
 #' Interface with `xcode-select` Shell Commands
 #'
@@ -199,7 +273,7 @@ xcode_cli_path = function() {
 #' @export
 #' @rdname xcode-select
 xcode_select = function(args) {
-    out = sys::exec_internal("xcode-select", args = args)
+    out = sys::exec_internal("xcode-select", args = args, error = FALSE)
 
     structure(
         list(

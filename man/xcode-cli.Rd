@@ -5,20 +5,26 @@
 \alias{xcode_cli_install}
 \alias{xcode_cli_uninstall}
 \alias{xcode_cli_path}
+\alias{xcode_cli_switch}
+\alias{xcode_cli_reset}
 \title{Find, Install, or Uninstall XCode CLI}
 \usage{
 is_xcode_cli_installed()
 
 xcode_cli_install(password = getOption("macrtools.password"), verbose = TRUE)
 
-xcode_cli_uninstall(verbose = TRUE, password = NULL)
+xcode_cli_uninstall(password = getOption("macrtools.password"), verbose = TRUE)
 
 xcode_cli_path()
+
+xcode_cli_switch(password = getOption("macrtools.password"), verbose = TRUE)
+
+xcode_cli_reset(password = getOption("macrtools.password"), verbose = TRUE)
 }
 \arguments{
-\item{verbose}{Display status messages}
-
 \item{password}{User password to access \code{sudo}.}
+
+\item{verbose}{Display status messages}
 }
 \description{
 Set of functions that seek to identify whether XCode CLI was installed,
@@ -56,10 +62,10 @@ Per the \href{https://developer.apple.com/library/archive/technotes/tn2339/_inde
 Thus, the \code{xcode_cli_uninstall()} opts to perform the second step \strong{only}.
 We use an \emph{R} sanitized \emph{shell} version of:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo -kS rm -rf /Library/Developer/CommandLineTools
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo rm -rf /Library/Developer/CommandLineTools
 }\if{html}{\out{</div>}}
 
-If the Xcode application is detect, we note that we did not install the
+If the Xcode application is detect, we note that we did not uninstall the
 Xcode application. Instead, we request the user uninstall the Xcode
 app using the following steps:
 \enumerate{
