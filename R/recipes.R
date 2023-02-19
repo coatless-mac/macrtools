@@ -202,6 +202,8 @@ recipes_binary_install = function(
                                 password = password,
                                 verbose = verbose)
         }
+
+        return(invisible(TRUE))
     } else
         urls
 }
