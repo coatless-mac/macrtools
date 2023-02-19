@@ -33,13 +33,11 @@ allow XCode CLI to be installed, and removing XCode CLI.
 \section{Check if XCode CLI is installed}{
 
 
-Checks using the \code{xcode-select -p} command to obtain the relevant
-the directory. If the status code returned is 0, then the tools exist.
-Otherwise, the return value will be 2 indicating that the tools are missing.
+Checks to see if Xcode CLI returns a viable path to the default Xcode CLI
+location by checking the output of:
 
-Implementation is based on:
-
-\url{https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed}
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{xcode-select -p
+}\if{html}{\out{</div>}}
 }
 
 \section{XCode CLI Installation}{
