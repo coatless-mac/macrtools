@@ -84,11 +84,13 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
         # Verify installation directory exists. If it doesn't, create it.
         if (!dir.exists(install_dir)) dir.create(install_dir)
 
+        gfortran_status = FALSE
         if (is_x86_64()) {
-            status = install_gfortran_82_mojave(password = password,
+            gfortran_status = install_gfortran_82_mojave(password = password,
                                                 verbose = verbose)
         } else if (is_aarch64()) {
-            status =
+
+            gfortran_status =
             if (is_r_version("4.2")) {
                 install_gfortran_12_arm(password = password,
                                         verbose = verbose)
@@ -103,13 +105,12 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
             cat("We do not have support for that macOS architecture yet.\n")
         }
 
-        if(!isTRUE(status)) {
+        if(!isTRUE(gfortran_status)) {
             return(invisible(FALSE))
         }
 
         renviron_gfortran_path(path_variable)
 
-        return( invisible(status) )
     } else {
         cat("Your version of macOS is not supported.\n")
         return(invisible(FALSE))
