@@ -47,7 +47,7 @@ install_location = function(arch = system_arch()) {
 binary_download = function(url,  binary_file_name = basename(url), verbose = TRUE) {
 
     # Three step procedure:
-    cat("Downloading tar: ", url, "...\n")
+    cat("Downloading binary: ", url, "...\n")
 
     # Step One:Download the package into the temporary directory
     save_location = file.path(tempdir(), binary_file_name)
@@ -89,7 +89,7 @@ tar_package_install = function(path_to_tar,
     binary_file_name = basename(path_to_tar)
 
     if (verbose)
-        cat("Installing: ", binary_file_name, " into ", install_directory ," ...\n")
+        cat("Installing:", binary_file_name, "into", install_directory ,"...\n")
 
     # Step Two: Install the package using tar with stdin redirect
     cmd = paste0("tar fxj ", path_to_tar," -C ", install_directory, " --strip ", strip_levels)
