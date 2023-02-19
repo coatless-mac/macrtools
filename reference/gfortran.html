@@ -49,22 +49,22 @@ allow gfortran to be installed, and removing gfortran.</p>
 <span></span>
 <span><span class="fu">gfortran_version</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">gfortran_install</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">gfortran_install</span><span class="op">(</span>password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"macrtools.password"</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">gfortran_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">gfortran_uninstall</span><span class="op">(</span>password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"macrtools.password"</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">gfortran_update</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">gfortran_update</span><span class="op">(</span>password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"macrtools.password"</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>verbose</dt>
-<dd><p>Display messages indicating status</p></dd>
-
-
-<dt>password</dt>
+    <dl><dt>password</dt>
 <dd><p>Password for user account to install software. Default is
 <code>NULL</code>.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>Display messages indicating status</p></dd>
 
 </dl></div>
     <div class="section level2">

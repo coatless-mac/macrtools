@@ -47,21 +47,25 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">is_xcode_cli_installed</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">xcode_cli_install</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">xcode_cli_install</span><span class="op">(</span>password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"macrtools.password"</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">xcode_cli_uninstall</span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">TRUE</span>, password <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">xcode_cli_uninstall</span><span class="op">(</span>password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"macrtools.password"</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">xcode_cli_switch</span><span class="op">(</span>password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"macrtools.password"</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">xcode_cli_reset</span><span class="op">(</span>password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"macrtools.password"</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>verbose</dt>
-<dd><p>Display status messages</p></dd>
-
-
-<dt>password</dt>
+    <dl><dt>password</dt>
 <dd><p>User password to access <code>sudo</code>.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>Display status messages</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -92,8 +96,8 @@ Otherwise, the return value will be 2 indicating that the tools are missing.</p>
 <li><p>If the <code>/Library/Developer/CommandLineTools</code> directory exists on your system, remove it to uninstall the command-line tools</p></li>
 </ul><p>Thus, the <code>xcode_cli_uninstall()</code> opts to perform the second step <strong>only</strong>.
 We use an <em>R</em> sanitized <em>shell</em> version of:</p>
-<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-kS</span> rm <span class="at">-rf</span> /Library/Developer/CommandLineTools</span></code></pre><p></p></div>
-<p>If the Xcode application is detect, we note that we did not install the
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> rm <span class="at">-rf</span> /Library/Developer/CommandLineTools</span></code></pre><p></p></div>
+<p>If the Xcode application is detect, we note that we did not uninstall the
 Xcode application. Instead, we request the user uninstall the Xcode
 app using the following steps:</p><ol><li><p>Make sure that Xcode is closed. Quit Xcode if needed.</p></li>
 <li><p>Open Finder &gt; Applications, select Xcode and move it to Trash.</p></li>
@@ -101,12 +105,35 @@ app using the following steps:</p><ol><li><p>Make sure that Xcode is closed. Qui
 <li><p>In addition, open Terminal and run:</p></li>
 </ol><p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> /Developer/Library/uninstall-devtools <span class="at">--mode</span><span class="op">=</span>all</span></code></pre><p></p></div>
     </div>
+    <div class="section level2">
+    <h2 id="change-xcode-cli-location">Change Xcode CLI Location<a class="anchor" aria-label="anchor" href="#change-xcode-cli-location"></a></h2>
+    
+
+<p>If the Xcode Application has been previously installed, the underlying
+path reported by <code>xcode-select</code> may not reflect the Xcode CLI location.
+The situation can be rectified by using the <code>xcode_cli_switch()</code> function,
+which changes the command line tool directory away from the Xcode application
+location to the Xcode CLI location. This uses the <em>default</em> Xcode CLI
+path.</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> xcode-select <span class="at">--switch</span> /Library/Developer/CommandLineTools</span></code></pre><p></p></div>
+<p>If this does not fix the issue, we recommend using the <code>xcode_cli_reset()</code>
+function.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="reset-xcode-cli">Reset Xcode CLI<a class="anchor" aria-label="anchor" href="#reset-xcode-cli"></a></h2>
+    
+
+<p>The <code>xcode_cli_reset()</code> function uses <code>xcode-select</code> to restore
+the default Xcode CLI settings.</p>
+<p>We use an <em>R</em> sanitized <em>shell</em> version of:</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> xcode-select <span class="at">--reset</span></span></code></pre><p></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
 <span class="r-in"><span><span class="fu">is_xcode_cli_installed</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span><span class="co"># Determine the path location of Xcode CLI</span></span></span>
 <span class="r-in"><span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Applications/Xcode_14.2.app/Contents/Developer"</span>
