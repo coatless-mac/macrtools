@@ -39,8 +39,8 @@ The \code{gfortran} suite of functions attempts to locate, install, and uninstal
 }
 \item M1/M2 (\code{arm64} or \code{aarch64})
 \itemize{
-\item \verb{/opt/r/arm64/gfortran/}
-\item \verb{/opt/r/arm64/bin/gfortran}
+\item \verb{/opt/R/arm64/gfortran/}
+\item \verb{/opt/R/arm64/bin/gfortran}
 }
 }
 }

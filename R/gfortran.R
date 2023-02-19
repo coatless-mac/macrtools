@@ -15,8 +15,8 @@ NULL
 #'   - `/usr/local/gfortran`
 #'   - `/usr/local/bin/gfortran`
 #' - M1/M2 (`arm64` or `aarch64`)
-#'   - `/opt/r/arm64/gfortran/`
-#'   - `/opt/r/arm64/bin/gfortran`
+#'   - `/opt/R/arm64/gfortran/`
+#'   - `/opt/R/arm64/bin/gfortran`
 #'
 #' @section Check if `gfortran` is installed:
 #'
