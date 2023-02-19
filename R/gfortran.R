@@ -7,9 +7,21 @@ NULL
 #' Set of functions that seek to identify whether gfortran was installed,
 #' allow gfortran to be installed, and removing gfortran.
 #'
+#' @details
+#' The `gfortran` suite of functions attempts to locate, install, and uninstall
+#' `gfortran` based the default installation locations that depend on architecture:
+#'
+#' - Intel (`x86_64`)
+#'   - `/usr/local/gfortran`
+#'   - `/usr/local/bin/gfortran`
+#' - M1/M2 (`arm64` or `aarch64`)
+#'   - `/opt/r/arm64/gfortran/`
+#'   - `/opt/r/arm64/bin/gfortran`
+#'
 #' @section Check if `gfortran` is installed:
 #'
-#' Checks using the `gfortran --version` command to see if a response is present.
+#' Checks the local file system for whether `gfortran` is installed in
+#' the default installation location.
 #'
 #' @rdname gfortran
 #' @export
@@ -36,16 +48,9 @@ gfortran_version = function() {
     gfortran("--version")
 }
 
-#' @section Install `gfortran`:
-#' The `gfortran_install()` function aims to install `gfortran` into
-#' two locations:
-#'
-#' - Intel (`x86_64`)
-#'   - `/usr/local/gfortran`
-#'   - `/usr/local/bin/gfortran`
-#' - M1/M2 (`aarch64`)
-#'   - `/opt/r/arm64/gfortran/`
-#'   - `/opt/r/arm64/bin/gfortran`
+#' @section Installing `gfortran`:
+#' The `gfortran_install()` function aims to install `gfortran` into the
+#' appropriate location for Intel (`x86_64`) or M1/M2 (`arm64`/`aarch64`).
 #'
 #' ### gfortran Installation for Intel Macs (`x86_64`)
 #'
@@ -77,7 +82,7 @@ gfortran_version = function() {
 #' EOF
 #' ```
 #'
-#' ### gfortran Installation for M1 or M2 Macs (`x86_64`)
+#' ### gfortran Installation for M1 or M2 Macs (`arm64`)
 #'
 #' The M1 or M2 `gfortran` installer is a tar file that is unpacked into the
 #' directory. Depending on the _R_ version, we opt to install either
@@ -185,31 +190,30 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
 
 #' @section Uninstalling `gfortran`:
 #' The `gfortran_uninstall()` attempts to remove `gfortran` from
-#' two locations:
+#' the default installation locations described in the details section.
 #'
-#' - Intel (`x86_64`)
-#'   - `/usr/local/gfortran`
-#'   - `/usr/local/bin/gfortran`
-#' - M1/M2 (`aarch64`)
-#'   - `/opt/r/arm64/gfortran/`
-#'   - `/opt/r/arm64/bin/gfortran`
+#' ### Uninstalling gfortran for Intel Macs
 #'
-#' Using the _R_ sanitized _shell_ command of:
+#' We use the _R_ sanitized _shell_ command of:
 #'
 #' ```sh
 #' sudo rm -rf /usr/local/gfortran /usr/local/bin/gfortran
-#' ```
-#' Or:
-#'
-#' ```sh
-#' sudo rm -rf /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
 #' ```
 #'
 #' These uninstall steps are based on:
 #'
 #' <https://gcc.gnu.org/wiki/GFortranBinariesMacOS>
 #'
-#' And the desired path for `aarch64`:
+#'
+#' ### Uninstalling gfortran for M1 or M2 Macs (`arm64`)
+#'
+#' For M1 or M2 Macs (`arm64`), we use the _R_ sanitized _shell_ command of:
+#'
+#' ```sh
+#' sudo rm -rf /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
+#' ```
+#'
+#' This aligns with the default path used by CRAN for `arm64`:
 #'
 #' <https://mac.r-project.org/tools/>
 #'
@@ -239,7 +243,7 @@ gfortran_uninstall = function(password = getOption("macrtools.password"), verbos
     return( invisible(status == 0) )
 }
 
-#' @section Update `gfortran`:
+#' @section Updating `gfortran`:
 #' The `gfortran_update()` attempts to update the version of `gfortran` installed
 #' using the provided `gfortran-update-sdk` inside of `/opt/R/arm64/gfortran/bin`.
 #'

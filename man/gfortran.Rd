@@ -28,28 +28,33 @@ gfortran_update(password = getOption("macrtools.password"), verbose = TRUE)
 Set of functions that seek to identify whether gfortran was installed,
 allow gfortran to be installed, and removing gfortran.
 }
-\section{Check if \code{gfortran} is installed}{
-
-
-Checks using the \code{gfortran --version} command to see if a response is present.
-}
-
-\section{Install \code{gfortran}}{
-
-The \code{gfortran_install()} function aims to install \code{gfortran} into
-two locations:
+\details{
+The \code{gfortran} suite of functions attempts to locate, install, and uninstall
+\code{gfortran} based the default installation locations that depend on architecture:
 \itemize{
 \item Intel (\code{x86_64})
 \itemize{
 \item \verb{/usr/local/gfortran}
 \item \verb{/usr/local/bin/gfortran}
 }
-\item M1/M2 (\code{aarch64})
+\item M1/M2 (\code{arm64} or \code{aarch64})
 \itemize{
 \item \verb{/opt/r/arm64/gfortran/}
 \item \verb{/opt/r/arm64/bin/gfortran}
 }
 }
+}
+\section{Check if \code{gfortran} is installed}{
+
+
+Checks the local file system for whether \code{gfortran} is installed in
+the default installation location.
+}
+
+\section{Installing \code{gfortran}}{
+
+The \code{gfortran_install()} function aims to install \code{gfortran} into the
+appropriate location for Intel (\code{x86_64}) or M1/M2 (\code{arm64}/\code{aarch64}).
 \subsection{gfortran Installation for Intel Macs (\code{x86_64})}{
 
 The Intel \code{gfortran} installer is a DMG image that is mounted, installed,
@@ -79,7 +84,7 @@ EOF
 }\if{html}{\out{</div>}}
 }
 
-\subsection{gfortran Installation for M1 or M2 Macs (\code{x86_64})}{
+\subsection{gfortran Installation for M1 or M2 Macs (\code{arm64})}{
 
 The M1 or M2 \code{gfortran} installer is a tar file that is unpacked into the
 directory. Depending on the \emph{R} version, we opt to install either
@@ -121,40 +126,33 @@ EOF
 \section{Uninstalling \code{gfortran}}{
 
 The \code{gfortran_uninstall()} attempts to remove \code{gfortran} from
-two locations:
-\itemize{
-\item Intel (\code{x86_64})
-\itemize{
-\item \verb{/usr/local/gfortran}
-\item \verb{/usr/local/bin/gfortran}
-}
-\item M1/M2 (\code{aarch64})
-\itemize{
-\item \verb{/opt/r/arm64/gfortran/}
-\item \verb{/opt/r/arm64/bin/gfortran}
-}
-}
+the default installation locations described in the details section.
+\subsection{Uninstalling gfortran for Intel Macs}{
 
-Using the \emph{R} sanitized \emph{shell} command of:
+We use the \emph{R} sanitized \emph{shell} command of:
 
 \if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo rm -rf /usr/local/gfortran /usr/local/bin/gfortran
-}\if{html}{\out{</div>}}
-
-Or:
-
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo rm -rf /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
 }\if{html}{\out{</div>}}
 
 These uninstall steps are based on:
 
 \url{https://gcc.gnu.org/wiki/GFortranBinariesMacOS}
+}
 
-And the desired path for \code{aarch64}:
+\subsection{Uninstalling gfortran for M1 or M2 Macs (\code{arm64})}{
+
+For M1 or M2 Macs (\code{arm64}), we use the \emph{R} sanitized \emph{shell} command of:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo rm -rf /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
+}\if{html}{\out{</div>}}
+
+This aligns with the default path used by CRAN for \code{arm64}:
 
 \url{https://mac.r-project.org/tools/}
 }
+}
 
-\section{Update \code{gfortran}}{
+\section{Updating \code{gfortran}}{
 
 The \code{gfortran_update()} attempts to update the version of \code{gfortran} installed
 using the provided \code{gfortran-update-sdk} inside of \verb{/opt/R/arm64/gfortran/bin}.
