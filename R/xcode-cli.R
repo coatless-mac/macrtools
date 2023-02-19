@@ -22,7 +22,12 @@ NULL
 #' is_xcode_cli_installed()
 is_xcode_cli_installed = function() {
     assert_mac()
-    identical(xcode_select_path()$status, 0L)
+
+    path_info = xcode_select_path()
+
+    identical(path_info$status, 0L) &&
+    identical(path_info$output, install_directory_xcode_cli()) &&
+    dir.exists(path_info$output)
 }
 
 #' @section XCode CLI Installation:
