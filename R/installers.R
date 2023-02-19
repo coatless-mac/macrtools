@@ -23,6 +23,24 @@ install_location = function(arch = system_arch()) {
      )
 }
 
+create_install_location = function(arch = system_arch(), password = getOptions("macrtools.password")) {
+
+    install_dir = install_location(arch)
+
+    # Verify installation directory exists. If it doesn't, create it.
+    if (dir.exists(install_dir)) return(invisible(TRUE))
+
+
+    dir_creation_status = shell_execute(
+            paste("mkdir", "-p", install_dir ),
+            sudo = TRUE,
+            password = password)
+
+    dir_creation_clean = identical(dir_creation_status, 0L)
+
+    return(invisible(dir_creation_clean))
+}
+
 
 # Tar Installation ----
 

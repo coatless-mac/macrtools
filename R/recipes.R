@@ -181,16 +181,17 @@ recipes_binary_install = function(
     if (action == "install") {
 
         # Check if we're using sudo & have a password
-        if (sudo && is.null(password))
-            password = askpass::askpass()
+        entered_recipes_password = password
+        if (sudo && is.null(entered_recipes_password))
+            entered_recipes_password = askpass::askpass()
 
         # Determine the correct installation path based on arch type
         supplied_arch = strsplit(os.arch, "/")[[1]][2]
         installation_directory = install_location(supplied_arch)
         installation_strip_level = install_strip_level(supplied_arch)
 
-        # Verify installation directory exists. If it doesn't, create it.
-        if (!dir.exists(installation_directory)) dir.create(installation_directory)
+        # Ensure the installation location is valid.
+        create_install_location(arch = supplied_arch, password = entered_recipes_password)
 
         for (binary_url in urls) {
 
@@ -202,7 +203,7 @@ recipes_binary_install = function(
                                 installation_directory,
                                 installation_strip_level,
                                 sudo    = sudo,
-                                password = password,
+                                password = entered_recipes_password,
                                 verbose = verbose)
         }
 

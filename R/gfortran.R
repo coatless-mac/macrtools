@@ -129,6 +129,7 @@ gfortran_version = function() {
 #' @rdname gfortran
 gfortran_install = function(password = getOption("macrtools.password"), verbose = TRUE) {
     assert_mac()
+
     if(isTRUE(is_gfortran_installed())) {
         if(verbose) {
             cat("gfortran is already installed.\n")
@@ -136,57 +137,62 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
         return(invisible(TRUE))
     }
 
+    if (!is_macos_r_supported()) {
+        cat("R version", getRversion(),"is not supported. Please upgrade.\n")
+        return(invisible(FALSE))
+    }
+
     if (verbose) {
         cat("\n\nAttempting to download and install gfortran ...\n")
         cat("\nWe expect the installation to take between 2 to 5 minutes.\n\n")
     }
 
-    if (is_macos_r_supported()) {
+    # Figure out installation directory
+    install_dir = install_location()
 
-        # Figure out installation directory
-        install_dir = install_location()
+    # Establish a path
+    path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
+    path_variable = paste0("${PATH}:", path_gfortran_bin)
 
-        # Establish a path
-        path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
-        path_variable = paste0("${PATH}:", path_gfortran_bin)
 
-        # Verify installation directory exists. If it doesn't, create it.
-        if (!dir.exists(install_dir)) dir.create(install_dir)
+    entered_password_gfortran = password
+    if(is.null(entered_password_gfortran)) {
+        cat("Please enter your password in the prompt that is appearing to continue ...\n\n")
+        entered_password_gfortran = askpass::askpass()
+    }
 
-        gfortran_status = FALSE
-        if (is_x86_64()) {
-            gfortran_status = install_gfortran_82_mojave(password = password,
-                                                verbose = verbose)
-        } else if (is_aarch64()) {
+    # Ensure the installation location is valid.
+    create_install_location(password = entered_password_gfortran)
 
-            gfortran_status =
-            if (is_r_version("4.2")) {
-                install_gfortran_12_arm(password = password,
-                                        verbose = verbose)
-            }
-            else if(is_r_version("4.1")) {
-                install_gfortran_11_arm(password = password,
-                                        verbose = verbose)
-            } else {
-                FALSE
-            }
+    gfortran_status = FALSE
+    if (is_x86_64()) {
+        gfortran_status = install_gfortran_82_mojave(password = entered_password_gfortran,
+                                            verbose = verbose)
+    } else if (is_aarch64()) {
+
+        gfortran_status =
+        if (is_r_version("4.2")) {
+            install_gfortran_12_arm(password = entered_password_gfortran,
+                                    verbose = verbose)
+        }
+        else if(is_r_version("4.1")) {
+            install_gfortran_11_arm(password = entered_password_gfortran,
+                                    verbose = verbose)
         } else {
-            cat("We do not have support for that macOS architecture yet.\n")
+            FALSE
         }
-
-        if(!isTRUE(gfortran_status)) {
-            cat("We were not able to install gfortran ...\n")
-            cat("Please try to manually install using: ..\n")
-            cat("https://rmacoslib.github.io/macrtools/reference/gfortran.html#uninstalling-gfortran\n")
-            return(invisible(FALSE))
-        }
-
-        renviron_gfortran_path(path_variable)
-
     } else {
-        cat("Your version of macOS is not supported.\n")
+        cat("We do not have support for that macOS architecture yet.\n")
+    }
+
+    if(!isTRUE(gfortran_status)) {
+        cat("We were not able to install gfortran ...\n")
+        cat("Please try to manually install using: ..\n")
+        cat("https://rmacoslib.github.io/macrtools/reference/gfortran.html#uninstalling-gfortran\n")
         return(invisible(FALSE))
     }
+
+    renviron_gfortran_path(path_variable)
 
     return(invisible(TRUE) )
 }
@@ -236,7 +242,7 @@ gfortran_uninstall = function(password = getOption("macrtools.password"), verbos
     install_dir = install_location()
 
     path_gfortran = file.path(install_dir, "gfortran")
-    path_bin_gfortran =file.path(install_dir, "bin", "gfortran")
+    path_bin_gfortran = file.path(install_dir, "bin", "gfortran")
 
     status = shell_execute(
         paste0("rm -rf ", path_gfortran, " ", path_bin_gfortran ),
