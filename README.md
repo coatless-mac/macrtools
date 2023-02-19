@@ -23,7 +23,16 @@ page](https://mac.r-project.org/tools/).
 Balamuta](https://thecoatlessprofessor.com/) and has no connection with
 the R project’s macOS CRAN maintainers.
 
-## Installation
+## Quick Start
+
+For an overview of how to use the package, please see the following
+video:
+
+[![Video: Installing and using the `{macrtools}` package to setup the R
+Compilation Toolchain for
+macOS](http://img.youtube.com/vi/_fckF0fefXQ/0.jpg)](https://www.youtube.com/watch?v=_fckF0fefXQ)
+
+### Install the R Package
 
 You can install the development version of `macrtools` from
 [GitHub](https://github.com/) with:
@@ -31,6 +40,27 @@ You can install the development version of `macrtools` from
 ``` r
 # install.packages("remotes")
 remotes::install_github("rmacoslib/macrtools")
+```
+
+### Install the R Compilation Toolchain using the R Package
+
+With the package installed, the required components can be installed
+using:
+
+``` r
+macrtools::macos_rtools_install()
+```
+
+This will attempt to install:
+
+- Xcode CLI
+- gfortran
+- R Development binaries
+
+The compilation toolchain can be removed by using:
+
+``` r
+macrtools::macos_rtools_uninstall()
 ```
 
 ## Usage
@@ -57,8 +87,8 @@ The next set of functions focus primarily on installing different binary
 packages into the required locations.
 
 ``` r
-# todo: finish xcode_cli headless install
-# macrtools::xcode_cli_install() # not available
+# We can perform a non-interactive installation of Xcode CLI with:
+macrtools::xcode_cli_install() 
 
 # We can install gfortran using:
 macrtools::gfortran_install()
@@ -75,11 +105,12 @@ can remove the development tools using:
 ``` r
 # We can remove Xcode CLI using
 macrtools::xcode_cli_uninstall()
-# Note: To remove Xcode app, you must manually do it! 
 
 # We can uninstall gfortran using:
 macrtools::gfortran_uninstall()
 ```
+
+**Note:** This does not yet uninstall the *R* development binaries.
 
 ## License
 
