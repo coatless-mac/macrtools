@@ -2,12 +2,6 @@
 NULL
 
 # Installation directories ----
-install_directory_x86_64 = function() {
-    "/usr/local"
-}
-install_directory_arm64 = function() {
-    "/opt/R/arm64"
-}
 
 install_strip_level = function(arch = system_arch()) {
     switch(
