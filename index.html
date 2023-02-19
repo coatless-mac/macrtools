@@ -132,6 +132,16 @@
 </div>
 </div>
 <div class="section level2">
+<h2 id="design-decisions">Design Decisions<a class="anchor" aria-label="anchor" href="#design-decisions"></a>
+</h2>
+<blockquote>
+<p>Why not a macOS installer package (<code>.pkg</code>) or Apple Disk Image (<code>.dmg</code>) ?</p>
+</blockquote>
+<p>We previously wrote a very successful <a href="https://github.com/rmacoslib/r-macos-rtools" class="external-link"><code>r-macos-rtools</code></a> installer package. However, as part of the up-keep of the installer package, we needed to have a yearly subscription to Apple’s <a href="https://developer.apple.com/" class="external-link">Developer program</a>, which has a base cost of ~$99 and sales tax of about ~$6 leading to an annual expense of ~$105 per year. Given that we only used the Developer account to sign and notarize only the <code>r-macos-rtools</code> installer, we opted not to continue on this path.</p>
+<p>That said, we are grateful to <a href="http://www.ed.ac.uk/profile/timothy-bates" class="external-link">Professor Timothy Bates</a> of the <a href="http://www.ed.ac.uk/" class="external-link">University of Edinburgh</a>. He provided the initial financial support that allowed for the installer to be signed and tested.</p>
+<p>Moreover, we hope that by placing the logic inside of an <em>R</em> package, the community of <em>R</em> developers will be able to play a more active role in feature development.</p>
+</div>
+<div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
 <p>AGPL (&gt;=3)</p>
