@@ -50,12 +50,72 @@ two locations:
 \item \verb{/opt/r/arm64/bin/gfortran}
 }
 }
+\subsection{gfortran Installation for Intel Macs (\code{x86_64})}{
 
 The Intel \code{gfortran} installer is a DMG image that is mounted, installed,
-and unmounted.
+and unmounted. We're using the following set of \emph{R} sanitized \emph{shell} commands:
 
-The M1/M2 \code{gfortran} installer is a tar file that is unpacked into the
-directory.
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{# Mount the `.dmg` installer image
+hdiutil attach "$path_to_dmg" -nobrowse -quiet
+
+# Install the DMG Image into root
+sudo installer \\
+  -pkg /Volume/gfortran-8.2-Mojave/gfortran-8.2-Mojave/gfortran.pkg \\
+  -target /
+
+# Unmount the `.dmg` installer image
+hdiutil detach /Volumes/gfortran-8.2-Mojave
+}\if{html}{\out{</div>}}
+
+Lastly, we modify the \code{PATH} environment variable to recognize the newly
+installed software by adding into the \verb{~/.Renviron} file the following:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{touch ~/.Renviron
+cat << "EOF" > ~./Renviron
+## macrtools - gfortran: start
+PATH=$\{PATH\}:/usr/local/gfortran/bin
+## macrtools - gfortran: end
+EOF
+}\if{html}{\out{</div>}}
+}
+
+\subsection{gfortran Installation for M1 or M2 Macs (\code{x86_64})}{
+
+The M1 or M2 \code{gfortran} installer is a tar file that is unpacked into the
+directory. Depending on the \emph{R} version, we opt to install either
+\strong{gfortran 12 for R 4.2} or \strong{gfortran 11 for R 4.1}
+
+If users are on \strong{R 4.2 or above} with an M1 or M2 mac, then the \emph{R}
+sanitized \emph{shell} commands used are:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{URL="https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"
+curl -O --output-dir /tmp/ "$URL"
+sudo mkdir -p /opt/R/arm64/
+sudo tar fxz /tmp/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz -C /opt/R/arm64/ --strip-level 3
+rm  /tmp/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz
+}\if{html}{\out{</div>}}
+
+If users are on \strong{R 4.1} with an \strong{M1} or \strong{M2} mac, then the \emph{R}
+sanitized \emph{shell} commands used are:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{URL="https://mac.r-project.org/libs-arm64/gfortran-f51f1da0-darwin20.0-arm64.tar.gz"
+curl -O --output-dir /tmp/ "$URL"
+sudo mkdir -p /opt/R/arm64/
+sudo tar fxz /tmp/gfortran-f51f1da0-darwin20.0-arm64.tar.gz -C /opt/R/arm64/ --strip-level 3
+rm  /tmp/gfortran-f51f1da0-darwin20.0-arm64.tar.gz
+}\if{html}{\out{</div>}}
+
+Lastly, we modify the \code{PATH} environment variable to recognize the newly
+installed software by adding into the \verb{~/.Renviron} file the following:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{touch ~/.Renviron
+cat << "EOF" > ~./Renviron
+## macrtools - gfortran: start
+PATH=$\{PATH\}:/opt/R/arm64/gfortran/bin
+## macrtools - gfortran: end
+EOF
+}\if{html}{\out{</div>}}
+}
 }
 
 \section{Uninstalling \code{gfortran}}{
@@ -77,12 +137,12 @@ two locations:
 
 Using the \emph{R} sanitized \emph{shell} command of:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo -kS rm -r /usr/local/gfortran /usr/local/bin/gfortran
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo rm -rf /usr/local/gfortran /usr/local/bin/gfortran
 }\if{html}{\out{</div>}}
 
 Or:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo -kS rm -r /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo rm -rf /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
 }\if{html}{\out{</div>}}
 
 These uninstall steps are based on:
@@ -99,8 +159,14 @@ And the desired path for \code{aarch64}:
 The \code{gfortran_update()} attempts to update the version of \code{gfortran} installed
 using the provided \code{gfortran-update-sdk} inside of \verb{/opt/R/arm64/gfortran/bin}.
 
-Note: This update command only works for M1/M2 (\code{arm64}) users on \emph{R} 4.2
-or above.
+Please be advised that the update command only works for M1/M2 (\code{arm64}/\code{aarch64})
+users on \emph{R} 4.2 or above.
+
+The update command is issued using an \emph{R} sanitized version of the \emph{shell}
+command:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo /opt/R/arm64/gfortran/bin/gfortran-update-sdk
+}\if{html}{\out{</div>}}
 }
 
 \examples{

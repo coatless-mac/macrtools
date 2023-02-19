@@ -47,11 +47,75 @@ gfortran_version = function() {
 #'   - `/opt/r/arm64/gfortran/`
 #'   - `/opt/r/arm64/bin/gfortran`
 #'
-#' The Intel `gfortran` installer is a DMG image that is mounted, installed,
-#' and unmounted.
+#' ### gfortran Installation for Intel Macs (`x86_64`)
 #'
-#' The M1/M2 `gfortran` installer is a tar file that is unpacked into the
-#' directory.
+#' The Intel `gfortran` installer is a DMG image that is mounted, installed,
+#' and unmounted. We're using the following set of _R_ sanitized _shell_ commands:
+#'
+#' ```sh
+#' # Mount the `.dmg` installer image
+#' hdiutil attach "$path_to_dmg" -nobrowse -quiet
+#'
+#' # Install the DMG Image into root
+#' sudo installer \
+#'   -pkg /Volume/gfortran-8.2-Mojave/gfortran-8.2-Mojave/gfortran.pkg \
+#'   -target /
+#'
+#' # Unmount the `.dmg` installer image
+#' hdiutil detach /Volumes/gfortran-8.2-Mojave
+#' ```
+#'
+#' Lastly, we modify the `PATH` environment variable to recognize the newly
+#' installed software by adding into the `~/.Renviron` file the following:
+#'
+#' ```sh
+#' touch ~/.Renviron
+#' cat << "EOF" > ~./Renviron
+#' ## macrtools - gfortran: start
+#' PATH=${PATH}:/usr/local/gfortran/bin
+#' ## macrtools - gfortran: end
+#' EOF
+#' ```
+#'
+#' ### gfortran Installation for M1 or M2 Macs (`x86_64`)
+#'
+#' The M1 or M2 `gfortran` installer is a tar file that is unpacked into the
+#' directory. Depending on the _R_ version, we opt to install either
+#' **gfortran 12 for R 4.2** or **gfortran 11 for R 4.1**
+#'
+#' If users are on **R 4.2 or above** with an M1 or M2 mac, then the _R_
+#' sanitized _shell_ commands used are:
+#'
+#' ```sh
+#' URL="https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"
+#' curl -O --output-dir /tmp/ "$URL"
+#' sudo mkdir -p /opt/R/arm64/
+#' sudo tar fxz /tmp/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz -C /opt/R/arm64/ --strip-level 3
+#' rm  /tmp/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz
+#' ```
+#'
+#' If users are on **R 4.1** with an **M1** or **M2** mac, then the _R_
+#' sanitized _shell_ commands used are:
+#'
+#' ```sh
+#' URL="https://mac.r-project.org/libs-arm64/gfortran-f51f1da0-darwin20.0-arm64.tar.gz"
+#' curl -O --output-dir /tmp/ "$URL"
+#' sudo mkdir -p /opt/R/arm64/
+#' sudo tar fxz /tmp/gfortran-f51f1da0-darwin20.0-arm64.tar.gz -C /opt/R/arm64/ --strip-level 3
+#' rm  /tmp/gfortran-f51f1da0-darwin20.0-arm64.tar.gz
+#' ```
+#'
+#' Lastly, we modify the `PATH` environment variable to recognize the newly
+#' installed software by adding into the `~/.Renviron` file the following:
+#'
+#' ```sh
+#' touch ~/.Renviron
+#' cat << "EOF" > ~./Renviron
+#' ## macrtools - gfortran: start
+#' PATH=${PATH}:/opt/R/arm64/gfortran/bin
+#' ## macrtools - gfortran: end
+#' EOF
+#' ```
 #'
 #' @param verbose  Display messages indicating status
 #' @param password Password for user account to install software. Default is
@@ -133,12 +197,12 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
 #' Using the _R_ sanitized _shell_ command of:
 #'
 #' ```sh
-#' sudo -kS rm -r /usr/local/gfortran /usr/local/bin/gfortran
+#' sudo rm -rf /usr/local/gfortran /usr/local/bin/gfortran
 #' ```
 #' Or:
 #'
 #' ```sh
-#' sudo -kS rm -r /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
+#' sudo rm -rf /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
 #' ```
 #'
 #' These uninstall steps are based on:
@@ -179,8 +243,15 @@ gfortran_uninstall = function(password = getOption("macrtools.password"), verbos
 #' The `gfortran_update()` attempts to update the version of `gfortran` installed
 #' using the provided `gfortran-update-sdk` inside of `/opt/R/arm64/gfortran/bin`.
 #'
-#' Note: This update command only works for M1/M2 (`arm64`) users on _R_ 4.2
-#' or above.
+#' Please be advised that the update command only works for M1/M2 (`arm64`/`aarch64`)
+#' users on _R_ 4.2 or above.
+#'
+#' The update command is issued using an _R_ sanitized version of the _shell_
+#' command:
+#'
+#' ```sh
+#' sudo /opt/R/arm64/gfortran/bin/gfortran-update-sdk
+#' ```
 #'
 #' @export
 #' @rdname gfortran
