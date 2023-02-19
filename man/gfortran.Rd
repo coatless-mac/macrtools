@@ -12,17 +12,17 @@ is_gfortran_installed()
 
 gfortran_version()
 
-gfortran_install(verbose = TRUE, password = NULL)
+gfortran_install(password = getOption("macrtools.password"), verbose = TRUE)
 
-gfortran_uninstall(verbose = TRUE, password = NULL)
+gfortran_uninstall(password = getOption("macrtools.password"), verbose = TRUE)
 
-gfortran_update(verbose = TRUE, password = NULL)
+gfortran_update(password = getOption("macrtools.password"), verbose = TRUE)
 }
 \arguments{
-\item{verbose}{Display messages indicating status}
-
 \item{password}{Password for user account to install software. Default is
 \code{NULL}.}
+
+\item{verbose}{Display messages indicating status}
 }
 \description{
 Set of functions that seek to identify whether gfortran was installed,
