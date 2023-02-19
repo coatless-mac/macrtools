@@ -120,6 +120,14 @@ xcode_cli_install = function(password = getOption("macrtools.password"), verbose
 
     xcli_clean = identical(xcli_status, 0L)
 
+
+    if(!isTRUE(xcli_clean)) {
+        cat("We were not able to install Xcode CLI ...\n")
+        cat("Please try to manually install using: ..\n")
+        cat("https://rmacoslib.github.io/macrtools/reference/xcode-cli.html#xcode-cli-installation\n")
+        return(invisible(FALSE))
+    }
+
     return( invisible( xcli_clean ) )
 }
 

@@ -175,6 +175,9 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
         }
 
         if(!isTRUE(gfortran_status)) {
+            cat("We were not able to install gfortran ...\n")
+            cat("Please try to manually install using: ..\n")
+            cat("https://rmacoslib.github.io/macrtools/reference/gfortran.html#uninstalling-gfortran\n")
             return(invisible(FALSE))
         }
 

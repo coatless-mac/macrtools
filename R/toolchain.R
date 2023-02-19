@@ -67,7 +67,7 @@ macos_rtools_install = function(
     result_xcode = TRUE
     if(!is_xcode_cli_installed()) {
         result_xcode = xcode_cli_install(password = entered_password, verbose = describe_steps)
-        if(!result_xcode) stop("Failed to install Xcode CLI. Please see manual steps.")
+        if(!result_xcode) stop("Failed to install Xcode CLI. Please see manual steps above.")
     } else {
         if(describe_steps) cat("Xcode CLI was already installed! ...\n")
     }
@@ -75,7 +75,7 @@ macos_rtools_install = function(
     result_gfortran = TRUE
     if(!is_gfortran_installed()) {
         result_gfortran = gfortran_install(password = entered_password, verbose = describe_steps)
-        if(!result_gfortran) stop("Failed to install gfortran. Please see manual steps.")
+        if(!result_gfortran) stop("Failed to install gfortran. Please see manual step above.")
     } else {
         if(describe_steps) cat("gfortran was already installed! ...\n")
     }
