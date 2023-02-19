@@ -73,11 +73,9 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
     
 
 
-<p>Checks using the <code>xcode-select -p</code> command to obtain the relevant
-the directory. If the status code returned is 0, then the tools exist.
-Otherwise, the return value will be 2 indicating that the tools are missing.</p>
-<p>Implementation is based on:</p>
-<p><a href="https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed" class="external-link">https://stackoverflow.com/questions/15371925/how-to-check-if-xcode-command-line-tools-are-installed</a></p>
+<p>Checks to see if Xcode CLI returns a viable path to the default Xcode CLI
+location by checking the output of:</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">xcode-select</span> <span class="at">-p</span></span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="xcode-cli-installation">XCode CLI Installation<a class="anchor" aria-label="anchor" href="#xcode-cli-installation"></a></h2>
