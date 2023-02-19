@@ -58,13 +58,18 @@ gfortran_version = function() {
 #'                 `NULL`.
 #' @export
 #' @rdname gfortran
-gfortran_install = function(verbose = TRUE, password = NULL) {
+gfortran_install = function(password = getOption("macrtools.password"), verbose = TRUE) {
     assert_mac()
     if(isTRUE(is_gfortran_installed())) {
         if(verbose) {
-            message("gfortran is already installed.")
+            cat("gfortran is already installed.\n")
         }
         return(invisible(TRUE))
+    }
+
+    if (verbose) {
+        cat("\n\nAttempting to download and install gfortran ...\n")
+        cat("\nWe expect the installation to take between 2 to 5 minutes.\n\n")
     }
 
     if (is_macos_r_supported()) {
@@ -77,19 +82,22 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
         path_variable = paste0("${PATH}:", path_gfortran_bin)
 
         if (is_x86_64()) {
-            status = install_gfortran_82_mojave()
+            status = install_gfortran_82_mojave(password = password,
+                                                verbose = verbose)
         } else if (is_aarch64()) {
             status =
             if (is_r_version("4.2")) {
-                install_gfortran_12_arm()
+                install_gfortran_12_arm(password = password,
+                                        verbose = verbose)
             }
             else if(is_r_version("4.1")) {
-                install_gfortran_11_arm()
+                install_gfortran_11_arm(password = password,
+                                        verbose = verbose)
             } else {
                 FALSE
             }
         } else {
-            message("We do not have support for that macOS architecture yet.")
+            cat("We do not have support for that macOS architecture yet.\n")
         }
 
         if(!isTRUE(status)) {
@@ -100,7 +108,7 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
 
         return( invisible(status) )
     } else {
-        message("Your version of macOS is not supported.")
+        cat("Your version of macOS is not supported.\n")
         return(invisible(FALSE))
     }
 
@@ -139,12 +147,12 @@ gfortran_install = function(verbose = TRUE, password = NULL) {
 #'
 #' @export
 #' @rdname gfortran
-gfortran_uninstall = function(verbose = TRUE, password = NULL) {
+gfortran_uninstall = function(password = getOption("macrtools.password"), verbose = TRUE) {
     assert_mac()
 
     if(isFALSE(is_gfortran_installed())) {
         if(verbose) {
-            message("gfortran is not installed.")
+            cat("gfortran is not installed.\n")
         }
         return(invisible(TRUE))
     }
@@ -172,7 +180,7 @@ gfortran_uninstall = function(verbose = TRUE, password = NULL) {
 #'
 #' @export
 #' @rdname gfortran
-gfortran_update = function(verbose = TRUE, password = NULL) {
+gfortran_update = function(password = getOption("macrtools.password"), verbose = TRUE) {
     assert_mac()
     assert_aarch64()
     assert(is_gfortran_installed(), "On gfortran")
@@ -218,7 +226,7 @@ gfortran = function(args) {
 #' Download and Install gfortran 8.2 for Intel Macs
 #'
 #' @noRd
-install_gfortran_82_mojave = function(password = askpass::askpass(),
+install_gfortran_82_mojave = function(password = getOption("macrtools.password"),
                                       verbose = TRUE) {
 
     # Key the necessary download steps
@@ -256,7 +264,7 @@ install_gfortran_82_mojave = function(password = askpass::askpass(),
 }
 
 
-install_gfortran_12_arm = function(password = askpass::askpass(),
+install_gfortran_12_arm = function(password = getOption("macrtools.password"),
                                    verbose = TRUE) {
 
     gfortran_12_url = "https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"
@@ -278,7 +286,7 @@ install_gfortran_12_arm = function(password = askpass::askpass(),
 }
 
 
-install_gfortran_11_arm = function(password = askpass::askpass(),
+install_gfortran_11_arm = function(password = getOption("macrtools.password"),
                                    verbose = TRUE) {
 
     gfortran_11_url = "https://mac.r-project.org/libs-arm64/gfortran-f51f1da0-darwin20.0-arm64.tar.gz"
