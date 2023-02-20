@@ -23,7 +23,7 @@ install_location = function(arch = system_arch()) {
      )
 }
 
-create_install_location = function(arch = system_arch(), password = getOptions("macrtools.password")) {
+create_install_location = function(arch = system_arch(), password = getOption("macrtools.password")) {
 
     install_dir = install_location(arch)
 
