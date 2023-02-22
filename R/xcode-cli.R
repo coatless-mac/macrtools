@@ -137,7 +137,7 @@ xcode_cli_install = function(password = getOption("macrtools.password"), verbose
     xcli_clean = identical(xcli_status, 0L)
 
 
-    if(!isTRUE(xcli_clean)) {
+    if(isFALSE(xcli_clean)) {
         cat("We were not able to install Xcode CLI ...\n")
         cat("Please try to manually install using: ..\n")
         cat("https://rmacoslib.github.io/macrtools/reference/xcode-cli.html#xcode-cli-installation\n")
@@ -204,6 +204,13 @@ xcode_cli_uninstall = function(password = getOption("macrtools.password"), verbo
                   password = password)
 
     xcli_uninstall_clean = identical(xcli_uninstall_status, 0L)
+
+    if(isFALSE(xcli_uninstall_clean)) {
+        cat("We were not able to uninstall Xcode CLI ...\n")
+        cat("Please try to manually uninstall using: ..\n")
+        cat("https://rmacoslib.github.io/macrtools/reference/xcode-cli.html#uninstalling-xcode-cli\n")
+        return(invisible(FALSE))
+    }
 
     invisible(xcli_uninstall_clean)
 }

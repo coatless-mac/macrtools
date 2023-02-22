@@ -185,10 +185,10 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
         cat("We do not have support for that macOS architecture yet.\n")
     }
 
-    if(!isTRUE(gfortran_status)) {
+    if(isFALSE(gfortran_status)) {
         cat("We were not able to install gfortran ...\n")
         cat("Please try to manually install using: ..\n")
-        cat("https://rmacoslib.github.io/macrtools/reference/gfortran.html#uninstalling-gfortran\n")
+        cat("https://rmacoslib.github.io/macrtools/reference/gfortran.html#installing-gfortran\n")
         return(invisible(FALSE))
     }
 
@@ -244,12 +244,20 @@ gfortran_uninstall = function(password = getOption("macrtools.password"), verbos
     path_gfortran = file.path(install_dir, "gfortran")
     path_bin_gfortran = file.path(install_dir, "bin", "gfortran")
 
-    status = shell_execute(
+    gfortran_uninstall_status = shell_execute(
         paste0("rm -rf ", path_gfortran, " ", path_bin_gfortran ),
         sudo = TRUE,
         password = password)
 
-    return( invisible(status == 0) )
+    gfortran_uninstall_clean = identical(gfortran_uninstall_status, 0L)
+    if(isFALSE(gfortran_uninstall_clean)) {
+        cat("We were not able to uninstall gfortran ...\n")
+        cat("Please try to manually uninstall using: ..\n")
+        cat("https://rmacoslib.github.io/macrtools/reference/gfortran.html#uninstalling-gfortran\n")
+        return(invisible(FALSE))
+    }
+
+    return( invisible(gfortran_uninstall_status) )
 }
 
 #' @section Updating `gfortran`:
@@ -282,12 +290,20 @@ gfortran_update = function(password = getOption("macrtools.password"), verbose =
     # Verify that the tool exists
     assert(!file.exists(path_gfortran_update), "Found gfortran-update-sdk")
 
-    status = shell_execute(
+    gfortran_update_status = shell_execute(
         path_gfortran_update,
         sudo = TRUE,
         password = password)
 
-    return( invisible(status == 0) )
+    gfortran_update_clean = identical(gfortran_update_status, 0L)
+    if(isFALSE(gfortran_update_clean)) {
+        cat("We were not able to update gfortran ...\n")
+        cat("Please try to manually update using: ..\n")
+        cat("https://rmacoslib.github.io/macrtools/reference/gfortran.html#updating-gfortran\n")
+        return(invisible(FALSE))
+    }
+
+    return( invisible(gfortran_update_clean) )
 }
 
 
