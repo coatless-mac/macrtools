@@ -1,4 +1,5 @@
 url: https://rmacoslib.github.io/macrtools/
 template:
   bootstrap: 5
-
+  includes:
+    in_header: gads.html
