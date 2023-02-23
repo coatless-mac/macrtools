@@ -95,7 +95,7 @@ gfortran_version = function() {
 #' URL="https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"
 #' curl -O --output-dir /tmp/ "$URL"
 #' sudo mkdir -p /opt/R/arm64/
-#' sudo tar fxz /tmp/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz -C /opt/R/arm64/ --strip-component 3
+#' sudo tar fxz /tmp/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz -C /opt/R/arm64/ --strip-components 3
 #' rm  /tmp/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz
 #' ```
 #'
@@ -106,7 +106,7 @@ gfortran_version = function() {
 #' URL="https://mac.r-project.org/libs-arm64/gfortran-f51f1da0-darwin20.0-arm64.tar.gz"
 #' curl -O --output-dir /tmp/ "$URL"
 #' sudo mkdir -p /opt/R/arm64/
-#' sudo tar fxz /tmp/gfortran-f51f1da0-darwin20.0-arm64.tar.gz -C /opt/R/arm64/ --strip-component 3
+#' sudo tar fxz /tmp/gfortran-f51f1da0-darwin20.0-arm64.tar.gz -C /opt/R/arm64/ --strip-components 3
 #' rm  /tmp/gfortran-f51f1da0-darwin20.0-arm64.tar.gz
 #' ```
 #'

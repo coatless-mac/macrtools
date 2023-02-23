@@ -110,7 +110,7 @@ tar_package_install = function(path_to_tar,
         cat("Installing:", binary_file_name, "into", install_directory ,"...\n")
 
     # Step Two: Install the package using tar with stdin redirect
-    cmd = paste0("tar fxj ", path_to_tar," -C ", install_directory, " --strip-component ", strip_levels)
+    cmd = paste0("tar fxj ", path_to_tar," -C ", install_directory, " --strip-components ", strip_levels)
     status = shell_execute(cmd, sudo = sudo, password = password, verbose = verbose)
 
     # Verify installation is okay:
