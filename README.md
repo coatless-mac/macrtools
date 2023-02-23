@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/rmacoslib/macrtools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmacoslib/macrtools/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/coatless-mac/macrtools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmacoslib/macrtools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 **This is a work in progress package. Features may be unstable.**
@@ -42,7 +42,7 @@ You can install the development version of `macrtools` from
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("rmacoslib/macrtools")
+remotes::install_github("coatless-mac/macrtools")
 ```
 
 ### Install the R Compilation Toolchain using the R Package
@@ -120,10 +120,11 @@ macrtools::gfortran_uninstall()
 > Why not a macOS installer package (`.pkg`) or Apple Disk Image
 > (`.dmg`) ?
 
-We previously wrote a very successful
-[`r-macos-rtools`](https://github.com/rmacoslib/r-macos-rtools)
-installer package. However, as part of the up-keep of the installer
-package, we needed to have a yearly subscription to Apple’s [Developer
+We previously wrote two very successful installer packages (
+[`r-macos-rtools`](https://github.com/coatless-mac/r-macos-rtools) and
+[`r-macos-clang`](https://github.com/coatless-mac/r-macos-clang)).
+However, as part of the up-keep of the installer package, we needed to
+have a yearly subscription to Apple’s [Developer
 program](https://developer.apple.com/), which has a base cost of \~\$99
 and sales tax of about \~\$6 leading to an annual expense of \~\$105 per
 year. Given that we only used the Developer account to sign and notarize
