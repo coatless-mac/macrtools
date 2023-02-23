@@ -2,7 +2,7 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles: {}
-last_built: 2023-02-23T17:24Z
+last_built: 2023-02-23T18:08Z
 urls:
   reference: https://rmacoslib.github.io/macrtools/reference
   article: https://rmacoslib.github.io/macrtools/articles
