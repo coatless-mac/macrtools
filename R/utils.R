@@ -81,7 +81,7 @@ is_r_version = function(target_version, compare_major_minor = TRUE) {
         R.version$minor
     }
 
-    version_string = paste(R.version$major, minor_value)
+    version_string = paste(R.version$major, minor_value, sep = ".")
     return(version_string == target_version)
 }
 
