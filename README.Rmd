@@ -130,7 +130,7 @@ However, as part of the up-keep of the installer package, we needed to have
 a yearly subscription to Apple's [Developer program](https://developer.apple.com/),
 which has a base cost of ~\$99 and sales tax of about ~\$6 leading to an 
 annual expense of ~\$105 per year. Given that we only used the Developer 
-account to sign and notarize only the `r-macos-rtools` installer, we opted not
+account to sign and notarize only the installers packages, we opted not
 to continue on this path.
 
 That said, we are grateful to 
