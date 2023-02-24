@@ -1,9 +1,19 @@
 Package: macrtools
 Title: macOS Rtools package
 Version: 0.0.0.9000
-Authors@R: 
-    person("James Joseph", "Balamuta", , "balamut2@illinois.edu", role = c("aut", "cre", "cph"),
-           comment = c(ORCID = "0000-0003-2826-8458"))
+Authors@R: c(
+    person(given = "James Joseph", 
+           family = "Balamuta", 
+           email = "balamut2@illinois.edu", 
+           role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0003-2826-8458")),
+    person(given = "Adam H.",
+           family = "Sparks",
+           role = c("ctb"),
+           email = "adamhsparks@gmail.com",
+           comment = c(ORCID = "0000-0002-0061-8359")
+           )
+    )
 Description: Sets up the macOS Rtools compiled code toolchain.
 License: AGPL (>= 3)
 Encoding: UTF-8
