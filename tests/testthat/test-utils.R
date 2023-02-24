@@ -2,13 +2,13 @@ test_that("check R version", {
 
     # Check current version
     minor_value = strsplit(R.version$minor, ".", fixed = TRUE)[[1]][1]
-    version_string = paste(R.version$major, minor_value)
+    version_string = paste(R.version$major, minor_value, sep = ".")
 
     # Check minor release
     expect_true(is_r_version(version_string))
 
     # Check full release
-    version_string = paste(R.version$major, R.version$minor)
+    version_string = paste(R.version$major, R.version$minor, sep=".")
     expect_true(is_r_version(version_string, compare_major_minor = FALSE))
 
     # Check old version not in test grid
