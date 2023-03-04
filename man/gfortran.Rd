@@ -143,7 +143,7 @@ These uninstall steps are based on:
 
 For M1 or M2 Macs (\code{arm64}), we use the \emph{R} sanitized \emph{shell} command of:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo rm -rf /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo rm -rf /opt/R/arm64/gfortran/ /opt/R/arm64/bin/gfortran
 }\if{html}{\out{</div>}}
 
 This aligns with the default path used by CRAN for \code{arm64}:

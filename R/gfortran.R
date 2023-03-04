@@ -219,7 +219,7 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
 #' For M1 or M2 Macs (`arm64`), we use the _R_ sanitized _shell_ command of:
 #'
 #' ```sh
-#' sudo rm -rf /opt/r/arm64/gfortran/ /opt/r/arm64/bin/gfortran
+#' sudo rm -rf /opt/R/arm64/gfortran/ /opt/R/arm64/bin/gfortran
 #' ```
 #'
 #' This aligns with the default path used by CRAN for `arm64`:
