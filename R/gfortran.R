@@ -154,12 +154,8 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
     path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
     path_variable = paste0("${PATH}:", path_gfortran_bin)
 
-
-    entered_password_gfortran = password
-    if(is.null(entered_password_gfortran)) {
-        cat("Please enter your password in the prompt that is appearing to continue ...\n\n")
-        entered_password_gfortran = askpass::askpass()
-    }
+    # Prompt for password if not found
+    entered_password_gfortran = force_password(password)
 
     # Ensure the installation location is valid.
     create_install_location(password = entered_password_gfortran)
@@ -179,10 +175,14 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
             install_gfortran_11_arm(password = entered_password_gfortran,
                                     verbose = verbose)
         } else {
-            FALSE
+            cat("Unable to install gfortran for arm64/aarch64... \n")
+            cat("Official R support for arm64/aarch64 began in R 4.1 ...\n")
+            cat("Please upgrade R ...\n")
+            return(invisible(FALSE))
         }
     } else {
         cat("We do not have support for that macOS architecture yet.\n")
+        return(invisible(FALSE))
     }
 
     if(isFALSE(gfortran_status)) {
