@@ -12,7 +12,7 @@
 #'   - `/usr/local`
 #' - M1 or M2 (arm64 or aarch64)
 #'   - `/opt/R/arm64`
-#' - Xcode CLI
+#' - Xcode Command Line Tools (Xcode CLI)
 #'   - `/Library/Developer/CommandLineTools`
 #' - Xcode App
 #'   - `/Applications/Xcode.app/Contents/Developer`

@@ -32,7 +32,7 @@ We have the following fixed paths:
 \itemize{
 \item \verb{/opt/R/arm64}
 }
-\item Xcode CLI
+\item Xcode Command Line Tools (Xcode CLI)
 \itemize{
 \item \verb{/Library/Developer/CommandLineTools}
 }
