@@ -159,5 +159,5 @@ block_find = function(lines, block_start = "# <<<", block_end = "# >>>") {
 }
 
 block_create = function(lines = character(), block_start = "# <<<", block_end = "# >>>") {
-    c(block_start, unique(lines), block_end)
+    c("\n", block_start, unique(lines), block_end)
 }
