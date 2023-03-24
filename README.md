@@ -8,11 +8,15 @@
 [![R-CMD-check](https://github.com/coatless-mac/macrtools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmacoslib/macrtools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
+Repository: <https://github.com/coatless-mac/macrtools>
+
 **This is a work in progress package. Features may be unstable.**
 
 **This is an *unofficial* project to support users on macOS.**
 
-The repository includes source code for `macrtools`, which is an *R*
+
+The [repository](https://github.com/coatless-mac/macrtools)
+includes source code for `macrtools`, which is an *R*
 package exclusively for [Apple](https://www.apple.com/)’s macOS
 operating system. This package is designed to recreate the compiled code
 toolchain used to compile the [official macOS R binary on
