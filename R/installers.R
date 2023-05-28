@@ -13,6 +13,22 @@ install_strip_level = function(arch = system_arch()) {
     )
 }
 
+recipe_binary_install_strip_level = function(arch = system_arch()) {
+    if (is_r_version("4.3")) {
+        switch(
+            arch,
+            "arm64" = 3,
+            "aarch64" = 3,
+            "x86_64" = 3,
+            stop("`arch` type not recognized. Please make sure you are on either an `arm64` or `x86_64` system.")
+        )
+    } else if (is_r_version("4.0") | is_r_version("4.1") | is_r_version("4.2")) {
+        install_strip_level()
+    } else {
+        stop("We do not yet support recipe binary installation for the current version of R.")
+    }
+}
+
 install_location = function(arch = system_arch()) {
 
     switch(

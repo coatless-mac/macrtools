@@ -188,7 +188,7 @@ recipes_binary_install = function(
         # Determine the correct installation path based on arch type
         supplied_arch = strsplit(os.arch, "/")[[1]][2]
         installation_directory = recipe_binary_install_location(supplied_arch)
-        installation_strip_level = install_strip_level(supplied_arch)
+        installation_strip_level = recipe_binary_install_strip_level(supplied_arch)
 
         # Ensure the installation location is valid.
         create_install_location(arch = supplied_arch, password = entered_recipes_password)
