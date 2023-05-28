@@ -76,10 +76,13 @@ allow gfortran to be installed, and removing gfortran.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The <code>gfortran</code> suite of functions attempts to locate, install, and uninstall
-<code>gfortran</code> based the default installation locations that depend on architecture:</p><ul><li><p>Intel (<code>x86_64</code>)</p><ul><li><p><code>/usr/local/gfortran</code></p></li>
+<code>gfortran</code> based the default installation locations that depend on architecture:</p><ul><li><p>Intel (<code>x86_64</code>) and M1/M2 (<code>arm64</code> or <code>aarch64</code>) for R &gt;= 4.3</p><ul><li><p><code>/opt/gfortran/</code></p></li>
+<li><p><code>/opt/gfortran/bin</code></p></li>
+</ul></li>
+<li><p>Intel (<code>x86_64</code>) for R &lt; 4.3</p><ul><li><p><code>/usr/local/gfortran</code></p></li>
 <li><p><code>/usr/local/bin/gfortran</code></p></li>
 </ul></li>
-<li><p>M1/M2 (<code>arm64</code> or <code>aarch64</code>)</p><ul><li><p><code>/opt/R/arm64/gfortran/</code></p></li>
+<li><p>M1/M2 (<code>arm64</code> or <code>aarch64</code>) for 4.1 &lt;= R &lt; 4.3</p><ul><li><p><code>/opt/R/arm64/gfortran/</code></p></li>
 <li><p><code>/opt/R/arm64/bin/gfortran</code></p></li>
 </ul></li>
 </ul></div>
@@ -96,7 +99,29 @@ the default installation location.</p>
     
 
 <p>The <code>gfortran_install()</code> function aims to install <code>gfortran</code> into the
-appropriate location for Intel (<code>x86_64</code>) or M1/M2 (<code>arm64</code>/<code>aarch64</code>).</p><div class="section">
+appropriate location for Intel (<code>x86_64</code>) or M1/M2 (<code>arm64</code>/<code>aarch64</code>)
+depending on the R version used.</p><div class="section">
+<h3 id="gfortran-installation-for-r-">gfortran Installation for R 4.3<a class="anchor" aria-label="anchor" href="#gfortran-installation-for-r-"></a></h3>
+
+
+<p>The <code>gfortran</code> installer for R 4.3 is a universal installer that places
+<code>gfortran</code> into the <code>/opt/gfortran</code> for both Intel (<code>x86_64</code>) and M1/M2 (<code>arm64</code>/<code>aarch64</code>)
+macs.</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install the downloaded package into root</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> installer <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-pkg</span> /path/to/gfortran-12.2-universal.pkg <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-target</span> /</span></code></pre><p></p></div>
+<p>Once installed, we modify the <code>PATH</code> environment variable to recognize the newly
+installed software by adding into the <code>~/.Renviron</code> file the following:</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> ~/.Renviron</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; "EOF"</span> <span class="op">&gt;</span> ~./Renviron</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="st">## macrtools - gfortran: start</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="st">PATH=${PATH}:/opt/gfortran/bin</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="st">## macrtools - gfortran: end</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span></code></pre><p></p></div>
+</div>
+
+<div class="section">
 <h3 id="gfortran-installation-for-intel-macs-x-">gfortran Installation for Intel Macs (<code>x86_64</code>)<a class="anchor" aria-label="anchor" href="#gfortran-installation-for-intel-macs-x-"></a></h3>
 
 
@@ -105,7 +130,7 @@ and unmounted. We're using the following set of <em>R</em> sanitized <em>shell</
 <p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mount the `.dmg` installer image</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">hdiutil</span> attach <span class="st">"</span><span class="va">$path_to_dmg</span><span class="st">"</span> <span class="at">-nobrowse</span> <span class="at">-quiet</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install the DMG Image into root</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install the package from DMG image into root</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> installer <span class="dt">\</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">-pkg</span> /Volume/gfortran-8.2-Mojave/gfortran-8.2-Mojave/gfortran.pkg <span class="dt">\</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">-target</span> /</span>
@@ -129,7 +154,7 @@ installed software by adding into the <code>~/.Renviron</code> file the followin
 <p>The M1 or M2 <code>gfortran</code> installer is a tar file that is unpacked into the
 directory. Depending on the <em>R</em> version, we opt to install either
 <strong>gfortran 12 for R 4.2</strong> or <strong>gfortran 11 for R 4.1</strong></p>
-<p>If users are on <strong>R 4.2 or above</strong> with an M1 or M2 mac, then the <em>R</em>
+<p>If users are on <strong>R 4.2</strong> with an M1 or M2 mac, then the <em>R</em>
 sanitized <em>shell</em> commands used are:</p>
 <p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">URL</span><span class="op">=</span><span class="st">"https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-O</span> <span class="at">--output-dir</span> /tmp/ <span class="st">"</span><span class="va">$URL</span><span class="st">"</span></span>
