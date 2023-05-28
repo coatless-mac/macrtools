@@ -32,12 +32,17 @@ allow gfortran to be installed, and removing gfortran.
 The \code{gfortran} suite of functions attempts to locate, install, and uninstall
 \code{gfortran} based the default installation locations that depend on architecture:
 \itemize{
-\item Intel (\code{x86_64})
+\item Intel (\code{x86_64}) and M1/M2 (\code{arm64} or \code{aarch64}) for R >= 4.3
+\itemize{
+\item \verb{/opt/gfortran/}
+\item \verb{/opt/gfortran/bin}
+}
+\item Intel (\code{x86_64}) for R < 4.3
 \itemize{
 \item \verb{/usr/local/gfortran}
 \item \verb{/usr/local/bin/gfortran}
 }
-\item M1/M2 (\code{arm64} or \code{aarch64})
+\item M1/M2 (\code{arm64} or \code{aarch64}) for 4.1 <= R < 4.3
 \itemize{
 \item \verb{/opt/R/arm64/gfortran/}
 \item \verb{/opt/R/arm64/bin/gfortran}
@@ -54,7 +59,32 @@ the default installation location.
 \section{Installing \code{gfortran}}{
 
 The \code{gfortran_install()} function aims to install \code{gfortran} into the
-appropriate location for Intel (\code{x86_64}) or M1/M2 (\code{arm64}/\code{aarch64}).
+appropriate location for Intel (\code{x86_64}) or M1/M2 (\code{arm64}/\code{aarch64})
+depending on the R version used.
+\subsection{gfortran Installation for R 4.3}{
+
+The \code{gfortran} installer for R 4.3 is a universal installer that places
+\code{gfortran} into the \verb{/opt/gfortran} for both Intel (\code{x86_64}) and M1/M2 (\code{arm64}/\code{aarch64})
+macs.
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{# Install the downloaded package into root
+sudo installer \\
+  -pkg /path/to/gfortran-12.2-universal.pkg \\
+  -target /
+}\if{html}{\out{</div>}}
+
+Once installed, we modify the \code{PATH} environment variable to recognize the newly
+installed software by adding into the \verb{~/.Renviron} file the following:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{touch ~/.Renviron
+cat << "EOF" > ~./Renviron
+## macrtools - gfortran: start
+PATH=$\{PATH\}:/opt/gfortran/bin
+## macrtools - gfortran: end
+EOF
+}\if{html}{\out{</div>}}
+}
+
 \subsection{gfortran Installation for Intel Macs (\code{x86_64})}{
 
 The Intel \code{gfortran} installer is a DMG image that is mounted, installed,
@@ -63,7 +93,7 @@ and unmounted. We're using the following set of \emph{R} sanitized \emph{shell} 
 \if{html}{\out{<div class="sourceCode sh">}}\preformatted{# Mount the `.dmg` installer image
 hdiutil attach "$path_to_dmg" -nobrowse -quiet
 
-# Install the DMG Image into root
+# Install the package from DMG image into root
 sudo installer \\
   -pkg /Volume/gfortran-8.2-Mojave/gfortran-8.2-Mojave/gfortran.pkg \\
   -target /
@@ -90,7 +120,7 @@ The M1 or M2 \code{gfortran} installer is a tar file that is unpacked into the
 directory. Depending on the \emph{R} version, we opt to install either
 \strong{gfortran 12 for R 4.2} or \strong{gfortran 11 for R 4.1}
 
-If users are on \strong{R 4.2 or above} with an M1 or M2 mac, then the \emph{R}
+If users are on \strong{R 4.2} with an M1 or M2 mac, then the \emph{R}
 sanitized \emph{shell} commands used are:
 
 \if{html}{\out{<div class="sourceCode sh">}}\preformatted{URL="https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"

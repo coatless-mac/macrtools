@@ -11,10 +11,13 @@ NULL
 #' The `gfortran` suite of functions attempts to locate, install, and uninstall
 #' `gfortran` based the default installation locations that depend on architecture:
 #'
-#' - Intel (`x86_64`)
+#' - Intel (`x86_64`) and M1/M2 (`arm64` or `aarch64`) for R >= 4.3
+#'   - `/opt/gfortran/`
+#'   - `/opt/gfortran/bin`
+#' - Intel (`x86_64`) for R < 4.3
 #'   - `/usr/local/gfortran`
 #'   - `/usr/local/bin/gfortran`
-#' - M1/M2 (`arm64` or `aarch64`)
+#' - M1/M2 (`arm64` or `aarch64`) for 4.1 <= R < 4.3
 #'   - `/opt/R/arm64/gfortran/`
 #'   - `/opt/R/arm64/bin/gfortran`
 #'
@@ -50,7 +53,33 @@ gfortran_version = function() {
 
 #' @section Installing `gfortran`:
 #' The `gfortran_install()` function aims to install `gfortran` into the
-#' appropriate location for Intel (`x86_64`) or M1/M2 (`arm64`/`aarch64`).
+#' appropriate location for Intel (`x86_64`) or M1/M2 (`arm64`/`aarch64`)
+#' depending on the R version used.
+#'
+#' ### gfortran Installation for R 4.3
+#'
+#' The `gfortran` installer for R 4.3 is a universal installer that places
+#' `gfortran` into the `/opt/gfortran` for both Intel (`x86_64`) and M1/M2 (`arm64`/`aarch64`)
+#' macs.
+#'
+#' ```sh
+#' # Install the downloaded package into root
+#' sudo installer \
+#'   -pkg /path/to/gfortran-12.2-universal.pkg \
+#'   -target /
+#' ```
+#'
+#' Once installed, we modify the `PATH` environment variable to recognize the newly
+#' installed software by adding into the `~/.Renviron` file the following:
+#'
+#' ```sh
+#' touch ~/.Renviron
+#' cat << "EOF" > ~./Renviron
+#' ## macrtools - gfortran: start
+#' PATH=${PATH}:/opt/gfortran/bin
+#' ## macrtools - gfortran: end
+#' EOF
+#' ```
 #'
 #' ### gfortran Installation for Intel Macs (`x86_64`)
 #'
@@ -61,7 +90,7 @@ gfortran_version = function() {
 #' # Mount the `.dmg` installer image
 #' hdiutil attach "$path_to_dmg" -nobrowse -quiet
 #'
-#' # Install the DMG Image into root
+#' # Install the package from DMG image into root
 #' sudo installer \
 #'   -pkg /Volume/gfortran-8.2-Mojave/gfortran-8.2-Mojave/gfortran.pkg \
 #'   -target /
@@ -88,7 +117,7 @@ gfortran_version = function() {
 #' directory. Depending on the _R_ version, we opt to install either
 #' **gfortran 12 for R 4.2** or **gfortran 11 for R 4.1**
 #'
-#' If users are on **R 4.2 or above** with an M1 or M2 mac, then the _R_
+#' If users are on **R 4.2** with an M1 or M2 mac, then the _R_
 #' sanitized _shell_ commands used are:
 #'
 #' ```sh
@@ -148,7 +177,7 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
     }
 
     # Figure out installation directory
-    install_dir = install_location()
+    install_dir = gfortran_install_location()
 
     # Establish a path
     path_gfortran_bin = file.path(install_dir, "gfortran", "bin")
@@ -161,27 +190,40 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
     create_install_location(password = entered_password_gfortran)
 
     gfortran_status = FALSE
-    if (is_x86_64()) {
-        gfortran_status = install_gfortran_82_mojave(password = entered_password_gfortran,
-                                            verbose = verbose)
-    } else if (is_aarch64()) {
 
-        gfortran_status =
-        if (is_r_version("4.2")) {
-            install_gfortran_12_arm(password = entered_password_gfortran,
-                                    verbose = verbose)
-        }
-        else if(is_r_version("4.1")) {
-            install_gfortran_11_arm(password = entered_password_gfortran,
-                                    verbose = verbose)
+    if(is_r_version("4.3")) {
+        gfortran_status = install_gfortran_12(password = entered_password_gfortran,
+                                                     verbose = verbose)
+    } else if(is_r_version("4.0") |is_r_version("4.1") | is_r_version("4.2")) {
+        if (is_x86_64()) {
+            gfortran_status = install_gfortran_82_mojave(password = entered_password_gfortran,
+                                                         verbose = verbose)
+        } else if (is_aarch64()) {
+            if (is_r_version("4.2")) {
+                gfortran_status = install_gfortran_12_arm(
+                    password = entered_password_gfortran,
+                    verbose = verbose)
+            } else if(is_r_version("4.1")) {
+                gfortran_status = install_gfortran_11_arm(
+                    password = entered_password_gfortran,
+                    verbose = verbose)
+            } else {
+                cat("Unable to install gfortran for arm64/aarch64... \n")
+                cat("Official R support for arm64/aarch64 began in R 4.1 ...\n")
+                cat("Please upgrade R ...\n")
+                return(invisible(FALSE))
+            }
         } else {
-            cat("Unable to install gfortran for arm64/aarch64... \n")
-            cat("Official R support for arm64/aarch64 began in R 4.1 ...\n")
-            cat("Please upgrade R ...\n")
+            cat("We do not have support for that macOS architecture yet.\n")
             return(invisible(FALSE))
         }
     } else {
-        cat("We do not have support for that macOS architecture yet.\n")
+        version_number = paste(R.version$major, R.version$minor, sep = ".")
+        cat(
+            paste0(
+            "The macrtools package supports gfortran installations for R 4.0.* - R 4.3.*.\nThe installed version of R (", version_number, ") is not yet supported!\n"
+            )
+        )
         return(invisible(FALSE))
     }
 
@@ -409,4 +451,29 @@ install_gfortran_11_arm = function(password = getOption("macrtools.password"),
                         password = password,
                         verbose = verbose)
 
+}
+
+
+#' Install gfortran v12.2 universal binaries
+#'
+#' @details
+#' Installs the `gfortran` v12.2 binaries for R version 4.3 for both
+#' Intel and ARM-based macs.
+#'
+#' @noRd
+install_gfortran_12_2_universal = function(
+        password = getOption("macrtools.password"),
+        verbose = TRUE) {
+
+    # URL
+    gfortran_12_universal =  "https://mac.r-project.org/tools/gfortran-12.2-universal.pkg"
+
+    # Download tar
+    path_to_pkg = binary_download(gfortran_12_universal, verbose = verbose)
+
+    # Install pkg into the appropriate location
+    pkg_install(path_to_pkg,
+                "/",
+                password = password,
+                verbose = verbose)
 }

@@ -14,6 +14,7 @@ install_strip_level = function(arch = system_arch()) {
 }
 
 install_location = function(arch = system_arch()) {
+
     switch(
         arch,
         "arm64" = install_directory_arm64(),
@@ -21,6 +22,17 @@ install_location = function(arch = system_arch()) {
         "x86_64" = install_directory_x86_64(),
         stop("`arch` type not recognized. Please make sure you are on either an `arm64` or `x86_64` system.")
      )
+
+}
+
+gfortran_install_location = function(arch = system_arch()) {
+    if (is_r_version("4.3")) {
+        "/opt"
+    } else if (is_r_version("4.0") | is_r_version("4.1") | is_r_version("4.2")) {
+        install_location()
+    } else {
+        stop("We do not yet support gfortran installation for the current version of R.")
+    }
 }
 
 create_install_location = function(arch = system_arch(), password = getOption("macrtools.password")) {
@@ -29,7 +41,6 @@ create_install_location = function(arch = system_arch(), password = getOption("m
 
     # Verify installation directory exists. If it doesn't, create it.
     if (dir.exists(install_dir)) return(invisible(TRUE))
-
 
     dir_creation_status = shell_execute(
             paste("mkdir", "-p", install_dir ),
@@ -163,3 +174,29 @@ dmg_package_install = function(path_to_dmg,
 
     status == 0
 }
+
+pkg_install = function(path_to_pkg,
+                       target_location = "/",
+                       password = NULL,
+                       verbose = TRUE) {
+
+    package_name_with_extension = basename(path_to_pkg)
+    package_name = tools::file_path_sans_ext(package_name_with_extension)
+
+    if (verbose) {
+        message("Installing ", package_name, " ...")
+    }
+    cmd = paste(
+        "sudo",
+        "-kS",
+        "installer",
+        "-pkg",
+        path_to_pkg,
+        "-target",
+        target_location
+    )
+    status = shell_execute(cmd, sudo = TRUE, password = password)
+
+    status == 0
+}
+
