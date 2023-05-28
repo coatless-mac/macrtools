@@ -2,12 +2,15 @@
 % Please edit documentation in R/paths.R
 \name{install_directory_x86_64}
 \alias{install_directory_x86_64}
+\alias{install_directory_x86_64_r_version_4_3}
 \alias{install_directory_arm64}
 \alias{install_directory_xcode_cli}
 \alias{install_directory_xcode_app}
 \title{Installation Directory Locations}
 \usage{
 install_directory_x86_64()
+
+install_directory_x86_64_r_version_4_3()
 
 install_directory_arm64()
 

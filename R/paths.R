@@ -25,6 +25,12 @@ install_directory_x86_64 = function() {
 
 #' @export
 #' @rdname install-directory
+install_directory_x86_64_r_version_4_3 = function() {
+    "/opt/R/x86_64"
+}
+
+#' @export
+#' @rdname install-directory
 install_directory_arm64 = function() {
     "/opt/R/arm64"
 }

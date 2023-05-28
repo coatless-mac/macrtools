@@ -25,6 +25,22 @@ install_location = function(arch = system_arch()) {
 
 }
 
+recipe_binary_install_location = function(arch = system_arch()) {
+    if (is_r_version("4.3")) {
+        switch(
+            arch,
+            "arm64" = install_directory_arm64(),
+            "aarch64" = install_directory_arm64(),
+            "x86_64" = install_directory_x86_64_r_version_4_3(),
+            stop("`arch` type not recognized. Please make sure you are on either an `arm64` or `x86_64` system.")
+        )
+    } else if (is_r_version("4.0") | is_r_version("4.1") | is_r_version("4.2")) {
+        install_location()
+    } else {
+        stop("We do not yet support recipe binary installation for the current version of R.")
+    }
+}
+
 gfortran_install_location = function(arch = system_arch()) {
     if (is_r_version("4.3")) {
         "/opt"
