@@ -38,7 +38,7 @@ is_gfortran_installed = function() {
     # So, let's aim to check a hard coded path
 
     # Figure out installation directory
-    install_dir = install_location()
+    install_dir = gfortran_install_location()
     path_gfortran = file.path(install_dir, "gfortran")
 
     # Check if the directory is present
@@ -192,12 +192,14 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
     gfortran_status = FALSE
 
     if(is_r_version("4.3")) {
-        gfortran_status = install_gfortran_12(password = entered_password_gfortran,
-                                                     verbose = verbose)
+        gfortran_status = install_gfortran_12_2_universal(
+            password = entered_password_gfortran,
+            verbose = verbose)
     } else if(is_r_version("4.0") |is_r_version("4.1") | is_r_version("4.2")) {
         if (is_x86_64()) {
-            gfortran_status = install_gfortran_82_mojave(password = entered_password_gfortran,
-                                                         verbose = verbose)
+            gfortran_status = install_gfortran_82_mojave(
+                password = entered_password_gfortran,
+                verbose = verbose)
         } else if (is_aarch64()) {
             if (is_r_version("4.2")) {
                 gfortran_status = install_gfortran_12_arm(
@@ -281,7 +283,7 @@ gfortran_uninstall = function(password = getOption("macrtools.password"), verbos
     }
 
     # Figure out installation directories
-    install_dir = install_location()
+    install_dir = gfortran_install_location()
 
     path_gfortran = file.path(install_dir, "gfortran")
     path_bin_gfortran = file.path(install_dir, "bin", "gfortran")
