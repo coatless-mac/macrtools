@@ -11,13 +11,13 @@ NULL
 #' The `gfortran` suite of functions attempts to locate, install, and uninstall
 #' `gfortran` based the default installation locations that depend on architecture:
 #'
-#' - Intel (`x86_64`) and M1/M2 (`arm64` or `aarch64`) for R >= 4.3
+#' - Intel (`x86_64`) and M-series (`arm64` or `aarch64`) for R >= 4.3
 #'   - `/opt/gfortran/`
 #'   - `/opt/gfortran/bin`
 #' - Intel (`x86_64`) for R < 4.3
 #'   - `/usr/local/gfortran`
 #'   - `/usr/local/bin/gfortran`
-#' - M1/M2 (`arm64` or `aarch64`) for 4.1 <= R < 4.3
+#' - M-series (`arm64` or `aarch64`) for 4.1 <= R < 4.3
 #'   - `/opt/R/arm64/gfortran/`
 #'   - `/opt/R/arm64/bin/gfortran`
 #'
@@ -53,14 +53,14 @@ gfortran_version = function() {
 
 #' @section Installing `gfortran`:
 #' The `gfortran_install()` function aims to install `gfortran` into the
-#' appropriate location for Intel (`x86_64`) or M1/M2 (`arm64`/`aarch64`)
+#' appropriate location for **Intel** (`x86_64`) or **M-series** (`arm64`/`aarch64`)
 #' depending on the R version used.
 #'
 #' ### gfortran Installation for R 4.3
 #'
 #' The `gfortran` installer for R 4.3 is a universal installer that places
-#' `gfortran` into the `/opt/gfortran` for both Intel (`x86_64`) and M1/M2 (`arm64`/`aarch64`)
-#' macs.
+#' `gfortran` into the `/opt/gfortran` for both **Intel** (`x86_64`) and
+#' **M-series** (`arm64`/`aarch64`) macs.
 #'
 #' ```sh
 #' # Install the downloaded package into root
@@ -111,13 +111,13 @@ gfortran_version = function() {
 #' EOF
 #' ```
 #'
-#' ### gfortran Installation for M1 or M2 Macs (`arm64`)
+#' ### gfortran Installation for M-series Macs (`arm64`)
 #'
-#' The M1 or M2 `gfortran` installer is a tar file that is unpacked into the
+#' The **M-series** `gfortran` installer is a tar file that is unpacked into the
 #' directory. Depending on the _R_ version, we opt to install either
 #' **gfortran 12 for R 4.2** or **gfortran 11 for R 4.1**
 #'
-#' If users are on **R 4.2** with an M1 or M2 mac, then the _R_
+#' If users are on **R 4.2** with an **M-series** mac, then the _R_
 #' sanitized _shell_ commands used are:
 #'
 #' ```sh
@@ -128,7 +128,7 @@ gfortran_version = function() {
 #' rm  /tmp/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz
 #' ```
 #'
-#' If users are on **R 4.1** with an **M1** or **M2** mac, then the _R_
+#' If users are on **R 4.1** with an **M-series** mac, then the _R_
 #' sanitized _shell_ commands used are:
 #'
 #' ```sh
