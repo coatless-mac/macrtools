@@ -32,14 +32,18 @@ Suggests:
     rstudioapi,
     testthat (>= 3.0.0)
 Collate: 
+    'assertions.R'
     'blocks.R'
     'renviron.R'
     'shell.R'
     'utils.R'
     'installers.R'
     'gfortran.R'
+    'macos-versions.R'
     'paths.R'
     'recipes.R'
+    'system-checks.R'
     'xcode-cli.R'
     'toolchain.R'
+    'version-check.R'
 Config/testthat/edition: 3
