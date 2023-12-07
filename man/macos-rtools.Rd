@@ -34,7 +34,10 @@ The macOS R compilation toolchain consists of:
 }
 
 The \code{mac_rtools_install()} function attempts to install each of the required
-components. Meanwhile, the \code{mac_rtools_uninstall()} function aims to
+components. If we detect that the Xcode.app IDE is installed, we'll skip
+attempting to install the Xcode CLI software.
+
+Meanwhile, the \code{mac_rtools_uninstall()} function aims to
 delete or uninstall the Xcode CLI and gfortran binaries. At the present moment,
 there is no support for uninstalling the binary packages from \code{recipes}.
 }

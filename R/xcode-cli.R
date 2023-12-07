@@ -94,9 +94,17 @@ is_xcode_cli_installed = function() {
 #' @param verbose    Display status messages
 xcode_cli_install = function(password = getOption("macrtools.password"), verbose = TRUE){
     assert_mac()
-    if(isTRUE(is_xcode_cli_installed())) {
+
+    if (isTRUE(is_xcode_cli_installed())) {
 
         if(verbose) message("Xcode CLI is already installed.")
+
+        return( invisible(TRUE) )
+    }
+
+    if (isTRUE(is_xcode_app_installed())) {
+
+        if(verbose) message("Xcode.app IDE is installed. Skipping the commandline installation.")
 
         return( invisible(TRUE) )
     }

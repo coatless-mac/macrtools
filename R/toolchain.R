@@ -18,7 +18,10 @@ NULL
 #' 3. A series of binary packages from the [`recipes`](https://github.com/R-macos/recipes) system to compile R.
 #'
 #' The `mac_rtools_install()` function attempts to install each of the required
-#' components. Meanwhile, the `mac_rtools_uninstall()` function aims to
+#' components. If we detect that the Xcode.app IDE is installed, we'll skip
+#' attempting to install the Xcode CLI software.
+#'
+#' Meanwhile, the `mac_rtools_uninstall()` function aims to
 #' delete or uninstall the Xcode CLI and gfortran binaries. At the present moment,
 #' there is no support for uninstalling the binary packages from `recipes`.
 #'
@@ -65,11 +68,15 @@ macos_rtools_install = function(
     describe_steps = isTRUE(verbose)
 
     result_xcode = TRUE
-    if(!is_xcode_cli_installed()) {
-        result_xcode = xcode_cli_install(password = entered_password, verbose = describe_steps)
-        if(!result_xcode) stop("Failed to install Xcode CLI. Please see manual steps above.")
+    if(!is_xcode_app_installed()) {
+        if(!is_xcode_cli_installed()) {
+            result_xcode = xcode_cli_install(password = entered_password, verbose = describe_steps)
+            if(!result_xcode) stop("Failed to install Xcode CLI. Please see manual steps above.")
+        } else {
+            if(describe_steps) cat("Xcode CLI was already installed! ...\n")
+        }
     } else {
-        if(describe_steps) cat("Xcode CLI was already installed! ...\n")
+        if(describe_steps) cat("Xcode.app was installed! Skipping the installation for Xcode CLI ...\n")
     }
 
     result_gfortran = TRUE
