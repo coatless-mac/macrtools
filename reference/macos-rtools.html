@@ -20,7 +20,7 @@ function aims to remove any installed files from your computer."><!-- mathjax --
     
     <a class="navbar-brand me-2" href="../index.html">macrtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,7 +81,9 @@ function aims to remove any installed files from your computer.</p>
 <li><p>gfortran</p></li>
 <li><p>A series of binary packages from the <a href="https://github.com/R-macos/recipes" class="external-link"><code>recipes</code></a> system to compile R.</p></li>
 </ol><p>The <code>mac_rtools_install()</code> function attempts to install each of the required
-components. Meanwhile, the <code>mac_rtools_uninstall()</code> function aims to
+components. If we detect that the Xcode.app IDE is installed, we'll skip
+attempting to install the Xcode CLI software.</p>
+<p>Meanwhile, the <code>mac_rtools_uninstall()</code> function aims to
 delete or uninstall the Xcode CLI and gfortran binaries. At the present moment,
 there is no support for uninstalling the binary packages from <code>recipes</code>.</p>
     </div>

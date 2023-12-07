@@ -37,9 +37,15 @@
     <loc>https://mac.thecoatlessprofessor.com/macrtools/reference/tar_package_install.html</loc>
   </url>
   <url>
+    <loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-app-ide.html</loc>
+  </url>
+  <url>
     <loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html</loc>
   </url>
   <url>
     <loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-select.html</loc>
+  </url>
+  <url>
+    <loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcodebuild.html</loc>
   </url>
 </urlset>
