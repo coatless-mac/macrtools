@@ -25,6 +25,12 @@ assert_mac = function(){
 
 #' @rdname assert
 #' @export
+assert_macos_supported = function() {
+    assert(is_macos_r_supported(), "On supported macOS version")
+}
+
+#' @rdname assert
+#' @export
 assert_aarch64 = function(){
     assert(is_aarch64(), "On aarch64")
 }

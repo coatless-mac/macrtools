@@ -158,17 +158,13 @@ gfortran_version = function() {
 #' @rdname gfortran
 gfortran_install = function(password = getOption("macrtools.password"), verbose = TRUE) {
     assert_mac()
+    assert_macos_supported()
 
     if(isTRUE(is_gfortran_installed())) {
         if(verbose) {
             cat("gfortran is already installed.\n")
         }
         return(invisible(TRUE))
-    }
-
-    if (!is_macos_r_supported()) {
-        cat("R version", getRversion(),"is not supported. Please upgrade.\n")
-        return(invisible(FALSE))
     }
 
     if (verbose) {
