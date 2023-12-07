@@ -5,8 +5,18 @@
 #' @param ... Additional parameters
 #' @export
 print.cli = function(x, ...) {
-    cat("Output:\n", paste(x$output, collapse = "\n"), "\n")
+
+    if(!identical(x$output, character(0)) ) {
+        cat("Output:\n", paste(x$output, collapse = "\n"), "\n")
+    }
+
+    if(!identical(x$error, character(0)) ) {
+        cat("Error:\n", paste(x$error, collapse = "\n"), "\n")
+    }
+
     cat("Status:\n", paste(x$status, collapse = "\n"), "\n")
+
+    return(invisible(x))
 }
 
 # Display download warning ----
