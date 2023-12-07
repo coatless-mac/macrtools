@@ -8,7 +8,7 @@
 #' @include shell.R utils.R installers.R
 NULL
 
-#' Install Binary Library from Recipes Project
+#' Install Binary Library from the CRAN R macOS Recipes Project
 #'
 #' Convenience function that seeks to install pre-built binary libraries
 #' used on [CRAN](https://cran.r-project.org/) for macOS through the
@@ -45,6 +45,7 @@ NULL
 #' | Name                                                             | Installation Location | Target                             |
 #' | ---------------------------------------------------------------- | --------------------- | ---------------------------------- |
 #' | [darwin17/x86_64](https://mac.r-project.org/bin/darwin17/x86_64) | /usr/local            | macOS 10.13, Intel (x86_64)        |
+#' | [darwin20/x86_64](https://mac.r-project.org/bin/darwin20/x86_64) | /opt/R/x86_64         | macOS 11, Intel (x86_64)           |
 #' | [darwin20/arm64](https://mac.r-project.org/bin/darwin20/arm64)   | /opt/R/arm64          | macOS 11, Apple M1 (arm64)         |
 #'
 #' @examples

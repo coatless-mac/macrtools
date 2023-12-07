@@ -9,8 +9,9 @@
 #' We have the following fixed paths:
 #'
 #' - Intel (x86_64)
-#'   - `/usr/local`
-#' - M1 or M2 (arm64 or aarch64)
+#'   - macOS 10.13: `/usr/local`
+#'   - macOS 11: `/opt/R/x86_64`
+#' - M1, M2, M3 (`arm64` or `aarch64`)
 #'   - `/opt/R/arm64`
 #' - Xcode Command Line Tools (Xcode CLI)
 #'   - `/Library/Developer/CommandLineTools`

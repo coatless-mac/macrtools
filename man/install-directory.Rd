@@ -29,9 +29,10 @@ We have the following fixed paths:
 \itemize{
 \item Intel (x86_64)
 \itemize{
-\item \verb{/usr/local}
+\item macOS 10.13: \verb{/usr/local}
+\item macOS 11: \verb{/opt/R/x86_64}
 }
-\item M1 or M2 (arm64 or aarch64)
+\item M1, M2, M3 (\code{arm64} or \code{aarch64})
 \itemize{
 \item \verb{/opt/R/arm64}
 }

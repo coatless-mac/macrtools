@@ -2,7 +2,7 @@
 % Please edit documentation in R/recipes.R
 \name{recipes_binary_install}
 \alias{recipes_binary_install}
-\title{Install Binary Library from Recipes Project}
+\title{Install Binary Library from the CRAN R macOS Recipes Project}
 \usage{
 recipes_binary_install(
   pkgs,
@@ -54,6 +54,7 @@ path for the binary packages when \code{"auto"} is set. By default, the
 repository and the install path are either:\tabular{lll}{
    Name \tab Installation Location \tab Target \cr
    \href{https://mac.r-project.org/bin/darwin17/x86_64}{darwin17/x86_64} \tab /usr/local \tab macOS 10.13, Intel (x86_64) \cr
+   \href{https://mac.r-project.org/bin/darwin20/x86_64}{darwin20/x86_64} \tab /opt/R/x86_64 \tab macOS 11, Intel (x86_64) \cr
    \href{https://mac.r-project.org/bin/darwin20/arm64}{darwin20/arm64} \tab /opt/R/arm64 \tab macOS 11, Apple M1 (arm64) \cr
 }
 }
