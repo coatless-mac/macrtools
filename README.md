@@ -8,15 +8,11 @@
 [![R-CMD-check](https://github.com/coatless-mac/macrtools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmacoslib/macrtools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-Repository: <https://github.com/coatless-mac/macrtools>
-
 **This is a work in progress package. Features may be unstable.**
 
 **This is an *unofficial* project to support users on macOS.**
 
-
-The [repository](https://github.com/coatless-mac/macrtools)
-includes source code for `macrtools`, which is an *R*
+The repository includes source code for `macrtools`, which is an *R*
 package exclusively for [Apple](https://www.apple.com/)’s macOS
 operating system. This package is designed to recreate the compiled code
 toolchain used to compile the [official macOS R binary on
@@ -62,7 +58,7 @@ This will attempt to install:
 
 - Xcode CLI
 - gfortran
-- R Development binaries
+- R Development binaries from the Recipes project
 
 The compilation toolchain can be removed by using:
 
@@ -87,6 +83,17 @@ macrtools::is_xcode_cli_installed()
 # We can verify gfortran is present as well
 macrtools::is_gfortran_installed()
 ```
+
+The package can also check to see if the full version of the Xcode
+(Xcode.app IDE) is installed.
+
+``` r
+# See if Xcode.app IDE is in use
+macrtools::is_xcode_app_installed()
+```
+
+The Xcode.app is a significantly larger development toolkit compared to
+Xcode CLI.
 
 ### Installation
 
@@ -129,8 +136,8 @@ We previously wrote two very successful installer packages (
 [`r-macos-clang`](https://github.com/coatless-mac/r-macos-clang)).
 However, as part of the up-keep of the installer package, we needed to
 have a yearly subscription to Apple’s [Developer
-program](https://developer.apple.com/), which has a base cost of \~\$99
-and sales tax of about \~\$6 leading to an annual expense of \~\$105 per
+program](https://developer.apple.com/), which has a base cost of ~\$99
+and sales tax of about ~\$6 leading to an annual expense of ~\$105 per
 year. Given that we only used the Developer account to sign and notarize
 only the installers packages, we opted not to continue on this path.
 

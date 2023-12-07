@@ -63,7 +63,7 @@ This will attempt to install:
 
 - Xcode CLI
 - gfortran
-- R Development binaries 
+- R Development binaries from the Recipes project
 
 The compilation toolchain can be removed by using: 
 
@@ -87,6 +87,16 @@ macrtools::is_xcode_cli_installed()
 # We can verify gfortran is present as well
 macrtools::is_gfortran_installed()
 ```
+
+The package can also check to see if the full version of the Xcode (Xcode.app IDE)
+is installed.
+
+```r
+# See if Xcode.app IDE is in use
+macrtools::is_xcode_app_installed()
+```
+
+The Xcode.app is a significantly larger development toolkit compared to Xcode CLI.
 
 ### Installation
 
