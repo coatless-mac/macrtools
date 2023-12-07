@@ -1,6 +1,6 @@
 Package: macrtools
 Title: macOS Rtools package
-Version: 0.0.0.9000
+Version: 0.0.2
 Authors@R: c(
     person(given = "James Joseph", 
            family = "Balamuta", 
@@ -46,4 +46,7 @@ Collate:
     'xcode-cli.R'
     'toolchain.R'
     'version-check.R'
+    'xcode-app-ide.R'
+    'xcode-select.R'
+    'xcodebuild.R'
 Config/testthat/edition: 3
