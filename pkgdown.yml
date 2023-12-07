@@ -2,7 +2,7 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles: {}
-last_built: 2023-12-07T08:47Z
+last_built: 2023-12-07T09:19Z
 urls:
   reference: https://mac.thecoatlessprofessor.com/macrtools/reference
   article: https://mac.thecoatlessprofessor.com/macrtools/articles

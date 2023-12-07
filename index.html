@@ -32,7 +32,7 @@
     
     <a class="navbar-brand me-2" href="index.html">macrtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,9 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -61,10 +64,9 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Repository: <a href="https://github.com/coatless-mac/macrtools" class="external-link uri">https://github.com/coatless-mac/macrtools</a></p>
 <p><strong>This is a work in progress package. Features may be unstable.</strong></p>
 <p><strong>This is an <em>unofficial</em> project to support users on macOS.</strong></p>
-<p>The <a href="https://github.com/coatless-mac/macrtools" class="external-link">repository</a> includes source code for <code>macrtools</code>, which is an <em>R</em> package exclusively for <a href="https://www.apple.com/" class="external-link">Apple</a>’s macOS operating system. This package is designed to recreate the compiled code toolchain used to compile the <a href="https://cran.r-project.org/bin/macosx/" class="external-link">official macOS R binary on CRAN</a> by following the steps described on the <a href="https://mac.r-project.org/tools/" class="external-link">r-project developer page for macOS <code>tools</code></a>. The package is able to to setup the compilation toolchain on any Mac that meets the standards required to install the official CRAN <em>R</em> binary on macOS.</p>
+<p>The repository includes source code for <code>macrtools</code>, which is an <em>R</em> package exclusively for <a href="https://www.apple.com/" class="external-link">Apple</a>’s macOS operating system. This package is designed to recreate the compiled code toolchain used to compile the <a href="https://cran.r-project.org/bin/macosx/" class="external-link">official macOS R binary on CRAN</a> by following the steps described on the <a href="https://mac.r-project.org/tools/" class="external-link">r-project developer page for macOS <code>tools</code></a>. The package is able to to setup the compilation toolchain on any Mac that meets the standards required to install the official CRAN <em>R</em> binary on macOS.</p>
 <p><strong>Note:</strong> The installer package was developed by <a href="https://thecoatlessprofessor.com/" class="external-link">James Joseph Balamuta</a> and has no connection with the R project’s macOS CRAN maintainers.</p>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
@@ -89,7 +91,7 @@
 <ul>
 <li>Xcode CLI</li>
 <li>gfortran</li>
-<li>R Development binaries</li>
+<li>R Development binaries from the Recipes project</li>
 </ul>
 <p>The compilation toolchain can be removed by using:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -110,12 +112,17 @@
 <span></span>
 <span><span class="co"># We can verify gfortran is present as well</span></span>
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/gfortran.html">is_gfortran_installed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The package can also check to see if the full version of the Xcode (Xcode.app IDE) is installed.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># See if Xcode.app IDE is in use</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-app-ide.html">is_xcode_app_installed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The Xcode.app is a significantly larger development toolkit compared to Xcode CLI.</p>
 </div>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <p>The next set of functions focus primarily on installing different binary packages into the required locations.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can perform a non-interactive installation of Xcode CLI with:</span></span>
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-cli.html">xcode_cli_install</a></span><span class="op">(</span><span class="op">)</span> </span>
 <span></span>
@@ -129,7 +136,7 @@
 <h3 id="uninstall">Uninstall<a class="anchor" aria-label="anchor" href="#uninstall"></a>
 </h3>
 <p>If we no longer have interest in having development tools present, we can remove the development tools using:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can remove Xcode CLI using</span></span>
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-cli.html">xcode_cli_uninstall</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
