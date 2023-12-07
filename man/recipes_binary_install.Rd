@@ -26,9 +26,9 @@ recipes_binary_install(
 \item{os}{Name and version of the OS, e.g. \code{"darwin22"} where \code{"darwin"}
 refers to macOS and \code{22} is the kernel version number.}
 
-\item{arch}{The architecture of either \code{arm64} (M1/M2) or \code{x86_64} (Intel). This is only used if \code{os.arch="auto"}.}
+\item{arch}{The architecture of either \code{arm64} (M1/M2/M3) or \code{x86_64} (Intel). This is only used if \code{os.arch="auto"}.}
 
-\item{os.arch}{Either name of the repository such as \code{"darwin20/arm64"}, \code{"darwin17/x86_64"}, or \code{"auto"}.
+\item{os.arch}{Either name of the repository such as \code{"darwin20/arm64"}, \code{"darwin20/x86_64"}, \code{"darwin17/x86_64"}, or \code{"auto"}.
 Default \code{"auto"}.}
 
 \item{dependencies}{Install build dependencies (\code{TRUE}) or only the requested packages (\code{FALSE}). Default \code{TRUE}.}

@@ -18,8 +18,8 @@ NULL
 #' @param url     URL of the repository root. Default <https://mac.R-project.org/bin>
 #' @param os      Name and version of the OS, e.g. `"darwin22"` where `"darwin"`
 #'                refers to macOS and `22` is the kernel version number.
-#' @param arch    The architecture of either `arm64` (M1/M2) or `x86_64` (Intel). This is only used if `os.arch="auto"`.
-#' @param os.arch Either name of the repository such as `"darwin20/arm64"`, `"darwin17/x86_64"`, or `"auto"`.
+#' @param arch    The architecture of either `arm64` (M1/M2/M3) or `x86_64` (Intel). This is only used if `os.arch="auto"`.
+#' @param os.arch Either name of the repository such as `"darwin20/arm64"`, `"darwin20/x86_64"`, `"darwin17/x86_64"`, or `"auto"`.
 #'                Default `"auto"`.
 #' @param dependencies Install build dependencies (`TRUE`) or only the requested packages (`FALSE`). Default `TRUE`.
 #' @param action  Determine if the binary should be downloaded and installed (`"install"`)
