@@ -11,6 +11,7 @@ xcode_select = function(args) {
     structure(
         list(
             output = sys::as_text(out$stdout),
+            error = sys::as_text(out$stderr),
             status = out$status
         ),
         class = c("xcodeselect", "cli")
