@@ -14,7 +14,7 @@ install_strip_level = function(arch = system_arch()) {
 }
 
 recipe_binary_install_strip_level = function(arch = system_arch()) {
-    if (is_r_version("4.3")) {
+    if (is_r_version("4.3") || is_r_version("4.4")) {
         switch(
             arch,
             "arm64" = 3,
@@ -42,7 +42,7 @@ install_location = function(arch = system_arch()) {
 }
 
 recipe_binary_install_location = function(arch = system_arch()) {
-    if (is_r_version("4.3")) {
+    if (is_r_version("4.3") || is_r_version("4.4")) {
         switch(
             arch,
             "arm64" = install_directory_arm64(),

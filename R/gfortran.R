@@ -187,7 +187,7 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
 
     gfortran_status = FALSE
 
-    if(is_r_version("4.3")) {
+    if(is_r_version("4.3") || is_r_version("4.4")) {
         gfortran_status = install_gfortran_12_2_universal(
             password = entered_password_gfortran,
             verbose = verbose)
