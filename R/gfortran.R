@@ -187,7 +187,7 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
 
     gfortran_status = FALSE
 
-    if(is_r_version("4.3")) {
+    if(is_r_version("4.3") || is_r_version("4.4")) {
         gfortran_status = install_gfortran_12_2_universal(
             password = entered_password_gfortran,
             verbose = verbose)
@@ -219,7 +219,7 @@ gfortran_install = function(password = getOption("macrtools.password"), verbose 
         version_number = paste(R.version$major, R.version$minor, sep = ".")
         cat(
             paste0(
-            "The macrtools package supports gfortran installations for R 4.0.* - R 4.3.*.\nThe installed version of R (", version_number, ") is not yet supported!\n"
+            "The macrtools package supports gfortran installations for R 4.0.* - R 4.4.*.\nThe installed version of R (", version_number, ") is not yet supported!\n"
             )
         )
         return(invisible(FALSE))
@@ -320,7 +320,7 @@ gfortran_update = function(password = getOption("macrtools.password"), verbose =
     assert_mac()
     assert_aarch64()
     assert(is_gfortran_installed(), "On gfortran")
-    assert(is_r_version("4.2") || is_r_version("4.3"), "On R 4.2 or above")
+    assert(is_r_version("4.2") || is_r_version("4.3") || is_r_version("4.4"), "On R 4.2 or above")
 
     # Figure out installation directory
     install_dir = install_location()

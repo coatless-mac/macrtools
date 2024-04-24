@@ -2,6 +2,12 @@
 
 ## Features
 
+- Updated to support R 4.4.0 on macOS.
+
+## Deployment
+
+- GitHub Actions now tests the package on `release` and `next` versions of 
+  macOS R's version.
 
 # macrtools 0.0.3
 
