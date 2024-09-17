@@ -1,3 +1,9 @@
+# macrtools 0.0.5
+
+## Features
+
+- Updated to support macOS Sequoia (15.0.0)
+
 # macrtools 0.0.4
 
 ## Features
