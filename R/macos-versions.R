@@ -7,7 +7,13 @@ shell_mac_version = function() {
 is_macos_r_supported = function() {
     mac_version = shell_mac_version()
 
-    version_between(mac_version, "10.13.0", "15.0.0")
+    version_between(mac_version, "10.13.0", "16.0.0")
+}
+
+is_macos_sequoia = function() {
+    mac_version = shell_mac_version()
+
+    version_between(mac_version, "15.0.0", "16.0.0")
 }
 
 is_macos_sonoma = function() {
