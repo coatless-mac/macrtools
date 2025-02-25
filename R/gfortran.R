@@ -252,7 +252,7 @@ gfortran_install <- function(password = getOption("macrtools.password"), verbose
             "Architecture: {.val {system_arch()}}",
             "R version: {.val {paste(R.version$major, R.version$minor, sep='.')}}"
         ),
-        advice = "Please try to manually install following the instructions at: https://rmacoslib.github.io/macrtools/reference/gfortran.html#installing-gfortran")
+        advice = "Please try to manually install following the instructions at: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#installing-gfortran")
         return(invisible(FALSE))
     }
 
@@ -331,7 +331,7 @@ gfortran_uninstall <- function(password = getOption("macrtools.password"), verbo
         cli_error(c(
             "We were not able to uninstall gfortran.",
             "Please try to manually uninstall using:",
-            "{.url https://rmacoslib.github.io/macrtools/reference/gfortran.html#uninstalling-gfortran}"
+            "{.url https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#uninstalling-gfortran}"
         ))
         return(invisible(FALSE))
     }
@@ -391,7 +391,7 @@ gfortran_update <- function(password = getOption("macrtools.password"), verbose 
         cli_error(c(
             "We were not able to update gfortran.",
             "Please try to manually update using:",
-            "{.url https://rmacoslib.github.io/macrtools/reference/gfortran.html#updating-gfortran}"
+            "{.url https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#updating-gfortran}"
         ))
         return(invisible(FALSE))
     }

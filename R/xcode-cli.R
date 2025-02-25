@@ -156,7 +156,7 @@ xcode_cli_install <- function(password = getOption("macrtools.password"), verbos
         cli_error(c(
             "We were not able to install Xcode CLI.",
             "Please try to manually install using:",
-            "{.url https://rmacoslib.github.io/macrtools/reference/xcode-cli.html#xcode-cli-installation}"
+            "{.url https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html#xcode-cli-installation}"
         ))
         return(invisible(FALSE))
     }
@@ -237,7 +237,7 @@ xcode_cli_uninstall <- function(password = getOption("macrtools.password"), verb
         cli_error(c(
             "We were not able to uninstall Xcode CLI.",
             "Please try to manually uninstall using:",
-            "{.url https://rmacoslib.github.io/macrtools/reference/xcode-cli.html#uninstalling-xcode-cli}"
+            "{.url https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html#uninstalling-xcode-cli}"
         ))
         return(invisible(FALSE))
     }

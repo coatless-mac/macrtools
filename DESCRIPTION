@@ -29,7 +29,7 @@ Imports:
     utils,
     cli, 
     rlang
-URL: https://rmacoslib.github.io/macrtools/
+URL: https://mac.thecoatlessprofessor.com/macrtools/
 Suggests: 
     rstudioapi,
     testthat (>= 3.0.0)

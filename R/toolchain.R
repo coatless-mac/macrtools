@@ -186,7 +186,7 @@ macos_rtools_install <- function(
                 "This is a required component for many scientific R packages.",
                 "Installation status: Failed"
             ),
-            advice = "Try installing manually following the instructions at: https://rmacoslib.github.io/macrtools/reference/gfortran.html")
+            advice = "Try installing manually following the instructions at: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html")
         }
 
         if (verbose) cli_process_update(pb_id, 0.6, "Gfortran installation complete")
