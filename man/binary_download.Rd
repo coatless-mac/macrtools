@@ -4,7 +4,13 @@
 \alias{binary_download}
 \title{Download Binary Packages}
 \usage{
-binary_download(url, binary_file_name = basename(url), verbose = TRUE)
+binary_download(
+  url,
+  binary_file_name = base::basename(url),
+  verbose = TRUE,
+  mode = "wb",
+  timeout = 600
+)
 }
 \arguments{
 \item{url}{A link containing the binary file to download.}
@@ -12,6 +18,10 @@ binary_download(url, binary_file_name = basename(url), verbose = TRUE)
 \item{binary_file_name}{Name of the binary file to save. Default \code{basname(url)}}
 
 \item{verbose}{Display a status messages. Default \code{true}}
+
+\item{mode}{Mode to use for download. Default is "wb" (binary mode)}
+
+\item{timeout}{Timeout in seconds. Default is 600 (10 minutes)}
 }
 \value{
 The file path for the binary file in the temporary \emph{R} directory

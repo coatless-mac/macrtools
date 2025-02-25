@@ -1,4 +1,4 @@
-#' @include utils.R shell.R installers.R
+#' @include utils.R shell.R installers.R cli-custom.R
 NULL
 
 #' Find, Install, or Uninstall XCode CLI
@@ -20,14 +20,14 @@ NULL
 #' @examples
 #' # Check if Xcode CLI is installed
 #' is_xcode_cli_installed()
-is_xcode_cli_installed = function() {
+is_xcode_cli_installed <- function() {
     assert_mac()
 
-    path_info = xcode_select_path()
+    path_info <- xcode_select_path()
 
     identical(path_info$status, 0L) &&
-    identical(path_info$output, install_directory_xcode_cli()) &&
-    dir.exists(path_info$output)
+        identical(path_info$output, install_directory_xcode_cli()) &&
+        dir.exists(path_info$output)
 }
 
 #' @section XCode CLI Installation:
@@ -92,29 +92,27 @@ is_xcode_cli_installed = function() {
 #' @export
 #' @rdname xcode-cli
 #' @param verbose    Display status messages
-xcode_cli_install = function(password = getOption("macrtools.password"), verbose = TRUE){
+xcode_cli_install <- function(password = getOption("macrtools.password"), verbose = TRUE){
     assert_mac()
 
     if (isTRUE(is_xcode_cli_installed())) {
-
-        if(verbose) message("Xcode CLI is already installed.")
-
-        return( invisible(TRUE) )
+        if(verbose) cli_info("Xcode CLI is already installed.")
+        return(invisible(TRUE))
     }
 
     if (isTRUE(is_xcode_app_installed())) {
-
-        if(verbose) message("Xcode.app IDE is installed. Skipping the commandline installation.")
-
-        return( invisible(TRUE) )
+        if(verbose) cli_info("Xcode.app IDE is installed. Skipping the commandline installation.")
+        return(invisible(TRUE))
     }
 
-    temporary_xcli_file = "/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress"
+    temporary_xcli_file <- "/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress"
 
     # Create a temporary in-progress file
     file.create(temporary_xcli_file)
 
-    product_information =
+    if (verbose) cli_info("Checking for available Xcode CLI updates...")
+
+    product_information <-
         system("softwareupdate -l |
           grep '\\*.*Command Line' |
           tail -n 1 |
@@ -123,36 +121,51 @@ xcode_cli_install = function(password = getOption("macrtools.password"), verbose
           sed 's/Label: //g' |
           tr -d '\n'", intern = TRUE)
 
-    if (verbose) {
-        cat("Attempting to install Xcode CLI version:", product_information, "...\n")
-        cat("Please be patient or grab a cup of coffee as Xcode CLI installs.\n")
-        cat("\nWe expect the installation to take between 10 to 15 minutes.\n\n")
+    if (length(product_information) == 0) {
+        cli_error("Could not find Xcode CLI in software updates. Try installing manually.")
+        # Remove temporary in-progress file if left in place
+        if(file.exists(temporary_xcli_file)) {
+            file.remove(temporary_xcli_file)
+        }
+        return(invisible(FALSE))
     }
 
-    user_password = password
-    describe_everything = isTRUE(verbose)
+    if (verbose) {
+        cli_info(c(
+            "Installing Xcode CLI version: {.val {product_information}}",
+            "This process may take 10-15 minutes. Please be patient."
+        ))
+    }
 
-    cmd = paste("softwareupdate", "-i", shQuote(product_information), "--verbose")
+    user_password <- password
+    describe_everything <- isTRUE(verbose)
 
-    xcli_status = shell_execute(cmd,
-                           sudo = TRUE, password = user_password, verbose = describe_everything)
+    cmd <- paste("softwareupdate", "-i", shQuote(product_information), "--verbose")
+
+    xcli_status <- shell_execute(cmd,
+                                 sudo = TRUE, password = user_password, verbose = describe_everything)
 
     # Remove temporary in-progress file if left in place
     if(file.exists(temporary_xcli_file)) {
         file.remove(temporary_xcli_file)
     }
 
-    xcli_clean = identical(xcli_status, 0L)
-
+    xcli_clean <- identical(xcli_status, 0L)
 
     if(isFALSE(xcli_clean)) {
-        cat("We were not able to install Xcode CLI ...\n")
-        cat("Please try to manually install using: ..\n")
-        cat("https://rmacoslib.github.io/macrtools/reference/xcode-cli.html#xcode-cli-installation\n")
+        cli_error(c(
+            "We were not able to install Xcode CLI.",
+            "Please try to manually install using:",
+            "{.url https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html#xcode-cli-installation}"
+        ))
         return(invisible(FALSE))
     }
 
-    return( invisible( xcli_clean ) )
+    if (verbose) {
+        cli_success("Xcode CLI installed successfully!")
+    }
+
+    return(invisible(xcli_clean))
 }
 
 
@@ -189,35 +202,48 @@ xcode_cli_install = function(password = getOption("macrtools.password"), verbose
 #' @export
 #' @rdname xcode-cli
 #' @param password   User password to access `sudo`.
-xcode_cli_uninstall = function(password = getOption("macrtools.password"), verbose = TRUE){
+xcode_cli_uninstall <- function(password = getOption("macrtools.password"), verbose = TRUE){
     assert_mac()
+
     if(isFALSE(is_xcode_cli_installed())) {
-        if(verbose) message("Xcode CLI is not installed.")
-        return( invisible(TRUE) )
+        if(verbose) cli_info("Xcode CLI is not installed.")
+        return(invisible(TRUE))
     }
 
-    xcli_path = xcode_cli_path()
+    xcli_path <- xcode_cli_path()
 
     # We should never hit this line of code as the is_xcode_cli_installed() now
     # focuses on only CLI. But, we might want to change that.
     if(xcli_path == install_directory_xcode_app()) {
-        message("We detected the full Xcode application in use at: ", xcode_cli_path)
-        message("Please uninstall it using the App store.")
-        return( invisible(TRUE) )
+        cli_warning(c(
+            "We detected the full Xcode application in use at: {.path {xcode_cli_path()}}",
+            "Please uninstall it using the App Store or manually."
+        ))
+        return(invisible(TRUE))
+    }
+
+    if (verbose) {
+        cli_info("Uninstalling Xcode CLI...")
     }
 
     # Remove the shell execution script
-    xcli_uninstall_status = shell_execute("rm -rf /Library/Developer/CommandLineTools",
-                  sudo = TRUE,
-                  password = password)
+    xcli_uninstall_status <- shell_execute("rm -rf /Library/Developer/CommandLineTools",
+                                           sudo = TRUE,
+                                           password = password)
 
-    xcli_uninstall_clean = identical(xcli_uninstall_status, 0L)
+    xcli_uninstall_clean <- identical(xcli_uninstall_status, 0L)
 
     if(isFALSE(xcli_uninstall_clean)) {
-        cat("We were not able to uninstall Xcode CLI ...\n")
-        cat("Please try to manually uninstall using: ..\n")
-        cat("https://rmacoslib.github.io/macrtools/reference/xcode-cli.html#uninstalling-xcode-cli\n")
+        cli_error(c(
+            "We were not able to uninstall Xcode CLI.",
+            "Please try to manually uninstall using:",
+            "{.url https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html#uninstalling-xcode-cli}"
+        ))
         return(invisible(FALSE))
+    }
+
+    if (verbose) {
+        cli_success("Xcode CLI uninstalled successfully!")
     }
 
     invisible(xcli_uninstall_clean)
@@ -228,8 +254,8 @@ xcode_cli_uninstall = function(password = getOption("macrtools.password"), verbo
 #' @examples
 #' # Determine the path location of Xcode CLI
 #' xcode_cli_path()
-xcode_cli_path = function() {
-    inquiry_on_path = xcode_select_path()
+xcode_cli_path <- function() {
+    inquiry_on_path <- xcode_select_path()
     if (identical(inquiry_on_path$status, 0L)) {
         inquiry_on_path$output
     } else {
@@ -253,26 +279,34 @@ xcode_cli_path = function() {
 #' function.
 #' @export
 #' @rdname xcode-cli
-xcode_cli_switch = function(password = getOption("macrtools.password"), verbose = TRUE) {
-
+xcode_cli_switch <- function(password = getOption("macrtools.password"), verbose = TRUE) {
     # The path matches with the default install directory location.
     if (xcode_cli_path() == install_directory_xcode_cli()) {
-        if (verbose) cat("Xcode CLI path is correctly set ...\n")
-        return( invisible(TRUE) )
+        if (verbose) cli_info("Xcode CLI path is correctly set.")
+        return(invisible(TRUE))
     }
 
     # Need to modify the location to the current CLI path
-    if (verbose) cat("Setting the Xcode CLI path ...\n")
+    if (verbose) cli_info("Setting the Xcode CLI path...")
 
-    cmd = paste("xcode-select", "--switch", install_directory_xcode_cli())
+    cmd <- paste("xcode-select", "--switch", install_directory_xcode_cli())
 
     # Change the directory
-    xcli_switch_status = shell_execute(cmd,
-                           sudo = TRUE,
-                           password = password,
-                           verbose = verbose)
+    xcli_switch_status <- shell_execute(cmd,
+                                        sudo = TRUE,
+                                        password = password,
+                                        verbose = verbose)
 
-    xcli_switch_clean = identical(xcli_switch_status, 0L)
+    xcli_switch_clean <- identical(xcli_switch_status, 0L)
+
+    if(isFALSE(xcli_switch_clean)) {
+        cli_error("Failed to switch Xcode CLI path.")
+        return(invisible(FALSE))
+    }
+
+    if (verbose) {
+        cli_success("Xcode CLI path updated successfully!")
+    }
 
     return(invisible(xcli_switch_clean))
 }
@@ -289,21 +323,25 @@ xcode_cli_switch = function(password = getOption("macrtools.password"), verbose 
 #'
 #' @export
 #' @rdname xcode-cli
-xcode_cli_reset = function(password = getOption("macrtools.password"), verbose = TRUE) {
+xcode_cli_reset <- function(password = getOption("macrtools.password"), verbose = TRUE) {
+    if (verbose) cli_info("Resetting Xcode CLI to default settings...")
 
-    if (verbose) cat("Attempting to reset Xcode CLI to default settings ...\n")
-
-    cmd = paste("xcode-select", "--reset")
+    cmd <- paste("xcode-select", "--reset")
 
     # Change the directory
-    xcli_reset_status = shell_execute(cmd,
-                           sudo = TRUE,
-                           password = password,
-                           verbose = verbose)
+    xcli_reset_status <- shell_execute(cmd,
+                                       sudo = TRUE,
+                                       password = password,
+                                       verbose = verbose)
 
-    xcli_reset_clean = xcli_reset_status == 0L
+    xcli_reset_clean <- xcli_reset_status == 0L
 
-    if(verbose && xcli_reset_clean) cat("Successfully reset Xcode CLI settings ...\n")
+    if(isFALSE(xcli_reset_clean)) {
+        cli_error("Failed to reset Xcode CLI settings.")
+        return(invisible(FALSE))
+    }
+
+    if(verbose) cli_success("Successfully reset Xcode CLI settings!")
 
     return(invisible(xcli_reset_clean))
 }
