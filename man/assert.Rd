@@ -6,24 +6,29 @@
 \alias{assert_macos_supported}
 \alias{assert_aarch64}
 \alias{assert_x86_64}
+\alias{assert_r_version_supported}
 \title{Assert a condition}
 \usage{
-assert(condition, message = NULL)
+assert(condition, message = NULL, call = caller_env())
 
-assert_mac()
+assert_mac(call = caller_env())
 
-assert_macos_supported()
+assert_macos_supported(call = caller_env())
 
-assert_aarch64()
+assert_aarch64(call = caller_env())
 
-assert_x86_64()
+assert_x86_64(call = caller_env())
+
+assert_r_version_supported(call = caller_env())
 }
 \arguments{
 \item{condition}{A logical indicating the status of the condition.}
 
-\item{message}{A string to display.}
+\item{message}{A string to display in the error message.}
+
+\item{call}{The calling environment (default: caller_env()).}
 }
 \description{
-\code{assert()} allows a function state to be checked and stopped.
+\code{assert()} checks a condition and throws an error with a formatted message if it fails.
 }
 \keyword{internal}

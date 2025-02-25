@@ -1,6 +1,6 @@
 Package: macrtools
 Title: macOS Rtools package
-Version: 0.0.4
+Version: 0.0.4.1
 Authors@R: c(
     person(given = "James Joseph", 
            family = "Balamuta", 
@@ -18,7 +18,7 @@ Description: Sets up the macOS Rtools compiled code toolchain.
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 OS_type: unix
 SystemRequirements: macOS
 Imports: 
@@ -26,12 +26,15 @@ Imports:
     stats,
     sys,
     tools,
-    utils
+    utils,
+    cli, 
+    rlang
 URL: https://rmacoslib.github.io/macrtools/
 Suggests: 
     rstudioapi,
     testthat (>= 3.0.0)
 Collate: 
+    'cli-custom.R'
     'assertions.R'
     'blocks.R'
     'renviron.R'
@@ -49,4 +52,5 @@ Collate:
     'xcode-app-ide.R'
     'xcode-select.R'
     'xcodebuild.R'
+    'zzz.R'
 Config/testthat/edition: 3
