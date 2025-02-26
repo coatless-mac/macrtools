@@ -1,7 +1,3 @@
-#' @include shell.R utils.R installers.R renviron.R cli-custom.R
-NULL
-
-
 #' Find, Install, or Uninstall gfortran
 #'
 #' Set of functions that seek to identify whether gfortran was installed,
@@ -39,10 +35,10 @@ is_gfortran_installed <- function() {
 
     # Figure out installation directory
     install_dir <- gfortran_install_location()
-    path_gfortran <- file.path(install_dir, "gfortran")
+    path_gfortran <- base::file.path(install_dir, "gfortran")
 
     # Check if the directory is present
-    dir.exists(path_gfortran)
+    base::dir.exists(path_gfortran)
 }
 
 #' @export
@@ -156,36 +152,50 @@ gfortran_version <- function() {
 #'                 `NULL`.
 #' @export
 #' @rdname gfortran
-gfortran_install <- function(password = getOption("macrtools.password"), verbose = TRUE) {
+gfortran_install <- function(password = base::getOption("macrtools.password"), verbose = TRUE) {
     assert_mac()
     assert_macos_supported()
     assert_r_version_supported()
 
-    if(isTRUE(is_gfortran_installed())) {
+    if(base::isTRUE(is_gfortran_installed())) {
         if(verbose) {
-            cli_info(c(
-                "gfortran is already installed at {.path {file.path(gfortran_install_location(), 'gfortran')}}.",
-                "Version information: {.val {tryCatch(sys::as_text(sys::exec_internal('gfortran', '--version')$stdout), error = function(e) 'Unknown')}}"
+            # Get gfortran path and version info
+            install_path <- base::file.path(gfortran_install_location(), 'gfortran')
+            version_info <- base::tryCatch(
+                sys::as_text(sys::exec_internal('gfortran', '--version')$stdout),
+                error = function(e) 'Unknown'
+            )
+
+            cli::cli_alert_info("{.pkg macrtools}: gfortran is already installed.")
+            cli::cli_bullets(c(
+                "Installation path: {.path {install_path}}",
+                "Version information: {.val {version_info}}"
             ))
+            cli::cli_text("") # Add spacing
         }
-        return(invisible(TRUE))
+        return(base::invisible(TRUE))
     }
 
     if (verbose) {
-        cli_info(c(
-            "Preparing to download and install gfortran...",
-            "Architecture: {.val {system_arch()}}",
-            "R version: {.val {paste(R.version$major, R.version$minor, sep='.')}}",
-            "Expected installation time: 2-5 minutes on a broadband connection."
+        # Get system info
+        arch_info <- system_arch()
+        r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
+
+        cli::cli_alert_info("{.pkg macrtools}: Preparing to download and install gfortran.")
+        cli::cli_bullets(c(
+            "Architecture: {.val {arch_info}}",
+            "R version: {.val {r_version}}",
+            "Expected installation time: 2-5 minutes on a broadband connection"
         ))
+        cli::cli_text("") # Add spacing
     }
 
     # Figure out installation directory
     install_dir <- gfortran_install_location()
 
     # Establish a path
-    path_gfortran_bin <- file.path(install_dir, "gfortran", "bin")
-    path_variable <- paste0("${PATH}:", path_gfortran_bin)
+    path_gfortran_bin <- base::file.path(install_dir, "gfortran", "bin")
+    path_variable <- base::paste0("${PATH}:", path_gfortran_bin)
 
     # Prompt for password if not found
     entered_password_gfortran <- force_password(password)
@@ -207,67 +217,78 @@ gfortran_install <- function(password = getOption("macrtools.password"), verbose
         } else if (is_aarch64()) {
             if (is_r_version("4.2")) {
                 if (verbose) {
-                    cli_info(c(
-                        "Installing gfortran 12 for Apple Silicon with R 4.2",
+                    install_path <- install_location()
+                    cli::cli_alert_info("{.pkg macrtools}: Installing gfortran 12 for Apple Silicon with R 4.2")
+                    cli::cli_bullets(c(
                         "Source: {.url https://mac.r-project.org/tools/}",
-                        "Target installation: {.path {install_location()}}"
+                        "Target installation: {.path {install_path}}"
                     ))
+                    cli::cli_text("") # Add spacing
                 }
                 gfortran_status <- install_gfortran_12_arm(
                     password = entered_password_gfortran,
                     verbose = verbose)
             } else if(is_r_version("4.1")) {
                 if (verbose) {
-                    cli_info(c(
-                        "Installing gfortran 11 for Apple Silicon with R 4.1",
+                    install_path <- install_location()
+                    cli::cli_alert_info("{.pkg macrtools}: Installing gfortran 11 for Apple Silicon with R 4.1")
+                    cli::cli_bullets(c(
                         "Source: {.url https://mac.r-project.org/libs-arm64/}",
-                        "Target installation: {.path {install_location()}}"
+                        "Target installation: {.path {install_path}}"
                     ))
+                    cli::cli_text("") # Add spacing
                 }
                 gfortran_status <- install_gfortran_11_arm(
                     password = entered_password_gfortran,
                     verbose = verbose)
             } else {
-                cli_error(c(
-                    "Unable to install gfortran for Apple Silicon (arm64/aarch64).",
-                    "Official R support for Apple Silicon began in R 4.1.",
-                    "Please upgrade R to version 4.1 or higher."
-                ),
-                advice = "Visit https://cran.r-project.org/bin/macosx/ to download a compatible R version for Apple Silicon.")
-                return(invisible(FALSE))
+                cli::cli_abort(c(
+                    "{.pkg macrtools}: Unable to install gfortran for Apple Silicon (arm64/aarch64).",
+                    "i" = "Official R support for Apple Silicon began in R 4.1.",
+                    "i" = "Please upgrade R to version 4.1 or higher.",
+                    "i" = "Visit https://cran.r-project.org/bin/macosx/ to download a compatible R version for Apple Silicon."
+                ))
+                return(base::invisible(FALSE))
             }
         } else {
-            cli_error(c(
-                "Unsupported macOS architecture: {.val {system_arch()}}",
-                "Only Intel (x86_64) and Apple Silicon (arm64/aarch64) architectures are supported."
+            arch <- system_arch()
+            cli::cli_abort(c(
+                "{.pkg macrtools}: Unsupported macOS architecture: {.val {arch}}",
+                "i" = "Only Intel (x86_64) and Apple Silicon (arm64/aarch64) architectures are supported."
             ))
-            return(invisible(FALSE))
+            return(base::invisible(FALSE))
         }
     }
 
-    if(isFALSE(gfortran_status)) {
-        cli_error(c(
-            "Failed to install gfortran.",
-            "Installation target: {.path {gfortran_install_location()}}",
-            "Architecture: {.val {system_arch()}}",
-            "R version: {.val {paste(R.version$major, R.version$minor, sep='.')}}"
-        ),
-        advice = "Please try to manually install following the instructions at: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#installing-gfortran")
-        return(invisible(FALSE))
+    if(base::isFALSE(gfortran_status)) {
+        install_path <- gfortran_install_location()
+        arch_info <- system_arch()
+        r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
+
+        cli::cli_abort(c(
+            "{.pkg macrtools}: Failed to install gfortran.",
+            "i" = "Installation target: {.path {install_path}}",
+            "i" = "Architecture: {.val {arch_info}}",
+            "i" = "R version: {.val {r_version}}",
+            "i" = "Please try to manually install following the instructions at: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#installing-gfortran"
+        ))
+        return(base::invisible(FALSE))
     }
 
     renviron_gfortran_path(path_variable)
 
     if (verbose) {
-        cli_success(c(
-            "gfortran was successfully installed!",
-            "Installation location: {.path {file.path(gfortran_install_location(), 'gfortran')}}",
+        install_path <- base::file.path(gfortran_install_location(), 'gfortran')
+        cli::cli_alert_success("{.pkg macrtools}: gfortran was successfully installed!")
+        cli::cli_bullets(c(
+            "Installation location: {.path {install_path}}",
             "PATH environment variable has been updated in your ~/.Renviron file.",
             "You may need to restart R for the changes to take effect."
         ))
+        cli::cli_text("") # Add spacing
     }
 
-    return(invisible(TRUE))
+    return(base::invisible(TRUE))
 }
 
 #' @section Uninstalling `gfortran`:
@@ -301,46 +322,52 @@ gfortran_install <- function(password = getOption("macrtools.password"), verbose
 #'
 #' @export
 #' @rdname gfortran
-gfortran_uninstall <- function(password = getOption("macrtools.password"), verbose = TRUE) {
+gfortran_uninstall <- function(password = base::getOption("macrtools.password"), verbose = TRUE) {
     assert_mac()
 
-    if(isFALSE(is_gfortran_installed())) {
+    if(base::isFALSE(is_gfortran_installed())) {
         if(verbose) {
-            cli_info("gfortran is not installed.")
+            cli::cli_alert_info("{.pkg macrtools}: gfortran is not installed.")
+            cli::cli_text("") # Add spacing
         }
-        return(invisible(TRUE))
+        return(base::invisible(TRUE))
     }
 
     # Figure out installation directories
     install_dir <- gfortran_install_location()
 
-    path_gfortran <- file.path(install_dir, "gfortran")
-    path_bin_gfortran <- file.path(install_dir, "bin", "gfortran")
+    path_gfortran <- base::file.path(install_dir, "gfortran")
+    path_bin_gfortran <- base::file.path(install_dir, "bin", "gfortran")
 
     if (verbose) {
-        cli_info("Uninstalling gfortran...")
+        cli::cli_alert_info("{.pkg macrtools}: Uninstalling gfortran.")
+        cli::cli_bullets(c(
+            "Path to remove: {.path {path_gfortran}}",
+            "Binary to remove: {.path {path_bin_gfortran}}"
+        ))
+        cli::cli_text("") # Add spacing
     }
 
     gfortran_uninstall_status <- shell_execute(
-        paste0("rm -rf ", path_gfortran, " ", path_bin_gfortran),
+        base::paste0("rm -rf ", path_gfortran, " ", path_bin_gfortran),
         sudo = TRUE,
         password = password)
 
-    gfortran_uninstall_clean <- identical(gfortran_uninstall_status, 0L)
-    if(isFALSE(gfortran_uninstall_clean)) {
-        cli_error(c(
-            "We were not able to uninstall gfortran.",
-            "Please try to manually uninstall using:",
-            "{.url https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#uninstalling-gfortran}"
+    gfortran_uninstall_clean <- base::identical(gfortran_uninstall_status, 0L)
+    if(base::isFALSE(gfortran_uninstall_clean)) {
+        cli::cli_abort(c(
+            "{.pkg macrtools}: We were not able to uninstall gfortran.",
+            "i" = "Please try to manually uninstall using: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#uninstalling-gfortran"
         ))
-        return(invisible(FALSE))
+        return(base::invisible(FALSE))
     }
 
     if (verbose) {
-        cli_success("gfortran was successfully uninstalled!")
+        cli::cli_alert_success("{.pkg macrtools}: gfortran was successfully uninstalled!")
+        cli::cli_text("") # Add spacing
     }
 
-    return(invisible(gfortran_uninstall_clean))
+    return(base::invisible(gfortran_uninstall_clean))
 }
 
 #' @section Updating `gfortran`:
@@ -359,7 +386,7 @@ gfortran_uninstall <- function(password = getOption("macrtools.password"), verbo
 #'
 #' @export
 #' @rdname gfortran
-gfortran_update <- function(password = getOption("macrtools.password"), verbose = TRUE) {
+gfortran_update <- function(password = base::getOption("macrtools.password"), verbose = TRUE) {
     assert_mac()
     assert_aarch64()
     assert(is_gfortran_installed(), "gfortran must be installed")
@@ -369,16 +396,22 @@ gfortran_update <- function(password = getOption("macrtools.password"), verbose 
     # Figure out installation directory
     install_dir <- install_location()
 
-    path_gfortran_update <- file.path(install_dir, "gfortran", "bin", "gfortran-update-sdk")
+    path_gfortran_update <- base::file.path(install_dir, "gfortran", "bin", "gfortran-update-sdk")
 
     # Verify that the tool exists
-    if (!file.exists(path_gfortran_update)) {
-        cli_error("Could not find gfortran-update-sdk at {.path {path_gfortran_update}}")
-        return(invisible(FALSE))
+    if (!base::file.exists(path_gfortran_update)) {
+        cli::cli_abort("{.pkg macrtools}: Could not find gfortran-update-sdk at {.path {path_gfortran_update}}")
+        return(base::invisible(FALSE))
     }
 
     if (verbose) {
-        cli_info("Updating gfortran...")
+        cli::cli_alert_info("{.pkg macrtools}: Updating gfortran.")
+        cli::cli_bullets(c(
+            "Update tool: {.path {path_gfortran_update}}",
+            "Architecture: {.val {system_arch()}}",
+            "R version: {.val {base::paste(base::R.version$major, base::R.version$minor, sep='.')}}"
+        ))
+        cli::cli_text("") # Add spacing
     }
 
     gfortran_update_status <- shell_execute(
@@ -386,37 +419,36 @@ gfortran_update <- function(password = getOption("macrtools.password"), verbose 
         sudo = TRUE,
         password = password)
 
-    gfortran_update_clean <- identical(gfortran_update_status, 0L)
-    if(isFALSE(gfortran_update_clean)) {
-        cli_error(c(
-            "We were not able to update gfortran.",
-            "Please try to manually update using:",
-            "{.url https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#updating-gfortran}"
+    gfortran_update_clean <- base::identical(gfortran_update_status, 0L)
+    if(base::isFALSE(gfortran_update_clean)) {
+        cli::cli_abort(c(
+            "{.pkg macrtools}: We were not able to update gfortran.",
+            "i" = "Please try to manually update using: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#updating-gfortran"
         ))
-        return(invisible(FALSE))
+        return(base::invisible(FALSE))
     }
 
     if (verbose) {
-        cli_success("gfortran was successfully updated!")
+        cli::cli_alert_success("{.pkg macrtools}: gfortran was successfully updated!")
+        cli::cli_text("") # Add spacing
     }
 
-    return(invisible(gfortran_update_clean))
+    return(base::invisible(gfortran_update_clean))
 }
 
-
 gfortran <- function(args) {
-    out <- tryCatch(
+    out <- base::tryCatch(
         sys::exec_internal("gfortran", args = args, error = FALSE),
         error = function(e) {
-            list(
+            base::list(
                 output = e,
                 status = -127L
             )
         }
     )
 
-    structure(
-        list(
+    base::structure(
+        base::list(
             output = sys::as_text(out$stdout),
             status = out$status
         ),
@@ -427,19 +459,19 @@ gfortran <- function(args) {
 #' Download and Install gfortran 8.2 for Intel Macs
 #'
 #' @noRd
-install_gfortran_82_mojave <- function(password = getOption("macrtools.password"),
+install_gfortran_82_mojave <- function(password = base::getOption("macrtools.password"),
                                        verbose = TRUE) {
 
     # Key the necessary download steps
     gfortran_82_url <- "https://mac.r-project.org/tools/gfortran-8.2-Mojave.dmg"
-    gfortran_dmg_name <- basename(gfortran_82_url)
+    gfortran_dmg_name <- base::basename(gfortran_82_url)
 
     # Download the dmg file
     gfortran_path <- binary_download(gfortran_82_url, verbose = verbose)
 
     # Establish where in the dmg the installer package is
     path_to_pkg <-
-        file.path(
+        base::file.path(
             tools::file_path_sans_ext(gfortran_dmg_name),
             tools::file_path_sans_ext(gfortran_dmg_name),
             "gfortran.pkg"
@@ -454,18 +486,18 @@ install_gfortran_82_mojave <- function(password = getOption("macrtools.password"
     )
 
     if (!success) {
-        cli_error("Error installing the gfortran package")
+        cli::cli_abort("{.pkg macrtools}: Error installing the gfortran package")
         return(FALSE)
     }
 
     # Remove unused gfortran file
-    unlink(gfortran_path)
+    base::unlink(gfortran_path)
 
-    return(invisible(TRUE))
+    return(base::invisible(TRUE))
 }
 
 
-install_gfortran_12_arm <- function(password = getOption("macrtools.password"),
+install_gfortran_12_arm <- function(password = base::getOption("macrtools.password"),
                                     verbose = TRUE) {
 
     gfortran_12_url <- "https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"
@@ -487,7 +519,7 @@ install_gfortran_12_arm <- function(password = getOption("macrtools.password"),
 }
 
 
-install_gfortran_11_arm <- function(password = getOption("macrtools.password"),
+install_gfortran_11_arm <- function(password = base::getOption("macrtools.password"),
                                     verbose = TRUE) {
 
     gfortran_11_url <- "https://mac.r-project.org/libs-arm64/gfortran-f51f1da0-darwin20.0-arm64.tar.gz"
@@ -517,7 +549,7 @@ install_gfortran_11_arm <- function(password = getOption("macrtools.password"),
 #'
 #' @noRd
 install_gfortran_12_2_universal <- function(
-        password = getOption("macrtools.password"),
+        password = base::getOption("macrtools.password"),
         verbose = TRUE) {
 
     # URL

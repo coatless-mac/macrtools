@@ -1,8 +1,3 @@
-#' @include cli-custom.R
-NULL
-
-# Custom CLI Printing -----
-
 #' Print CLI Responses
 #' @param x   An object with class `cli`
 #' @param ... Additional parameters
@@ -20,22 +15,32 @@ print.cli <- function(x, ...) {
 
     cli::cli_h1("Status")
     status_color <- if(x$status == 0) "{.green}" else "{.red}"
-    cli::cli_text(base::paste0(status_color, x$status, "{.reset}"))
+    cli::cli_text("{status_color}{x$status}{.reset}")
 
     return(base::invisible(x))
 }
 
-# Display download warning ----
+#' Verify Status of Operation
+#'
+#' @param status Status code from operation
+#' @param program Name of the program being installed or uninstalled
+#' @param url Optional URL for manual instructions
+#' @param type Type of operation ("uninstall" or "install")
+#' @return TRUE if status is successful, FALSE otherwise (invisibly)
+#' @keywords internal
 verify_status <- function(status, program, url, type = c("uninstall", "install")) {
     type <- base::match.arg(type)
 
     if(base::isFALSE(status)) {
-        cli_error(c(
-            "Operation failed: Could not {type} {.pkg {program}}.",
-            "Status: {.val {status}}",
-            "Operation type: {.val {type}}",
-            "Time of failure: {.val {base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')}}",
-            if(!base::missing(url)) c("Manual instructions available at:", "{.url {url}}")
+        time_of_failure <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+        url_info <- if(!base::missing(url)) c("Manual instructions available at:", "{.url {url}}") else NULL
+
+        cli::cli_abort(c(
+            "{.pkg macrtools}: Operation failed: Could not {type} {.pkg {program}}.",
+            "{.pkg macrtools}: Status: {.val {status}}",
+            "{.pkg macrtools}: Operation type: {.val {type}}",
+            "{.pkg macrtools}: Time of failure: {.val {time_of_failure}}",
+            url_info
         ),
         advice = base::paste0("You may need to run this operation with administrative privileges or check for system compatibility issues."))
         return(base::invisible(FALSE))
@@ -44,15 +49,21 @@ verify_status <- function(status, program, url, type = c("uninstall", "install")
     base::invisible(TRUE)
 }
 
-# Obtain a password if not present ----
+#' Force Password Entry if Not Provided
+#'
+#' @param supplied_password Password provided by user (may be NULL)
+#' @return Password to use for operations
+#' @keywords internal
 force_password <- function(supplied_password) {
     entered_password <- supplied_password
     if(base::is.null(entered_password)) {
-        cli_info(c(
-            "Administrative privileges required.",
+        current_user <- base::Sys.info()['user']
+
+        cli::cli_alert_info(c(
+            "{.pkg macrtools}: Administrative privileges required.",
             "Your user account password is needed to execute privileged operations.",
             "This password will not be stored and is only used for the current session.",
-            "Current user: {.val {base::Sys.info()['user']}}"
+            "Current user: {.val {current_user}}"
         ))
         entered_password <- askpass::askpass("Please enter your administrator password:")
     }
@@ -60,12 +71,22 @@ force_password <- function(supplied_password) {
     entered_password
 }
 
-# Get caller environment ----
+#' Get Caller Environment
+#'
+#' @param n Number of frames to go back
+#' @return Caller environment
+#' @keywords internal
 caller_env <- function(n = 1) {
     base::parent.frame(n + 1)
 }
 
-# Helpful null coalesce operator
+#' Null Coalesce Operator
+#'
+#' @param x First value (may be NULL)
+#' @param y Default value if x is NULL
+#' @return x if not NULL, otherwise y
+#' @name null_coalesce
+#' @keywords internal
 `%||%` <- function(x, y) {
     if (base::is.null(x)) y else x
 }

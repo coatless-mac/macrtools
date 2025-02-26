@@ -23,7 +23,6 @@ OS_type: unix
 SystemRequirements: macOS
 Imports: 
     askpass,
-    stats,
     sys,
     tools,
     utils,
@@ -32,25 +31,6 @@ Imports:
 URL: https://mac.thecoatlessprofessor.com/macrtools/
 Suggests: 
     rstudioapi,
+    mockery,
     testthat (>= 3.0.0)
-Collate: 
-    'cli-custom.R'
-    'assertions.R'
-    'blocks.R'
-    'renviron.R'
-    'shell.R'
-    'utils.R'
-    'installers.R'
-    'gfortran.R'
-    'macos-versions.R'
-    'paths.R'
-    'recipes.R'
-    'system-checks.R'
-    'xcode-cli.R'
-    'toolchain.R'
-    'version-check.R'
-    'xcode-app-ide.R'
-    'xcode-select.R'
-    'xcodebuild.R'
-    'zzz.R'
 Config/testthat/edition: 3

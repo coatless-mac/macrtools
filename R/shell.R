@@ -1,6 +1,3 @@
-#' @include cli-custom.R
-NULL
-
 #' Execute shell commands
 #'
 #' Functions to execute shell commands with or without sudo
@@ -11,11 +8,13 @@ NULL
 #' @keywords internal
 shell_command <- function(cmd, verbose = TRUE) {
     if (verbose) {
-        cli_info(c(
-            "Executing shell command.",
+        working_dir <- base::getwd()
+        cli::cli_alert_info("{.pkg macrtools}: Executing shell command.")
+        cli::cli_bullets(c(
             "Command: {.code {cmd}}",
-            "Working directory: {.path {getwd()}}"
+            "Working directory: {.path {working_dir}}"
         ))
+        cli::cli_text("") # Add spacing
     }
     base::system(cmd)
 }
@@ -29,26 +28,29 @@ shell_command <- function(cmd, verbose = TRUE) {
 #' @return The exit status of the command (0 for success)
 #' @keywords internal
 shell_sudo_command <- function(cmd, password, verbose = TRUE, prefix = "sudo -kS ") {
-    cmd_with_sudo <- paste0(prefix, cmd)
+    cmd_with_sudo <- base::paste0(prefix, cmd)
     if (verbose) {
-        cli_info(c(
-            "Executing privileged command with sudo.",
+        cli::cli_alert_info("{.pkg macrtools}: Executing privileged command with sudo.")
+        cli::cli_bullets(c(
             "Command: {.code {cmd_with_sudo}}",
             "Administrative privileges will be required."
         ))
+        cli::cli_text("") # Add spacing
     }
 
-    if (is.null(password)) {
-        result <- base::system(cmd_with_sudo, input = askpass::askpass("Please enter your administrator password:"))
+    result <- if (base::is.null(password)) {
+        base::system(cmd_with_sudo, input = askpass::askpass("Please enter your administrator password:"))
     } else {
-        result <- base::system(cmd_with_sudo, input = password)
+        base::system(cmd_with_sudo, input = password)
     }
 
     if (verbose && result != 0) {
-        cli_warning(c(
-            "Command execution failed with status: {.val {result}}.",
+        cli::cli_alert_warning(c(
+            "{.pkg macrtools}: Command execution failed.",
+            "Status code: {.val {result}}",
             "This might indicate permission issues or syntax errors."
         ))
+        cli::cli_text("") # Add spacing
     }
 
     return(result)
@@ -66,27 +68,40 @@ shell_sudo_command <- function(cmd, password, verbose = TRUE, prefix = "sudo -kS
 #' @return The exit status of the command (0 for success)
 #' @keywords internal
 shell_execute <- function(cmd, sudo = FALSE, password = NULL, verbose = TRUE, timeout = 300) {
-    command_start_time <- Sys.time()
+    command_start_time <- base::Sys.time()
 
-    result <- if (sudo) {
-        shell_sudo_command(cmd = cmd, password = password, verbose = verbose)
-    } else {
-        shell_command(cmd = cmd, verbose = verbose)
+    if (verbose) {
+        # Use temporary variable for the sudo prefix text
+        sudo_prefix <- if (sudo) "sudo " else ""
+        cli::cli_alert_info("{.pkg macrtools}: Executing command.")
+        cli::cli_code("{sudo_prefix}{cmd}")
+        cli::cli_text("") # Add spacing
     }
 
-    command_duration <- difftime(Sys.time(), command_start_time, units = "secs")
+    result <- if (sudo) {
+        shell_sudo_command(cmd = cmd, password = password, verbose = FALSE)
+    } else {
+        shell_command(cmd = cmd, verbose = FALSE)
+    }
+
+    command_duration <- base::difftime(base::Sys.time(), command_start_time, units = "secs")
+    duration_seconds <- base::round(base::as.numeric(command_duration), 2)
 
     if (verbose) {
         if (result == 0) {
-            cli_info(c(
-                "Command completed successfully in {.val {round(as.numeric(command_duration), 2)}} seconds.",
+            cli::cli_alert_success("{.pkg macrtools}: Command completed successfully.")
+            cli::cli_bullets(c(
+                "Execution time: {.val {duration_seconds}} seconds",
                 "Exit status: {.val {result}}"
             ))
+            cli::cli_text("") # Add spacing
         } else {
-            cli_warning(c(
-                "Command completed with non-zero exit status in {.val {round(as.numeric(command_duration), 2)}} seconds.",
+            cli::cli_alert_warning("{.pkg macrtools}: Command completed with non-zero exit status.")
+            cli::cli_bullets(c(
+                "Execution time: {.val {duration_seconds}} seconds",
                 "Exit status: {.val {result}}"
             ))
+            cli::cli_text("") # Add spacing
         }
     }
 

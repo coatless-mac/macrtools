@@ -7,9 +7,9 @@
 recipes_binary_install(
   pkgs,
   url = "https://mac.R-project.org/bin",
-  os = tolower(paste0(system("uname -s", intern = TRUE), gsub("\\\\..*", "",
-    system("uname -r", intern = TRUE)))),
-  arch = system("uname -m", intern = TRUE),
+  os = base::tolower(base::paste0(base::system("uname -s", intern = TRUE),
+    base::gsub("\\\\..*", "", base::system("uname -r", intern = TRUE)))),
+  arch = base::system("uname -m", intern = TRUE),
   os.arch = "auto",
   dependencies = TRUE,
   action = c("install", "list"),

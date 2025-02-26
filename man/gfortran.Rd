@@ -12,11 +12,20 @@ is_gfortran_installed()
 
 gfortran_version()
 
-gfortran_install(password = getOption("macrtools.password"), verbose = TRUE)
+gfortran_install(
+  password = base::getOption("macrtools.password"),
+  verbose = TRUE
+)
 
-gfortran_uninstall(password = getOption("macrtools.password"), verbose = TRUE)
+gfortran_uninstall(
+  password = base::getOption("macrtools.password"),
+  verbose = TRUE
+)
 
-gfortran_update(password = getOption("macrtools.password"), verbose = TRUE)
+gfortran_update(
+  password = base::getOption("macrtools.password"),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{password}{Password for user account to install software. Default is
