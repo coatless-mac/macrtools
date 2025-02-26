@@ -19,12 +19,13 @@
 #' @param os.arch Either name of the repository such as `"darwin20/arm64"`, `"darwin20/x86_64"`, `"darwin17/x86_64"`, or `"auto"`.
 #'                Default `"auto"`.
 #' @param dependencies Install build dependencies (`TRUE`) or only the requested packages (`FALSE`). Default `TRUE`.
-#' @param action  Determine if the binary should be downloaded and installed (`"install"`)
-#'                or displayed (`"list"`). Default `"install"` to download and install the binaries.
+#' @param action  Determine if the binary should be downloaded and installed (`"install"`),
+#'                displayed (`"list"`), or downloaded but not installed (`"download"`).
+#'                Default `"install"` to download and install the binaries.
 #' @param sudo    Attempt to install the binaries using `sudo` permissions.
 #'                Default `TRUE`.
 #' @param password User password to switch into the `sudo` user. Default `NULL`.
-#' @param verbose Describe the steps being taken. Default `TRUE`
+#' @param verbose Describe the steps being taken. Default `TRUE`.
 #' @export
 #' @author
 #' Simon Urbanek wrote the function and made it available at
@@ -44,6 +45,10 @@
 #' | [darwin17/x86_64](https://mac.r-project.org/bin/darwin17/x86_64) | /usr/local            | macOS 10.13, Intel (x86_64)        |
 #' | [darwin20/x86_64](https://mac.r-project.org/bin/darwin20/x86_64) | /opt/R/x86_64         | macOS 11, Intel (x86_64)           |
 #' | [darwin20/arm64](https://mac.r-project.org/bin/darwin20/arm64)   | /opt/R/arm64          | macOS 11, Apple M1 (arm64)         |
+#'
+#' @section Differences:
+#' The official implementation uses `quiet` as a parameter to suppress output
+#' instead of `verbose`.
 #'
 #' @examples
 #' # Perform a dry-run to see the required development packages.
@@ -65,7 +70,7 @@ recipes_binary_install = function(
         arch = base::system("uname -m", intern = TRUE),
         os.arch = "auto",
         dependencies = TRUE,
-        action = c("install", "list"),
+        action = c("install", "list", "download"),
         sudo = TRUE,
         password = NULL,
         verbose = TRUE) {
@@ -76,7 +81,7 @@ recipes_binary_install = function(
 
     if (os.arch == "auto") {
         rindex <- up(url, "REPOS")
-        base::cat("Downloading", rindex, "...\n")
+        if (verbose) base::cat("Downloading", rindex, "...\n")
         rl <- base::readLines(u <- base::url(rindex))
         base::close(u)
         rla <- base::simplify2array(base::strsplit(rl[base::grep("/", rl)], "/"))
@@ -119,7 +124,7 @@ recipes_binary_install = function(
         os.arch <- base::file.path(rl$os, rl$arch)
     }
 
-    base::cat("Using repository ", up(url, os.arch), "...\n")
+    if (verbose) base::cat("Using repository ", up(url, os.arch), "...\n")
 
     deps <- function(pkgs, db) {
         ## convert bare (w/o version) names to full names
@@ -157,7 +162,7 @@ recipes_binary_install = function(
     }
 
     pindex <- up(url, os.arch, "PACKAGES")
-    base::cat("Downloading index ", pindex, "...\n")
+    if (verbose) base::cat("Downloading index ", pindex, "...\n")
     db <- base::read.dcf(u <- base::url(pindex))
     base::close(u)
     base::rownames(db) <- if ("Bundle" %in% base::colnames(db))
@@ -206,6 +211,16 @@ recipes_binary_install = function(
         }
 
         return(base::invisible(TRUE))
+    } else if (action == "download") {
+        for (u in urls) {
+            if (!base::file.exists(base::basename(u))) {
+
+            if (verbose) base::cat("Downloading ", u, "...\n", sep='')
+
+            if (base::system(base::paste("curl", "-sSLO", base::shQuote(u))) < 0)
+                base::stop("Failed to download ", u)
+            }
+        }
     } else
         urls
 }
