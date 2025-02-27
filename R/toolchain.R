@@ -103,7 +103,7 @@ macos_rtools_install <- function(
     # Create a detailed progress bar
     if (verbose) {
         pb_id <- cli::cli_progress_bar(
-            format = "{.pkg macrtools}: {.strong Installing R development toolchain} {cli::pb_bar} {cli::pb_percent} {.spinner}",
+            format = "{.pkg macrtools}: {.strong Installing R development toolchain} {cli::pb_bar} {cli::pb_percent} {cli::pb_spin}",
             format_done = "{.pkg macrtools}: {.strong Installation complete} {cli::symbol$tick}",
             total = 100
         )
@@ -147,7 +147,7 @@ macos_rtools_install <- function(
                     "{.pkg macrtools}: Failed to install Xcode Command Line Tools.",
                     "This is a required component for R package development.",
                     "Installation status: Failed",
-                    "i" = "Try installing manually by running 'xcode-select --install' in Terminal."
+                    "i" = "Try installing manually by running 'sudo xcode-select --install' in Terminal."
                 ))
             }
 
@@ -378,7 +378,7 @@ macos_rtools_uninstall <- function(
     # Create a progress bar
     if (verbose) {
         pb_id <- cli::cli_progress_bar(
-            format = "{.pkg macrtools}: {.strong Uninstalling R development toolchain} {cli::pb_bar} {cli::pb_percent} {.spinner}",
+            format = "{.pkg macrtools}: {.strong Uninstalling R development toolchain} {cli::pb_bar} {cli::pb_percent} {cli::pb_spin}",
             format_done = "{.pkg macrtools}: {.strong Uninstallation complete} {cli::symbol$tick}",
             total = 100
         )
