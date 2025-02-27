@@ -70,14 +70,6 @@ shell_sudo_command <- function(cmd, password, verbose = TRUE, prefix = "sudo -kS
 shell_execute <- function(cmd, sudo = FALSE, password = NULL, verbose = TRUE, timeout = 300) {
     command_start_time <- base::Sys.time()
 
-    if (verbose) {
-        # Use temporary variable for the sudo prefix text
-        sudo_prefix <- if (sudo) "sudo " else ""
-        cli::cli_alert_info("{.pkg macrtools}: Executing command.")
-        cli::cli_code("{sudo_prefix}{cmd}")
-        cli::cli_text("") # Add spacing
-    }
-
     result <- if (sudo) {
         shell_sudo_command(cmd = cmd, password = password, verbose = FALSE)
     } else {
