@@ -163,7 +163,7 @@ binary_download <- function(url, binary_file_name = base::basename(url), verbose
     # Create progress bar
     if (verbose) {
         pb_id <- cli::cli_progress_bar(
-            format = "{.pkg macrtools}: {.strong Downloading package} {.file {binary_file_name}} {.progress_bar} {.percent} {.spinner}",
+            format = "{.pkg macrtools}: {.strong Downloading package} {.file {binary_file_name}} {cli::pb_bar} {cli::pb_percent} {.spinner}",
             format_done = "{.pkg macrtools}: {.strong Download complete} {cli::symbol$tick}",
             total = 100
         )
