@@ -53,12 +53,12 @@ used on <a href="https://cran.r-project.org/" class="external-link">CRAN</a> for
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">recipes_binary_install</span><span class="op">(</span></span>
 <span>  <span class="va">pkgs</span>,</span>
 <span>  url <span class="op">=</span> <span class="st">"https://mac.R-project.org/bin"</span>,</span>
-<span>  os <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"uname -s"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"\\..*"</span>, <span class="st">""</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"uname -r"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  arch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"uname -m"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  os <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"uname -s"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"\\..*"</span>, <span class="st">""</span>, <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"uname -r"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  arch <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"uname -m"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>  os.arch <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  dependencies <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  action <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"install"</span>, <span class="st">"list"</span><span class="op">)</span>,</span>
+<span>  action <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"install"</span>, <span class="st">"list"</span>, <span class="st">"download"</span><span class="op">)</span>,</span>
 <span>  sudo <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -96,8 +96,9 @@ Default <code>"auto"</code>.</p></dd>
 
 
 <dt id="arg-action">action<a class="anchor" aria-label="anchor" href="#arg-action"></a></dt>
-<dd><p>Determine if the binary should be downloaded and installed (<code>"install"</code>)
-or displayed (<code>"list"</code>). Default <code>"install"</code> to download and install the binaries.</p></dd>
+<dd><p>Determine if the binary should be downloaded and installed (<code>"install"</code>),
+displayed (<code>"list"</code>), or downloaded but not installed (<code>"download"</code>).
+Default <code>"install"</code> to download and install the binaries.</p></dd>
 
 
 <dt id="arg-sudo">sudo<a class="anchor" aria-label="anchor" href="#arg-sudo"></a></dt>
@@ -110,7 +111,7 @@ Default <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>Describe the steps being taken. Default <code>TRUE</code></p></dd>
+<dd><p>Describe the steps being taken. Default <code>TRUE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -118,6 +119,13 @@ Default <code>TRUE</code>.</p></dd>
     <p>The function attempts to detect the appropriate repository and installation
 path for the binary packages when <code>"auto"</code> is set. By default, the
 repository and the install path are either:</p><table class="table table"><tr><td>Name</td><td>Installation Location</td><td>Target</td></tr><tr><td><a href="https://mac.r-project.org/bin/darwin17/x86_64" class="external-link">darwin17/x86_64</a></td><td>/usr/local</td><td>macOS 10.13, Intel (x86_64)</td></tr><tr><td><a href="https://mac.r-project.org/bin/darwin20/x86_64" class="external-link">darwin20/x86_64</a></td><td>/opt/R/x86_64</td><td>macOS 11, Intel (x86_64)</td></tr><tr><td><a href="https://mac.r-project.org/bin/darwin20/arm64" class="external-link">darwin20/arm64</a></td><td>/opt/R/arm64</td><td>macOS 11, Apple M1 (arm64)</td></tr></table></div>
+    <div class="section level2">
+    <h2 id="differences">Differences<a class="anchor" aria-label="anchor" href="#differences"></a></h2>
+
+
+<p>The official implementation uses <code>quiet</code> as a parameter to suppress output
+instead of <code>verbose</code>.</p>
+    </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Simon Urbanek wrote the function and made it available at
