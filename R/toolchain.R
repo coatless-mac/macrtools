@@ -1,6 +1,3 @@
-#' @include xcode-cli.R gfortran.R recipes.R cli-custom.R
-NULL
-
 #' Install and Uninstall the macOS R Toolchain
 #'
 #' The `macos_rtools_install()` function aims to install all required dependencies
@@ -48,240 +45,306 @@ NULL
 #'
 #' }
 macos_rtools_install <- function(
-        password = getOption("macrtools.password"),
+        password = base::getOption("macrtools.password"),
         verbose = TRUE
 ) {
-
     # Initial system check
     assert_mac()
     assert_macos_supported()
     assert_r_version_supported()
 
-    cli_system_update("Installing macOS R Development Toolchain", c(
-        "This process will install all components required for R package development on macOS:",
+    # Installation heading and components list - proper formatting
+    cli::cli_h3("Installing macOS R Development Toolchain")
+    cli::cli_text("This process will install all required components:")
+    cli::cli_ul(c(
         "Xcode Command Line Tools - Apple's development utilities",
         "gfortran - GNU Fortran compiler required for many scientific packages",
         "r-base-dev - Essential libraries from the R-macOS Recipes project"
     ))
+    cli::cli_text("") # Add spacing
 
-    cli_info(c(
-        "System requirements check:",
-        "Operating system: {.val {shell_mac_version()}} ({.val {Sys.info()['release']}})",
-        "Architecture: {.val {system_arch()}}",
-        "R version: {.val {paste(R.version$major, R.version$minor, sep='.')}}",
-        "Available disk space: {.val {round(as.numeric(system('df -h / | tail -1 | awk \'{print $4}\'', intern=TRUE)), 2)}} GB",
+    # System information with temporary variables
+    os_version <- shell_mac_version()
+    os_release <- base::Sys.info()['release']
+    arch <- system_arch()
+    r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
+    disk_space <- base::tryCatch(
+        base::round(base::as.numeric(base::system('df -h / | tail -1 | awk \'{print $4}\'', intern=TRUE)), 2),
+        error = function(e) "Unknown"
+    )
+
+    cli::cli_alert_info("System requirements check:")
+    cli::cli_bullets(c(
+        "Operating system: {.val {os_version}} ({.val {os_release}})",
+        "Architecture: {.val {arch}}",
+        "R version: {.val {r_version}}",
+        "Available disk space: {.val {disk_space}} GB",
         "Administrator privileges: Required"
     ))
+    cli::cli_text("") # Add spacing
 
-    cli_info(c(
-        "Installation prerequisites:",
+    cli::cli_alert_info("Installation prerequisites:")
+    cli::cli_bullets(c(
         "Ensure you have a stable internet connection",
         "Connect your computer to a power source",
         "Estimated installation time: 15-25 minutes",
         "Required disk space: Approximately 5-7 GB"
     ))
+    cli::cli_text("") # Add spacing
 
     entered_password <- password
     if(base::is.null(entered_password)) {
-        cli_info("Administrative privileges are required for installation.")
+        cli::cli_alert_info("Administrative privileges are required for installation.")
         entered_password <- askpass::askpass("Please enter your administrator password:")
     }
 
-    describe_steps <- isTRUE(verbose)
+    describe_steps <- base::isTRUE(verbose)
 
     # Create a detailed progress bar
     if (verbose) {
-        pb_id <- cli_process_start("Installing R development toolchain", total = 100)
-        cli_info("Installation process started at: {.val {format(Sys.time(), '%Y-%m-%d %H:%M:%S')}}")
+        pb_id <- cli::cli_progress_bar(
+            format = "{.pkg macrtools}: {.strong Installing R development toolchain} {.progress_bar} {.percent} {.spinner}",
+            format_done = "{.pkg macrtools}: {.strong Installation complete} {cli::symbol$tick}",
+            total = 100
+        )
+
+        current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+        cli::cli_alert_info("Installation process started at: {.val {current_time}}")
+        cli::cli_text("") # Add spacing
     }
 
     # COMPONENT 1: Xcode Command Line Tools
-    cli_system_update("Component 1 of 3: Xcode Command Line Tools", c(
-        "Apple's development utilities providing compilers and build tools",
+    cli::cli_h3("Component 1 of 3: Xcode Command Line Tools")
+    cli::cli_text("Apple's development utilities providing compilers and build tools")
+    cli::cli_ul(c(
         "Includes: gcc, make, git, clang, and other essential development tools",
         "Location: /Library/Developer/CommandLineTools",
         "Size: ~1.5 GB"
     ))
+    cli::cli_text("") # Add spacing
 
     # Step 1: Xcode CLI
     result_xcode <- TRUE
     if(!is_xcode_app_installed()) {
         if(!is_xcode_cli_installed()) {
             if (verbose) {
-                cli_process_update(pb_id, 0.1, "Checking Xcode CLI requirements")
-                cli_info(c(
-                    "Need to install Xcode Command Line Tools.",
+                cli::cli_progress_update(pb_id, 0.1)
+                cli::cli_alert_info("{.pkg macrtools}: Need to install Xcode Command Line Tools.")
+                cli::cli_bullets(c(
                     "Source: Apple Software Update",
                     "Installation method: softwareupdate command",
                     "Status: Not installed",
                     "Estimated time: 5-10 minutes"
                 ))
+                cli::cli_text("") # Add spacing
             }
 
-            if (verbose) cli_process_update(pb_id, 0.2, "Installing Xcode CLI")
+            if (verbose) cli::cli_progress_update(pb_id, 0.2)
             result_xcode <- xcode_cli_install(password = entered_password, verbose = describe_steps)
 
             if(!result_xcode) {
-                cli_error(c(
-                    "Failed to install Xcode Command Line Tools.",
+                cli::cli_abort(c(
+                    "{.pkg macrtools}: Failed to install Xcode Command Line Tools.",
                     "This is a required component for R package development.",
-                    "Installation status: Failed"
-                ),
-                advice = "Try installing manually by running 'xcode-select --install' in Terminal.")
-            }
-
-            if (verbose) cli_process_update(pb_id, 0.3, "Xcode CLI installation complete")
-        } else {
-            if(describe_steps) {
-                cli_info(c(
-                    "Xcode Command Line Tools already installed.",
-                    "Location: {.path {xcode_cli_path()}}",
-                    "Version: {.val {tryCatch(sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout), error = function(e) 'Unknown')}}",
-                    "Status: Pre-installed, no action needed"
+                    "Installation status: Failed",
+                    "i" = "Try installing manually by running 'xcode-select --install' in Terminal."
                 ))
             }
-            if (verbose) cli_process_update(pb_id, 0.3, "Xcode CLI already installed")
+
+            if (verbose) cli::cli_progress_update(pb_id, 0.3)
+        } else {
+            if(describe_steps) {
+                # Get Xcode CLI version information
+                xcode_version <- base::tryCatch(
+                    sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout),
+                    error = function(e) 'Unknown'
+                )
+
+                cli::cli_alert_info("{.pkg macrtools}: Xcode Command Line Tools already installed.")
+                cli::cli_bullets(c(
+                    "Location: {.path {xcode_cli_path()}}",
+                    "Version: {.val {xcode_version}}",
+                    "Status: Pre-installed, no action needed"
+                ))
+                cli::cli_text("") # Add spacing
+            }
+            if (verbose) cli::cli_progress_update(pb_id, 0.3)
         }
     } else {
         if(describe_steps) {
-            xcode_app_info <- tryCatch(sys::as_text(sys::exec_internal('xcodebuild', '-version')$stdout), error = function(e) "Unknown")
-            cli_info(c(
-                "Full Xcode.app IDE is installed.",
+            # Get full Xcode app version information
+            xcode_app_info <- base::tryCatch(
+                sys::as_text(sys::exec_internal('xcodebuild', '-version')$stdout),
+                error = function(e) "Unknown"
+            )
+
+            cli::cli_alert_info("{.pkg macrtools}: Full Xcode.app IDE is installed.")
+            cli::cli_bullets(c(
                 "Location: {.path {'/Applications/Xcode.app'}}",
                 "Version information: {.val {xcode_app_info}}",
                 "Status: Pre-installed, skipping Command Line Tools installation"
             ))
+            cli::cli_text("") # Add spacing
         }
-        if (verbose) cli_process_update(pb_id, 0.3, "Using existing Xcode.app")
+        if (verbose) cli::cli_progress_update(pb_id, 0.3)
     }
 
     # COMPONENT 2: GNU Fortran Compiler
-    cli_system_update("Component 2 of 3: GNU Fortran Compiler", c(
-        "Essential compiler for scientific computing and many CRAN packages",
+    cli::cli_h3("Component 2 of 3: GNU Fortran Compiler")
+    cli::cli_text("Essential compiler for scientific computing and many CRAN packages")
+    cli::cli_ul(c(
         "Provides: Fortran compiler compatible with R's build tools",
-        paste0("Location: ", gfortran_install_location(), "/gfortran"),
+        "Location: {gfortran_install_location()}/gfortran",
         "Size: ~1 GB"
     ))
+    cli::cli_text("") # Add spacing
 
     # Step 2: gfortran
-    if (verbose) cli_process_update(pb_id, 0.4, "Checking gfortran requirements")
+    if (verbose) cli::cli_progress_update(pb_id, 0.4)
     result_gfortran <- TRUE
     if(!is_gfortran_installed()) {
         if (verbose) {
-            cli_info(c(
-                "Need to install GNU Fortran compiler.",
+            cli::cli_alert_info("{.pkg macrtools}: Need to install GNU Fortran compiler.")
+            cli::cli_bullets(c(
                 "Source: R-Project macOS tools repository",
-                "Architecture: {.val {system_arch()}}",
-                "R version: {.val {paste(R.version$major, R.version$minor, sep='.')}}",
+                "Architecture: {.val {arch}}",
+                "R version: {.val {r_version}}",
                 "Status: Not installed",
                 "Estimated time: 2-5 minutes"
             ))
+            cli::cli_text("") # Add spacing
         }
 
-        if (verbose) cli_process_update(pb_id, 0.5, "Installing gfortran")
+        if (verbose) cli::cli_progress_update(pb_id, 0.5)
         result_gfortran <- gfortran_install(password = entered_password, verbose = describe_steps)
         if(!result_gfortran) {
-            cli_error(c(
-                "Failed to install GNU Fortran compiler.",
+            cli::cli_abort(c(
+                "{.pkg macrtools}: Failed to install GNU Fortran compiler.",
                 "This is a required component for many scientific R packages.",
-                "Installation status: Failed"
-            ),
-            advice = "Try installing manually following the instructions at: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html")
-        }
-
-        if (verbose) cli_process_update(pb_id, 0.6, "Gfortran installation complete")
-    } else {
-        if(describe_steps) {
-            cli_info(c(
-                "GNU Fortran compiler already installed.",
-                "Location: {.path {file.path(gfortran_install_location(), 'gfortran')}}",
-                "Version: {.val {tryCatch(sys::as_text(sys::exec_internal('gfortran', '--version')$stdout), error = function(e) 'Unknown')}}",
-                "Status: Pre-installed, no action needed"
+                "Installation status: Failed",
+                "i" = "Try installing manually following the instructions at: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html"
             ))
         }
-        if (verbose) cli_process_update(pb_id, 0.6, "Gfortran already installed")
+
+        if (verbose) cli::cli_progress_update(pb_id, 0.6)
+    } else {
+        if(describe_steps) {
+            # Get gfortran version information
+            gfortran_version_info <- base::tryCatch(
+                sys::as_text(sys::exec_internal('gfortran', '--version')$stdout),
+                error = function(e) 'Unknown'
+            )
+
+            install_path <- base::file.path(gfortran_install_location(), 'gfortran')
+
+            cli::cli_alert_info("{.pkg macrtools}: GNU Fortran compiler already installed.")
+            cli::cli_bullets(c(
+                "Location: {.path {install_path}}",
+                "Version: {.val {gfortran_version_info}}",
+                "Status: Pre-installed, no action needed"
+            ))
+            cli::cli_text("") # Add spacing
+        }
+        if (verbose) cli::cli_progress_update(pb_id, 0.6)
     }
 
     # COMPONENT 3: R Development Libraries
-    cli_system_update("Component 3 of 3: R Development Libraries", c(
-        "Essential third-party libraries required for R package development",
+    cli::cli_h3("Component 3 of 3: R Development Libraries")
+    cli::cli_text("Essential third-party libraries required for R package development")
+    cli::cli_ul(c(
         "Provides: zlib, libbz2, liblzma, pcre2, and other dependencies",
-        paste0("Location: ", recipe_binary_install_location(system_arch())),
+        "Location: {recipe_binary_install_location(arch)}",
         "Size: ~2-3 GB"
     ))
+    cli::cli_text("") # Add spacing
 
     # Step 3: r-base-dev
     if (verbose) {
-        cli_process_update(pb_id, 0.7, "Installing R development libraries")
-        cli_info(c(
-            "Installing R development libraries from the R-macOS recipes project.",
+        cli::cli_progress_update(pb_id, 0.7)
+        cli::cli_alert_info("{.pkg macrtools}: Installing R development libraries.")
+        cli::cli_bullets(c(
             "Source: R-Project macOS binary repository",
-            "Target: {.path {recipe_binary_install_location(system_arch())}}",
-            "Architecture: {.val {system_arch()}}",
+            "Target: {.path {recipe_binary_install_location(arch)}}",
+            "Architecture: {.val {arch}}",
             "Status: Installation starting",
             "Estimated time: 5-10 minutes"
         ))
+        cli::cli_text("") # Add spacing
     }
 
     result_base_dev <- recipes_binary_install(
         "r-base-dev", sudo = TRUE, password = entered_password, verbose = verbose
     )
 
-    if (verbose) cli_process_update(pb_id, 0.9, "Development libraries installation complete")
+    if (verbose) cli::cli_progress_update(pb_id, 0.9)
 
     # Finalize installation
     if (verbose) {
-        cli_process_update(pb_id, 1.0, "Installation complete")
-        cli_process_done(pb_id)
+        cli::cli_progress_update(pb_id, 1.0)
+        cli::cli_progress_done(pb_id)
     }
 
     rtools_install_clean <- result_gfortran && result_xcode && base::isTRUE(result_base_dev)
 
     if(rtools_install_clean) {
-        # Generate system report
-        r_version <- base::paste(R.version$major, R.version$minor, sep='.')
-        xcode_info <- base::tryCatch(sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout), error = function(e) "Unknown")
-        gfortran_info <- base::tryCatch(sys::as_text(sys::exec_internal('gfortran', '--version')$stdout), error = function(e) "Unknown")
+        # Get component information for summary
+        xcode_info <- base::tryCatch(
+            sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout),
+            error = function(e) "Unknown"
+        )
+        gfortran_info <- base::tryCatch(
+            sys::as_text(sys::exec_internal('gfortran', '--version')$stdout),
+            error = function(e) "Unknown"
+        )
 
-        cli_system_update("Installation Summary: Success", c(
+        # If version info is too long, truncate it
+        xcode_summary <- base::substr(xcode_info, 1, 20)
+        gfortran_summary <- base::substr(gfortran_info, 1, 20)
+        if(base::nchar(xcode_info) > 20) xcode_summary <- base::paste0(xcode_summary, "...")
+        if(base::nchar(gfortran_info) > 20) gfortran_summary <- base::paste0(gfortran_summary, "...")
+
+        cli::cli_h3("Installation Summary: Success")
+        cli::cli_ul(c(
             "Xcode Command Line Tools installed",
             "GNU Fortran Compiler installed",
             "R Development Libraries installed"
         ))
+        cli::cli_text("") # Add spacing
 
-        cli_success(c(
-            "macOS R development toolchain has been successfully installed!",
-            "",
-            "System configuration:",
-            "macOS version: {.val {shell_mac_version()}}",
-            "Architecture: {.val {system_arch()}}",
+        cli::cli_alert_success("{.pkg macrtools}: macOS R development toolchain has been successfully installed!")
+        cli::cli_text("") # Add spacing
+        cli::cli_text("System configuration:")
+        cli::cli_bullets(c(
+            "macOS version: {.val {os_version}}",
+            "Architecture: {.val {arch}}",
             "R version: {.val {r_version}}",
-            "Xcode tools: {.val {base::substr(xcode_info, 1, 20)}}...",
-            "Fortran: {.val {base::substr(gfortran_info, 1, 20)}}...",
-            "",
-            "Your system is now configured for R package development.",
-            "You can install packages from source with: {.code install.packages('package_name', type = 'source')}"
+            "Xcode tools: {.val {xcode_summary}}",
+            "Fortran: {.val {gfortran_summary}}"
         ))
+        cli::cli_text("") # Add spacing
+        cli::cli_text("Your system is now configured for R package development.")
+        cli::cli_text("You can install packages from source with: {.code install.packages('package_name', type = 'source')}")
+        cli::cli_text("") # Add spacing
 
-        cli_info(c(
-            "Installation completed at: {.val {format(Sys.time(), '%Y-%m-%d %H:%M:%S')}}",
-            "If you encounter issues with package installation, run:",
-            "{.code pkgbuild::check_build_tools(debug = TRUE)}"
-        ))
+        current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+        cli::cli_alert_info("Installation completed at: {.val {current_time}}")
+        cli::cli_text("If you encounter issues with package installation, run:")
+        cli::cli_code("pkgbuild::check_build_tools(debug = TRUE)")
     } else {
-        cli_error(c(
-            "Installation failed. Some components could not be installed properly.",
+        cli::cli_abort(c(
+            "{.pkg macrtools}: Installation failed. Some components could not be installed properly.",
             "Xcode CLI: {.val {if(result_xcode) 'Success' else 'Failed'}}",
             "Gfortran: {.val {if(result_gfortran) 'Success' else 'Failed'}}",
             "R development libraries: {.val {if(base::isTRUE(result_base_dev)) 'Success' else 'Failed'}}",
             "",
-            "Please check the error messages above for more details."
-        ),
-        advice = "Try running the installation again or installing each component separately.")
+            "Please check the error messages above for more details.",
+            "i" = "Try running the installation again or installing each component separately."
+        ))
     }
 
     base::invisible(rtools_install_clean)
 }
+
 
 #' @rdname macos-rtools
 #' @export
@@ -297,65 +360,83 @@ macos_rtools_install <- function(
 #'
 #' }
 macos_rtools_uninstall <- function(
-        password = getOption("macrtools.password"),
+        password = base::getOption("macrtools.password"),
         verbose = TRUE
 ) {
-    cli_info(c(
-        "Uninstalling Xcode CLI and gfortran...",
-        "Please ensure you are connected to a power source."
+    cli::cli_alert_info("{.pkg macrtools}: Beginning uninstallation process.")
+    cli::cli_bullets(c(
+        "Components to remove: Xcode CLI and gfortran",
+        "Please ensure you are connected to a power source"
     ))
+    cli::cli_text("") # Add spacing
 
-    if(is.null(password)) {
-        cli_info("Please enter your password to continue.")
-        password <- askpass::askpass()
+    if(base::is.null(password)) {
+        cli::cli_alert_info("{.pkg macrtools}: Administrative privileges required.")
+        password <- askpass::askpass("Please enter your password to continue:")
     }
 
     # Create a progress bar
     if (verbose) {
-        pb_id <- cli_process_start("Uninstalling R development toolchain")
+        pb_id <- cli::cli_progress_bar(
+            format = "{.pkg macrtools}: {.strong Uninstalling R development toolchain} {.progress_bar} {.percent} {.spinner}",
+            format_done = "{.pkg macrtools}: {.strong Uninstallation complete} {cli::symbol$tick}",
+            total = 100
+        )
     }
 
     # Step 1: Uninstall Xcode CLI
     result_xcode <- TRUE
     if(is_xcode_cli_installed()) {
         if (verbose) {
-            cli_process_update(pb_id, 0.3)
-            cli_info("Uninstalling Xcode CLI...")
+            cli::cli_progress_update(pb_id, 0.3)
+            cli::cli_alert_info("{.pkg macrtools}: Uninstalling Xcode CLI...")
+            cli::cli_text("") # Add spacing
         }
         result_xcode <- xcode_cli_uninstall(password = password, verbose = verbose)
         if(!result_xcode) {
-            cli_error("Failed to uninstall Xcode CLI. Please see manual steps.")
+            cli::cli_abort("{.pkg macrtools}: Failed to uninstall Xcode CLI. Please see manual steps.")
         }
     } else {
-        if(verbose) cli_info("Xcode CLI was not installed, skipping uninstall procedure.")
+        if(verbose) {
+            cli::cli_alert_info("{.pkg macrtools}: Xcode CLI was not installed, skipping uninstall procedure.")
+            cli::cli_text("") # Add spacing
+        }
     }
 
     # Step 2: Uninstall gfortran
-    if (verbose) cli_process_update(pb_id, 0.7)
+    if (verbose) cli::cli_progress_update(pb_id, 0.7)
     result_gfortran <- TRUE
     if(is_gfortran_installed()) {
-        if (verbose) cli_info("Uninstalling gfortran...")
+        if (verbose) {
+            cli::cli_alert_info("{.pkg macrtools}: Uninstalling gfortran...")
+            cli::cli_text("") # Add spacing
+        }
         result_gfortran <- gfortran_uninstall(password = password, verbose = verbose)
         if(!result_gfortran) {
-            cli_error("Failed to uninstall gfortran. Please see manual steps.")
+            cli::cli_abort("{.pkg macrtools}: Failed to uninstall gfortran. Please see manual steps.")
         }
     } else {
-        if(verbose) cli_info("gfortran was not installed, skipping uninstall procedure.")
+        if(verbose) {
+            cli::cli_alert_info("{.pkg macrtools}: gfortran was not installed, skipping uninstall procedure.")
+            cli::cli_text("") # Add spacing
+        }
     }
 
     if (verbose) {
-        cli_process_update(pb_id, 1.0)
-        cli_process_done(pb_id)
+        cli::cli_progress_update(pb_id, 1.0)
+        cli::cli_progress_done(pb_id)
     }
 
     clean <- result_gfortran && result_xcode
 
     if(clean) {
-        cli_success(c(
-            "Xcode CLI and Gfortran have been successfully removed from your system.",
-            "Note: This did not uninstall any binaries from the recipes project."
+        cli::cli_alert_success("{.pkg macrtools}: Uninstallation complete.")
+        cli::cli_bullets(c(
+            "Xcode CLI: Successfully removed",
+            "Gfortran: Successfully removed",
+            "Note: This did not uninstall any binaries from the recipes project"
         ))
     }
 
-    invisible(clean)
+    base::invisible(clean)
 }

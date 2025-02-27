@@ -6,12 +6,12 @@
 \title{Install and Uninstall the macOS R Toolchain}
 \usage{
 macos_rtools_install(
-  password = getOption("macrtools.password"),
+  password = base::getOption("macrtools.password"),
   verbose = TRUE
 )
 
 macos_rtools_uninstall(
-  password = getOption("macrtools.password"),
+  password = base::getOption("macrtools.password"),
   verbose = TRUE
 )
 }

@@ -7,7 +7,7 @@
 # Light modifications have occurred to remove use of `ui_*()`
 
 platform_line_ending = function() {
-    if (.Platform$OS.type == "windows") "\r\n" else "\n"
+    if (base::.Platform$OS.type == "windows") "\r\n" else "\n"
 }
 
 read_utf8 = function(path, n = -1L) {
@@ -15,51 +15,51 @@ read_utf8 = function(path, n = -1L) {
 }
 
 write_utf8 = function(path, lines, append = FALSE, line_ending = NULL) {
-    stopifnot(is.character(path))
-    stopifnot(is.character(lines))
+    base::stopifnot(base::is.character(path))
+    base::stopifnot(base::is.character(lines))
 
     file_mode = if (append) "ab" else "wb"
-    con = file(path, open = file_mode, encoding = "utf-8")
+    con = base::file(path, open = file_mode, encoding = "utf-8")
 
-    if (is.null(line_ending)) {
+    if (base::is.null(line_ending)) {
         line_ending = platform_line_ending()
     }
 
     # convert embedded newlines
-    lines = gsub("\r?\n", line_ending, lines)
+    lines = base::gsub("\r?\n", line_ending, lines)
     base::writeLines(base::enc2utf8(lines), con, sep = line_ending, useBytes = TRUE)
-    close(con)
+    base::close(con)
 
-    invisible(TRUE)
+    base::invisible(TRUE)
 }
 
 seq2 = function (from, to)
 {
-    if (length(from) != 1) {
-        stop(sprintf("%s must be length one.", from))
+    if (base::length(from) != 1) {
+        base::stop(base::sprintf("%s must be length one.", from))
     }
-    if (length(to) != 1) {
-        stop(sprintf("%s must be length one.", to))
+    if (base::length(to) != 1) {
+        base::stop(base::sprintf("%s must be length one.", to))
     }
     if (from > to) {
-        integer(0)
+        base::integer(0)
     }
     else {
-        seq.int(from, to)
+        base::seq.int(from, to)
     }
 }
 
 
 block_append = function(desc, value, path,
-                         block_start = "# <<<",
-                         block_end = "# >>>",
-                         block_prefix = NULL,
-                         block_suffix = NULL,
-                         sort = FALSE) {
+                        block_start = "# <<<",
+                        block_end = "# >>>",
+                        block_prefix = NULL,
+                        block_suffix = NULL,
+                        sort = FALSE) {
 
-    if (!is.null(path) && file.exists(path)) {
+    if (!base::is.null(path) && base::file.exists(path)) {
         lines = read_utf8(path)
-        if (all(value %in% lines)) {
+        if (base::all(value %in% lines)) {
             return(FALSE)
         }
 
@@ -68,9 +68,9 @@ block_append = function(desc, value, path,
         block_lines = NULL
     }
 
-    message("Adding ", desc, " to ", path)
+    base::message("Adding ", desc, " to ", path)
 
-    if (is.null(block_lines)) {
+    if (base::is.null(block_lines)) {
         # changed as we have a cold start and want to enforce a block being present
         write_utf8(path, block_create(value, block_start, block_end), append = TRUE)
         return(TRUE)
@@ -81,15 +81,15 @@ block_append = function(desc, value, path,
     end = block_lines[[2]]
     block = lines[seq2(start, end)]
 
-    new_lines = union(block, value)
+    new_lines = base::union(block, value)
     if (sort) {
-        new_lines = sort(new_lines)
+        new_lines = base::sort(new_lines)
     }
 
-    lines = c(
+    lines = base::c(
         lines[seq2(1, start - 1L)],
         new_lines,
-        lines[seq2(end + 1L, length(lines))]
+        lines[seq2(end + 1L, base::length(lines))]
     )
     write_utf8(path, lines)
 
@@ -97,35 +97,35 @@ block_append = function(desc, value, path,
 }
 
 block_replace = function(desc, value, path,
-                          block_start = "# <<<",
-                          block_end = "# >>>") {
-    if (!is.null(path) && file.exists(path)) {
+                         block_start = "# <<<",
+                         block_end = "# >>>") {
+    if (!base::is.null(path) && base::file.exists(path)) {
         lines = read_utf8(path)
         block_lines = block_find(lines, block_start, block_end)
     } else {
         block_lines = NULL
     }
 
-    if (is.null(block_lines)) {
-        message("Copy and paste the following lines into ", path, ":")
-        paste0(c(block_start, value, block_end), collapse = "\n")
-        return(invisible(FALSE))
+    if (base::is.null(block_lines)) {
+        base::message("Copy and paste the following lines into ", path, ":")
+        base::paste0(base::c(block_start, value, block_end), collapse = "\n")
+        return(base::invisible(FALSE))
     }
 
     start = block_lines[[1]]
     end = block_lines[[2]]
     block = lines[seq2(start, end)]
 
-    if (identical(value, block)) {
-        return(invisible(FALSE))
+    if (base::identical(value, block)) {
+        return(base::invisible(FALSE))
     }
 
-    message("Replacing ", desc, " in ", path)
+    base::message("Replacing ", desc, " in ", path)
 
-    lines = c(
+    lines = base::c(
         lines[seq2(1, start - 1L)],
         value,
-        lines[seq2(end + 1L, length(lines))]
+        lines[seq2(end + 1L, base::length(lines))]
     )
     write_utf8(path, lines)
 }
@@ -139,25 +139,25 @@ block_show = function(path, block_start = "# <<<", block_end = "# >>>") {
 
 block_find = function(lines, block_start = "# <<<", block_end = "# >>>") {
     # No file
-    if (is.null(lines)) {
+    if (base::is.null(lines)) {
         return(NULL)
     }
 
-    start = which(lines == block_start)
-    end = which(lines == block_end)
+    start = base::which(lines == block_start)
+    end = base::which(lines == block_end)
 
     # No block
-    if (length(start) == 0 && length(end) == 0) {
+    if (base::length(start) == 0 && base::length(end) == 0) {
         return(NULL)
     }
 
-    if (!(length(start) == 1 && length(end) == 1 && start < end)) {
-        stop("Invalid block specification.")
+    if (!(base::length(start) == 1 && base::length(end) == 1 && start < end)) {
+        base::stop("Invalid block specification.")
     }
 
-    c(start + 1L, end - 1L)
+    base::c(start + 1L, end - 1L)
 }
 
 block_create = function(lines = character(), block_start = "# <<<", block_end = "# >>>") {
-    c("\n", block_start, unique(lines), block_end)
+    base::c("\n", block_start, base::unique(lines), block_end)
 }

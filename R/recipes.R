@@ -5,9 +5,6 @@
 #
 # Barely modified for formatting
 
-#' @include shell.R utils.R installers.R
-NULL
-
 #' Install Binary Library from the CRAN R macOS Recipes Project
 #'
 #' Convenience function that seeks to install pre-built binary libraries
@@ -22,12 +19,13 @@ NULL
 #' @param os.arch Either name of the repository such as `"darwin20/arm64"`, `"darwin20/x86_64"`, `"darwin17/x86_64"`, or `"auto"`.
 #'                Default `"auto"`.
 #' @param dependencies Install build dependencies (`TRUE`) or only the requested packages (`FALSE`). Default `TRUE`.
-#' @param action  Determine if the binary should be downloaded and installed (`"install"`)
-#'                or displayed (`"list"`). Default `"install"` to download and install the binaries.
+#' @param action  Determine if the binary should be downloaded and installed (`"install"`),
+#'                displayed (`"list"`), or downloaded but not installed (`"download"`).
+#'                Default `"install"` to download and install the binaries.
 #' @param sudo    Attempt to install the binaries using `sudo` permissions.
 #'                Default `TRUE`.
 #' @param password User password to switch into the `sudo` user. Default `NULL`.
-#' @param verbose Describe the steps being taken. Default `TRUE`
+#' @param verbose Describe the steps being taken. Default `TRUE`.
 #' @export
 #' @author
 #' Simon Urbanek wrote the function and made it available at
@@ -48,6 +46,10 @@ NULL
 #' | [darwin20/x86_64](https://mac.r-project.org/bin/darwin20/x86_64) | /opt/R/x86_64         | macOS 11, Intel (x86_64)           |
 #' | [darwin20/arm64](https://mac.r-project.org/bin/darwin20/arm64)   | /opt/R/arm64          | macOS 11, Apple M1 (arm64)         |
 #'
+#' @section Differences:
+#' The official implementation uses `quiet` as a parameter to suppress output
+#' instead of `verbose`.
+#'
 #' @examples
 #' # Perform a dry-run to see the required development packages.
 #' recipes_binary_install("r-base-dev", action = "list")
@@ -57,57 +59,57 @@ NULL
 #' recipes_binary_install("r-base-dev", sudo = TRUE)
 #' }
 recipes_binary_install = function(
-    pkgs,
-    url = "https://mac.R-project.org/bin",
-    os = tolower(
-        paste0(
-            system("uname -s", intern = TRUE),
-            gsub("\\..*", "", system("uname -r", intern = TRUE))
-        )
-    ),
-    arch = system("uname -m", intern = TRUE),
-    os.arch = "auto",
-    dependencies = TRUE,
-    action = c("install", "list"),
-    sudo = TRUE,
-    password = NULL,
-    verbose = TRUE) {
+        pkgs,
+        url = "https://mac.R-project.org/bin",
+        os = base::tolower(
+            base::paste0(
+                base::system("uname -s", intern = TRUE),
+                base::gsub("\\..*", "", base::system("uname -r", intern = TRUE))
+            )
+        ),
+        arch = base::system("uname -m", intern = TRUE),
+        os.arch = "auto",
+        dependencies = TRUE,
+        action = c("install", "list", "download"),
+        sudo = TRUE,
+        password = NULL,
+        verbose = TRUE) {
 
     up <- function(...)
-        paste(..., sep = '/')
-    action <- match.arg(action)
+        base::paste(..., sep = '/')
+    action <- base::match.arg(action)
 
     if (os.arch == "auto") {
         rindex <- up(url, "REPOS")
-        cat("Downloading", rindex, "...\n")
-        rl <- readLines(u <- url(rindex))
-        close(u)
-        rla <- simplify2array(strsplit(rl[grep("/", rl)], "/"))
-        rl <- data.frame(os = rla[1, ], arch = rla[2, ])
+        if (verbose) base::cat("Downloading", rindex, "...\n")
+        rl <- base::readLines(u <- base::url(rindex))
+        base::close(u)
+        rla <- base::simplify2array(base::strsplit(rl[base::grep("/", rl)], "/"))
+        rl <- base::data.frame(os = rla[1, ], arch = rla[2, ])
 
         os.name <- function(os)
-            gsub("[0-9].*", "", os)
+            base::gsub("[0-9].*", "", os)
         os.ver <-
             function(os)
-                as.numeric(sub("\\..*", "", gsub("[^0-9]*", "", os)))
+                base::as.numeric(base::sub("\\..*", "", base::gsub("[^0-9]*", "", os)))
 
         rl$os.name <- os.name(rl$os)
         rl$os.ver <- os.ver(rl$os)
 
         rl <-
             rl[rl$os.name == os.name(os) & rl$os.ver <= os.ver(os), ]
-        if (nrow(rl) < 1)
-            stop(
+        if (base::nrow(rl) < 1)
+            base::stop(
                 "There is no repository that supports ",
                 os.name(os),
                 " version ",
                 os.ver(os),
                 " or higher.\nAvailable binaries only support: ",
-                paste(rla[1, ], collapse = ", ")
+                base::paste(rla[1, ], collapse = ", ")
             )
 
-        if (!any(rl$arch == arch))
-            stop(
+        if (!base::any(rl$arch == arch))
+            base::stop(
                 "Architecture ",
                 arch,
                 " is not supported on os ",
@@ -117,38 +119,38 @@ recipes_binary_install = function(
             )
 
         rl <- rl[rl$arch == arch, ]
-        rl <- rl[order(rl$os.ver, decreasing = TRUE), ][1, ]
+        rl <- rl[base::order(rl$os.ver, decreasing = TRUE), ][1, ]
 
-        os.arch <- file.path(rl$os, rl$arch)
+        os.arch <- base::file.path(rl$os, rl$arch)
     }
 
-    cat("Using repository ", up(url, os.arch), "...\n")
+    if (verbose) base::cat("Using repository ", up(url, os.arch), "...\n")
 
     deps <- function(pkgs, db) {
         ## convert bare (w/o version) names to full names
         bare <- pkgs %in% db[, "Package"]
-        if (any(bare))
-            pkgs[bare] = rownames(db)[match(pkgs[bare], db[, "Package"])]
+        if (base::any(bare))
+            pkgs[bare] = base::rownames(db)[base::match(pkgs[bare], db[, "Package"])]
 
         ## any missing?
-        mis <- !pkgs %in% rownames(db)
-        if (any(mis))
-            stop("Following binaries have no download candidates: ",
-                 paste(pkgs[mis], collapse = ", "))
+        mis <- !pkgs %in% base::rownames(db)
+        if (base::any(mis))
+            base::stop("Following binaries have no download candidates: ",
+                       base::paste(pkgs[mis], collapse = ", "))
 
         dep <- function(pkgs) {
-            mis <- !pkgs %in% rownames(db)
-            if (any(mis))
-                stop(
+            mis <- !pkgs %in% base::rownames(db)
+            if (base::any(mis))
+                base::stop(
                     "Following binaries have no download candidates: ",
-                    paste(pkgs[mis], collapse = ", ")
+                    base::paste(pkgs[mis], collapse = ", ")
                 )
 
             nd <-
-                stats::na.omit(unique(c(pkgs, unlist(
-                    strsplit(db[pkgs, "BuiltWith"], "[, ]+")
+                stats::na.omit(base::unique(base::c(pkgs, base::unlist(
+                    base::strsplit(db[pkgs, "BuiltWith"], "[, ]+")
                 ))))
-            if (length(unique(pkgs)) < length(nd))
+            if (base::length(base::unique(pkgs)) < base::length(nd))
                 dep(nd)
             else
                 nd
@@ -160,22 +162,22 @@ recipes_binary_install = function(
     }
 
     pindex <- up(url, os.arch, "PACKAGES")
-    cat("Downloading index ", pindex, "...\n")
-    db <- read.dcf(u <- url(pindex))
-    close(u)
-    rownames(db) <- if ("Bundle" %in% colnames(db))
-        ifelse(is.na(db[, "Bundle"]),
-               paste(db[, "Package"], db[, "Version"], sep = '-'),
-               db[, "Bundle"])
+    if (verbose) base::cat("Downloading index ", pindex, "...\n")
+    db <- base::read.dcf(u <- base::url(pindex))
+    base::close(u)
+    base::rownames(db) <- if ("Bundle" %in% base::colnames(db))
+        base::ifelse(base::is.na(db[, "Bundle"]),
+                     base::paste(db[, "Package"], db[, "Version"], sep = '-'),
+                     db[, "Bundle"])
     else
-        paste(db[, "Package"], db[, "Version"], sep = '-')
+        base::paste(db[, "Package"], db[, "Version"], sep = '-')
 
-    if (identical(pkgs, "all"))
+    if (base::identical(pkgs, "all"))
         pkgs <- stats::na.omit(db[, "Package"])
     need <- deps(pkgs, db)
     ## remove bundles as they have no binary
-    if ("Bundle" %in% colnames(db) &&
-        any(rem <- need %in% stats::na.omit(db[, "Bundle"])))
+    if ("Bundle" %in% base::colnames(db) &&
+        base::any(rem <- need %in% stats::na.omit(db[, "Bundle"])))
         need <- need[!rem]
     urls <- up(url, os.arch, db[need, "Binary"])
 
@@ -183,11 +185,11 @@ recipes_binary_install = function(
 
         # Check if we're using sudo & have a password
         entered_recipes_password = password
-        if (sudo && is.null(entered_recipes_password))
+        if (sudo && base::is.null(entered_recipes_password))
             entered_recipes_password = askpass::askpass()
 
         # Determine the correct installation path based on arch type
-        supplied_arch = strsplit(os.arch, "/")[[1]][2]
+        supplied_arch = base::strsplit(os.arch, "/")[[1]][2]
         installation_directory = recipe_binary_install_location(supplied_arch)
         installation_strip_level = recipe_binary_install_strip_level(supplied_arch)
 
@@ -208,8 +210,17 @@ recipes_binary_install = function(
                                 verbose = verbose)
         }
 
-        return(invisible(TRUE))
+        return(base::invisible(TRUE))
+    } else if (action == "download") {
+        for (u in urls) {
+            if (!base::file.exists(base::basename(u))) {
+
+            if (verbose) base::cat("Downloading ", u, "...\n", sep='')
+
+            if (base::system(base::paste("curl", "-sSLO", base::shQuote(u))) < 0)
+                base::stop("Failed to download ", u)
+            }
+        }
     } else
         urls
 }
-

@@ -1,14 +1,13 @@
-#' @include cli-custom.R
-
 .onAttach <- function(libname, pkgname) {
     # Only run on interactive mode
     if (!base::interactive()) return()
 
     # Check if it's actually macOS
     if (!is_macos()) {
+        os_info <- base::tolower(base::Sys.info()[['sysname']])
         base::packageStartupMessage(cli::format_inline(
             "{.pkg macrtools}: {.emph Warning: This package is designed for macOS only.}",
-            "\n{.pkg macrtools}: {.emph Current OS: {.val {tolower(base::Sys.info()[['sysname']])}}}",
+            "\n{.pkg macrtools}: {.emph Current OS: {.val {os_info}}}",
             "\n{.pkg macrtools}: {.emph See https://mac.thecoatlessprofessor.com/macrtools/ for more information.}"
         ))
         return()
@@ -30,8 +29,9 @@
     } else {
         # Show welcome message on supported system
         if (base::getOption("macrtools.show_welcome", TRUE)) {
+            mac_version <- shell_mac_version()
             base::packageStartupMessage(cli::format_inline(
-                "{.pkg macrtools}: Ready to set up R development tools on macOS {.val {shell_mac_version()}}.",
+                "{.pkg macrtools}: Ready to set up R development tools on macOS {.val {mac_version}}.",
                 "\n{.pkg macrtools}: Run {.code macrtools::macos_rtools_install()} to begin installation.",
                 "\n{.pkg macrtools}: For help, see: {.url https://mac.thecoatlessprofessor.com/macrtools/}"
             ))

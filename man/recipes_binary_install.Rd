@@ -7,12 +7,12 @@
 recipes_binary_install(
   pkgs,
   url = "https://mac.R-project.org/bin",
-  os = tolower(paste0(system("uname -s", intern = TRUE), gsub("\\\\..*", "",
-    system("uname -r", intern = TRUE)))),
-  arch = system("uname -m", intern = TRUE),
+  os = base::tolower(base::paste0(base::system("uname -s", intern = TRUE),
+    base::gsub("\\\\..*", "", base::system("uname -r", intern = TRUE)))),
+  arch = base::system("uname -m", intern = TRUE),
   os.arch = "auto",
   dependencies = TRUE,
-  action = c("install", "list"),
+  action = c("install", "list", "download"),
   sudo = TRUE,
   password = NULL,
   verbose = TRUE
@@ -33,15 +33,16 @@ Default \code{"auto"}.}
 
 \item{dependencies}{Install build dependencies (\code{TRUE}) or only the requested packages (\code{FALSE}). Default \code{TRUE}.}
 
-\item{action}{Determine if the binary should be downloaded and installed (\code{"install"})
-or displayed (\code{"list"}). Default \code{"install"} to download and install the binaries.}
+\item{action}{Determine if the binary should be downloaded and installed (\code{"install"}),
+displayed (\code{"list"}), or downloaded but not installed (\code{"download"}).
+Default \code{"install"} to download and install the binaries.}
 
 \item{sudo}{Attempt to install the binaries using \code{sudo} permissions.
 Default \code{TRUE}.}
 
 \item{password}{User password to switch into the \code{sudo} user. Default \code{NULL}.}
 
-\item{verbose}{Describe the steps being taken. Default \code{TRUE}}
+\item{verbose}{Describe the steps being taken. Default \code{TRUE}.}
 }
 \description{
 Convenience function that seeks to install pre-built binary libraries
@@ -58,6 +59,12 @@ repository and the install path are either:\tabular{lll}{
    \href{https://mac.r-project.org/bin/darwin20/arm64}{darwin20/arm64} \tab /opt/R/arm64 \tab macOS 11, Apple M1 (arm64) \cr
 }
 }
+\section{Differences}{
+
+The official implementation uses \code{quiet} as a parameter to suppress output
+instead of \code{verbose}.
+}
+
 \examples{
 # Perform a dry-run to see the required development packages.
 recipes_binary_install("r-base-dev", action = "list")
