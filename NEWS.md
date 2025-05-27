@@ -1,3 +1,10 @@
+# macrtools 0.0.6
+
+## Features
+
+- Updated to support R 4.5.0 on macOS.
+  - Downloads and sets up the latest version of gfortran 14.2
+
 # macrtools 0.0.5
 
 ## Features

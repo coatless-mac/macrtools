@@ -52,9 +52,34 @@ gfortran_version <- function() {
 #' appropriate location for **Intel** (`x86_64`) or **M-series** (`arm64`/`aarch64`)
 #' depending on the R version used.
 #'
-#' ### gfortran Installation for R 4.3
+#' ### gfortran Installation for R 4.5
 #'
-#' The `gfortran` installer for R 4.3 is a universal installer that places
+#' The `gfortran` installer for R 4.5 is a universal installer that places
+#' `gfortran` into the `/opt/gfortran` for both **Intel** (`x86_64`) and
+#' **M-series** (`arm64`/`aarch64`) macs.
+#'
+#' ```sh
+#' # Install the downloaded package into root
+#' sudo installer \
+#'   -pkg /path/to/gfortran-14.2-universal.pkg \
+#'   -target /
+#' ```
+#'
+#' Once installed, we modify the `PATH` environment variable to recognize the newly
+#' installed software by adding into the `~/.Renviron` file the following:
+#'
+#' ```sh
+#' touch ~/.Renviron
+#' cat << "EOF" > ~./Renviron
+#' ## macrtools - gfortran: start
+#' PATH=${PATH}:/opt/gfortran/bin
+#' ## macrtools - gfortran: end
+#' EOF
+#' ```
+#'
+#' ### gfortran Installation for R 4.3-4.4
+#'
+#' The `gfortran` installer for R 4.3-4.4 is a universal installer that places
 #' `gfortran` into the `/opt/gfortran` for both **Intel** (`x86_64`) and
 #' **M-series** (`arm64`/`aarch64`) macs.
 #'
@@ -205,7 +230,11 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
 
     gfortran_status <- FALSE
 
-    if(is_r_version("4.3") || is_r_version("4.4")) {
+    if(is_r_version("4.5")) {
+        gfortran_status <- install_gfortran_14_2_universal(
+            password = entered_password_gfortran,
+            verbose = verbose)
+    } else if(is_r_version("4.3") || is_r_version("4.4")) {
         gfortran_status <- install_gfortran_12_2_universal(
             password = entered_password_gfortran,
             verbose = verbose)
@@ -390,7 +419,7 @@ gfortran_update <- function(password = base::getOption("macrtools.password"), ve
     assert_mac()
     assert_aarch64()
     assert(is_gfortran_installed(), "gfortran must be installed")
-    assert(is_r_version("4.2") || is_r_version("4.3") || is_r_version("4.4"),
+    assert(is_r_version("4.2") || is_r_version("4.3") || is_r_version("4.4") || is_r_version("4.5"),
            "R 4.2 or above is required for gfortran update")
 
     # Figure out installation directory
@@ -541,10 +570,35 @@ install_gfortran_11_arm <- function(password = base::getOption("macrtools.passwo
 }
 
 
+#' Install gfortran v14.2 universal binaries
+#'
+#' @details
+#' Installs the `gfortran` v14.2 binaries for R version 4.5 for both
+#' Intel and ARM-based macs.
+#'
+#' @noRd
+install_gfortran_14_2_universal <- function(
+        password = base::getOption("macrtools.password"),
+        verbose = TRUE) {
+
+    # URL for gfortran 14.2 universal installer for R 4.5
+    gfortran_14_universal <- "https://github.com/R-macos/gcc-14-branch/releases/download/gcc-14.2-darwin-r2.1/gfortran-14.2-universal.pkg"
+
+    # Download pkg
+    path_to_pkg <- binary_download(gfortran_14_universal, verbose = verbose)
+
+    # Install pkg into the appropriate location
+    pkg_install(path_to_pkg,
+                "/",
+                password = password,
+                verbose = verbose)
+}
+
+
 #' Install gfortran v12.2 universal binaries
 #'
 #' @details
-#' Installs the `gfortran` v12.2 binaries for R version 4.3 for both
+#' Installs the `gfortran` v12.2 binaries for R version 4.3-4.4 for both
 #' Intel and ARM-based macs.
 #'
 #' @noRd
