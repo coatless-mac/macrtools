@@ -70,9 +70,33 @@ the default installation location.
 The \code{gfortran_install()} function aims to install \code{gfortran} into the
 appropriate location for \strong{Intel} (\code{x86_64}) or \strong{M-series} (\code{arm64}/\code{aarch64})
 depending on the R version used.
-\subsection{gfortran Installation for R 4.3}{
+\subsection{gfortran Installation for R 4.5}{
 
-The \code{gfortran} installer for R 4.3 is a universal installer that places
+The \code{gfortran} installer for R 4.5 is a universal installer that places
+\code{gfortran} into the \verb{/opt/gfortran} for both \strong{Intel} (\code{x86_64}) and
+\strong{M-series} (\code{arm64}/\code{aarch64}) macs.
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{# Install the downloaded package into root
+sudo installer \\
+  -pkg /path/to/gfortran-14.2-universal.pkg \\
+  -target /
+}\if{html}{\out{</div>}}
+
+Once installed, we modify the \code{PATH} environment variable to recognize the newly
+installed software by adding into the \verb{~/.Renviron} file the following:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{touch ~/.Renviron
+cat << "EOF" > ~./Renviron
+## macrtools - gfortran: start
+PATH=$\{PATH\}:/opt/gfortran/bin
+## macrtools - gfortran: end
+EOF
+}\if{html}{\out{</div>}}
+}
+
+\subsection{gfortran Installation for R 4.3-4.4}{
+
+The \code{gfortran} installer for R 4.3-4.4 is a universal installer that places
 \code{gfortran} into the \verb{/opt/gfortran} for both \strong{Intel} (\code{x86_64}) and
 \strong{M-series} (\code{arm64}/\code{aarch64}) macs.
 
