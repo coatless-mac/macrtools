@@ -108,10 +108,31 @@ the default installation location.</p>
 <p>The <code>gfortran_install()</code> function aims to install <code>gfortran</code> into the
 appropriate location for <strong>Intel</strong> (<code>x86_64</code>) or <strong>M-series</strong> (<code>arm64</code>/<code>aarch64</code>)
 depending on the R version used.</p><div class="section">
-<h3 id="gfortran-installation-for-r-">gfortran Installation for R 4.3<a class="anchor" aria-label="anchor" href="#gfortran-installation-for-r-"></a></h3>
+<h3 id="gfortran-installation-for-r-">gfortran Installation for R 4.5<a class="anchor" aria-label="anchor" href="#gfortran-installation-for-r-"></a></h3>
 
 
-<p>The <code>gfortran</code> installer for R 4.3 is a universal installer that places
+<p>The <code>gfortran</code> installer for R 4.5 is a universal installer that places
+<code>gfortran</code> into the <code>/opt/gfortran</code> for both <strong>Intel</strong> (<code>x86_64</code>) and
+<strong>M-series</strong> (<code>arm64</code>/<code>aarch64</code>) macs.</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install the downloaded package into root</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">sudo</span> installer <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">-pkg</span> /path/to/gfortran-14.2-universal.pkg <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">-target</span> /</span></code></pre><p></p></div>
+<p>Once installed, we modify the <code>PATH</code> environment variable to recognize the newly
+installed software by adding into the <code>~/.Renviron</code> file the following:</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">touch</span> ~/.Renviron</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; "EOF"</span> <span class="op">&gt;</span> ~./Renviron</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="st">## macrtools - gfortran: start</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="st">PATH=${PATH}:/opt/gfortran/bin</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="st">## macrtools - gfortran: end</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="op">EOF</span></span></code></pre><p></p></div>
+</div>
+
+<div class="section">
+<h3 id="gfortran-installation-for-r--1">gfortran Installation for R 4.3-4.4<a class="anchor" aria-label="anchor" href="#gfortran-installation-for-r--1"></a></h3>
+
+
+<p>The <code>gfortran</code> installer for R 4.3-4.4 is a universal installer that places
 <code>gfortran</code> into the <code>/opt/gfortran</code> for both <strong>Intel</strong> (<code>x86_64</code>) and
 <strong>M-series</strong> (<code>arm64</code>/<code>aarch64</code>) macs.</p>
 <p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install the downloaded package into root</span></span>
