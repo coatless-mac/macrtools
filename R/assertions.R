@@ -80,11 +80,11 @@ assert_x86_64 <- function(call = caller_env()) {
 #' @export
 assert_r_version_supported <- function(call = caller_env()) {
     if (!(is_r_version("4.0") || is_r_version("4.1") || is_r_version("4.2") ||
-          is_r_version("4.3") || is_r_version("4.4"))) {
+          is_r_version("4.3") || is_r_version("4.4") || is_r_version("4.5"))) {
         version_number <- base::paste(base::R.version$major, base::R.version$minor, sep = ".")
         cli::cli_abort(c(
             "{.pkg macrtools}: The installed R version {.val {version_number}} is not supported.",
-            "{.pkg macrtools}: Supported versions: R 4.0.x through R 4.4.x."
+            "{.pkg macrtools}: Supported versions: R 4.0.x through R 4.5.x."
         ),
         call = call,
         advice = "Please upgrade or downgrade your R installation to a supported version.")

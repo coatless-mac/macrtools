@@ -11,7 +11,7 @@ install_strip_level <- function(arch = system_arch()) {
 }
 
 recipe_binary_install_strip_level <- function(arch = system_arch()) {
-    if (is_r_version("4.3") || is_r_version("4.4")) {
+    if (is_r_version("4.3") || is_r_version("4.4") || is_r_version("4.5")) {
         base::switch(
             arch,
             "arm64" = 3,
@@ -22,7 +22,7 @@ recipe_binary_install_strip_level <- function(arch = system_arch()) {
     } else if (is_r_version("4.0") || is_r_version("4.1") || is_r_version("4.2")) {
         install_strip_level()
     } else {
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R 4.0.x through 4.4.x.")
+        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R 4.0.x through 4.5.x.")
     }
 }
 
@@ -37,7 +37,7 @@ install_location <- function(arch = system_arch()) {
 }
 
 recipe_binary_install_location <- function(arch = system_arch()) {
-    if (is_r_version("4.3") || is_r_version("4.4")) {
+    if (is_r_version("4.3") || is_r_version("4.4") || is_r_version("4.5")) {
         base::switch(
             arch,
             "arm64" = install_directory_arm64(),
@@ -48,17 +48,17 @@ recipe_binary_install_location <- function(arch = system_arch()) {
     } else if (is_r_version("4.0") || is_r_version("4.1") || is_r_version("4.2")) {
         install_location()
     } else {
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R 4.0.x through 4.4.x.")
+        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R 4.0.x through 4.5.x.")
     }
 }
 
 gfortran_install_location <- function(arch = system_arch()) {
-    if (is_r_version("4.3") || is_r_version("4.4")) {
+    if (is_r_version("4.3") || is_r_version("4.4") || is_r_version("4.5")) {
         "/opt"
     } else if (is_r_version("4.0") || is_r_version("4.1") || is_r_version("4.2")) {
         install_location()
     } else {
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support gfortran installation for R 4.0.x through 4.4.x.")
+        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support gfortran installation for R 4.0.x through 4.5.x.")
     }
 }
 
