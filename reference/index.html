@@ -3,13 +3,12 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BEVJR2VK90');
 </script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">macrtools</a>
 
@@ -25,6 +24,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/coatless-mac/macrtools" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -37,9 +37,112 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="main-installation-functions">Main Installation Functions<a class="anchor" aria-label="anchor" href="#main-installation-functions"></a></h2>
+
+      <div class="section-desc"><p>Primary functions for installing and managing the complete R toolchain</p></div>
 
 
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="macos-rtools.html">macos_rtools_install()</a></code> <code><a href="macos-rtools.html">macos_rtools_uninstall()</a></code>
+
+        </dt>
+        <dd>Install and Uninstall the macOS R Toolchain</dd>
+      </dl></div><div class="section level2">
+      <h2 id="xcode-command-line-tools">Xcode Command Line Tools<a class="anchor" aria-label="anchor" href="#xcode-command-line-tools"></a></h2>
+
+      <div class="section-desc"><p>Functions for managing Xcode CLI installation and configuration</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="xcode-cli.html">is_xcode_cli_installed()</a></code> <code><a href="xcode-cli.html">xcode_cli_path()</a></code> <code><a href="xcode-cli.html">xcode_cli_install()</a></code> <code><a href="xcode-cli.html">xcode_cli_uninstall()</a></code> <code><a href="xcode-cli.html">xcode_cli_switch()</a></code> <code><a href="xcode-cli.html">xcode_cli_reset()</a></code>
+
+        </dt>
+        <dd>Find, Install, or Uninstall XCode CLI</dd>
+      </dl><dl><dt>
+
+          <code><a href="xcode-app-ide.html">is_xcode_app_installed()</a></code>
+
+        </dt>
+        <dd>Detect if the Xcode.app IDE is Installed</dd>
+      </dl><dl><dt>
+
+          <code><a href="xcode-select.html">xcode_select()</a></code> <code><a href="xcode-select.html">xcode_select_path()</a></code> <code><a href="xcode-select.html">xcode_select_version()</a></code>
+
+        </dt>
+        <dd>Interface with <code>xcode-select</code> Shell Commands</dd>
+      </dl><dl><dt>
+
+          <code><a href="xcodebuild.html">xcodebuild()</a></code> <code><a href="xcodebuild.html">xcodebuild_version()</a></code>
+
+        </dt>
+        <dd>Interface with <code>xcodebuild</code> Shell Commands</dd>
+      </dl></div><div class="section level2">
+      <h2 id="gnu-fortran-compiler-gfortran-">GNU Fortran Compiler (gfortran)<a class="anchor" aria-label="anchor" href="#gnu-fortran-compiler-gfortran-"></a></h2>
+
+      <div class="section-desc"><p>Functions for installing, updating, and managing gfortran</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="gfortran.html">is_gfortran_installed()</a></code> <code><a href="gfortran.html">gfortran_version()</a></code> <code><a href="gfortran.html">gfortran_install()</a></code> <code><a href="gfortran.html">gfortran_uninstall()</a></code> <code><a href="gfortran.html">gfortran_update()</a></code>
+
+        </dt>
+        <dd>Find, Install, or Uninstall gfortran</dd>
+      </dl></div><div class="section level2">
+      <h2 id="r-development-libraries">R Development Libraries<a class="anchor" aria-label="anchor" href="#r-development-libraries"></a></h2>
+
+      <div class="section-desc"><p>Functions for installing binary packages from the R-macOS recipes project</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="recipes_binary_install.html">recipes_binary_install()</a></code>
+
+        </dt>
+        <dd>Install Binary Library from the CRAN R macOS Recipes Project</dd>
+      </dl></div><div class="section level2">
+      <h2 id="installation-paths-directories">Installation Paths &amp; Directories<a class="anchor" aria-label="anchor" href="#installation-paths-directories"></a></h2>
+
+      <div class="section-desc"><p>Functions that return standard installation directories for different architectures</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="install-directory.html">install_directory_x86_64()</a></code> <code><a href="install-directory.html">install_directory_x86_64_r_version_4_3()</a></code> <code><a href="install-directory.html">install_directory_arm64()</a></code> <code><a href="install-directory.html">install_directory_xcode_cli()</a></code> <code><a href="install-directory.html">install_directory_xcode_app()</a></code>
+
+        </dt>
+        <dd>Installation Directory Locations</dd>
+      </dl></div><div class="section level2">
+      <h2 id="binary-package-utilities">Binary Package Utilities<a class="anchor" aria-label="anchor" href="#binary-package-utilities"></a></h2>
+
+      <div class="section-desc"><p>Lower-level functions for downloading and installing binary packages</p></div>
 
 
     </div><div class="section level2">
@@ -55,70 +158,51 @@
         <dd>Download Binary Packages</dd>
       </dl><dl><dt>
 
-          <code><a href="gfortran.html">is_gfortran_installed()</a></code> <code><a href="gfortran.html">gfortran_version()</a></code> <code><a href="gfortran.html">gfortran_install()</a></code> <code><a href="gfortran.html">gfortran_uninstall()</a></code> <code><a href="gfortran.html">gfortran_update()</a></code>
+          <code><a href="tar_package_install.html">tar_package_install()</a></code>
 
         </dt>
-        <dd>Find, Install, or Uninstall gfortran</dd>
-      </dl><dl><dt>
+        <dd>Install Binary Package in a Tar Format</dd>
+      </dl></div><div class="section level2">
+      <h2 id="system-assertions-validation">System Assertions &amp; Validation<a class="anchor" aria-label="anchor" href="#system-assertions-validation"></a></h2>
 
-          <code><a href="install-directory.html">install_directory_x86_64()</a></code> <code><a href="install-directory.html">install_directory_x86_64_r_version_4_3()</a></code> <code><a href="install-directory.html">install_directory_arm64()</a></code> <code><a href="install-directory.html">install_directory_xcode_cli()</a></code> <code><a href="install-directory.html">install_directory_xcode_app()</a></code>
+      <div class="section-desc"><p>Functions to validate system requirements and compatibility</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="assert.html">assert()</a></code> <code><a href="assert.html">assert_mac()</a></code> <code><a href="assert.html">assert_macos_supported()</a></code> <code><a href="assert.html">assert_aarch64()</a></code> <code><a href="assert.html">assert_x86_64()</a></code> <code><a href="assert.html">assert_r_version_supported()</a></code>
 
         </dt>
-        <dd>Installation Directory Locations</dd>
-      </dl><dl><dt>
+        <dd>Assert a condition</dd>
+      </dl></div><div class="section level2">
+      <h2 id="utility-functions">Utility Functions<a class="anchor" aria-label="anchor" href="#utility-functions"></a></h2>
 
-          <code><a href="macos-rtools.html">macos_rtools_install()</a></code> <code><a href="macos-rtools.html">macos_rtools_uninstall()</a></code>
+      <div class="section-desc"><p>Helper functions and utilities</p></div>
 
-        </dt>
-        <dd>Install and Uninstall the macOS R Toolchain</dd>
-      </dl><dl><dt>
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="print.cli.html">print(<i>&lt;cli&gt;</i>)</a></code>
 
         </dt>
         <dd>Print CLI Responses</dd>
-      </dl><dl><dt>
-
-          <code><a href="recipes_binary_install.html">recipes_binary_install()</a></code>
-
-        </dt>
-        <dd>Install Binary Library from the CRAN R macOS Recipes Project</dd>
-      </dl><dl><dt>
-
-          <code><a href="tar_package_install.html">tar_package_install()</a></code>
-
-        </dt>
-        <dd>Install Binary Package in a Tar Format</dd>
-      </dl><dl><dt>
-
-          <code><a href="xcode-app-ide.html">is_xcode_app_installed()</a></code>
-
-        </dt>
-        <dd>Detect if the Xcode.app IDE is Installed</dd>
-      </dl><dl><dt>
-
-          <code><a href="xcode-cli.html">is_xcode_cli_installed()</a></code> <code><a href="xcode-cli.html">xcode_cli_path()</a></code> <code><a href="xcode-cli.html">xcode_cli_install()</a></code> <code><a href="xcode-cli.html">xcode_cli_uninstall()</a></code> <code><a href="xcode-cli.html">xcode_cli_switch()</a></code> <code><a href="xcode-cli.html">xcode_cli_reset()</a></code>
-
-        </dt>
-        <dd>Find, Install, or Uninstall XCode CLI</dd>
-      </dl><dl><dt>
-
-          <code><a href="xcode-select.html">xcode_select()</a></code> <code><a href="xcode-select.html">xcode_select_path()</a></code> <code><a href="xcode-select.html">xcode_select_version()</a></code>
-
-        </dt>
-        <dd>Interface with <code>xcode-select</code> Shell Commands</dd>
-      </dl><dl><dt>
-
-          <code><a href="xcodebuild.html">xcodebuild()</a></code> <code><a href="xcodebuild.html">xcodebuild_version()</a></code>
-
-        </dt>
-        <dd>Interface with <code>xcodebuild</code> Shell Commands</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by James Joseph Balamuta.</p>
+  <p>Developed by <a href="https://thecoatlessprofessor.com/" class="external-link">James Joseph Balamuta</a>. Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
 <div class="pkgdown-footer-right">
