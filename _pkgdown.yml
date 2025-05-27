@@ -1,16 +1,123 @@
 url: https://mac.thecoatlessprofessor.com/macrtools/
+
 template:
   bootstrap: 5
+  bootswatch: flatly
+  theme: arrow-light
   includes:
     in_header: |
-     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4979996562647159"
-     crossorigin="anonymous"></script>
-     <!-- Google tag (gtag.js) -->
-     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BEVJR2VK90"></script>
-     <script>
-       window.dataLayer = window.dataLayer || [];
-       function gtag(){dataLayer.push(arguments);}
-       gtag('js', new Date());
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4979996562647159"
+           crossorigin="anonymous"></script>
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-BEVJR2VK90"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BEVJR2VK90');
+      </script>
 
-       gtag('config', 'G-BEVJR2VK90');
-     </script>
+home:
+  title: "macrtools: R Development Toolchain for macOS"
+  description: >
+    An R package to install and manage the complete R development toolchain
+    on macOS, including Xcode CLI, gfortran, and essential development libraries.
+
+navbar:
+  structure:
+    left:  [intro, reference, news]
+    right: [search, github]
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/coatless-mac/macrtools
+      aria-label: GitHub
+
+reference:
+- title: "Main Installation Functions"
+  desc: "Primary functions for installing and managing the complete R toolchain"
+  contents:
+  - macos_rtools_install
+  - macos_rtools_uninstall
+
+- title: "Xcode Command Line Tools"
+  desc: "Functions for managing Xcode CLI installation and configuration"
+  contents:
+  - xcode_cli_install
+  - xcode_cli_uninstall
+  - xcode_cli_switch
+  - xcode_cli_reset
+  - xcode_cli_path
+  - is_xcode_cli_installed
+  - is_xcode_app_installed
+  - xcode_select
+  - xcode_select_path
+  - xcode_select_version
+  - xcodebuild
+  - xcodebuild_version
+
+- title: "GNU Fortran Compiler (gfortran)"
+  desc: "Functions for installing, updating, and managing gfortran"
+  contents:
+  - gfortran_install
+  - gfortran_uninstall
+  - gfortran_update
+  - gfortran_version
+  - is_gfortran_installed
+
+- title: "R Development Libraries"
+  desc: "Functions for installing binary packages from the R-macOS recipes project"
+  contents:
+  - recipes_binary_install
+
+- title: "Installation Paths & Directories"
+  desc: "Functions that return standard installation directories for different architectures"
+  contents:
+  - install_directory_x86_64
+  - install_directory_x86_64_r_version_4_3
+  - install_directory_arm64
+  - install_directory_xcode_cli
+  - install_directory_xcode_app
+
+- title: "Binary Package Utilities"
+  desc: "Lower-level functions for downloading and installing binary packages"
+  contents:
+  - binary_download
+  - tar_package_install
+
+- title: "System Assertions & Validation"
+  desc: "Functions to validate system requirements and compatibility"
+  contents:
+  - assert
+  - assert_mac
+  - assert_macos_supported
+  - assert_aarch64
+  - assert_x86_64
+  - assert_r_version_supported
+
+- title: "Utility Functions"
+  desc: "Helper functions and utilities"
+  contents:
+  - print.cli
+
+news:
+  releases:
+  - text: "Development version"
+    href: https://github.com/coatless-mac/macrtools/blob/main/NEWS.md
+
+footer:
+  structure:
+    left: [developed_by, built_with]
+
+authors:
+  James Joseph Balamuta:
+    href: https://thecoatlessprofessor.com/
