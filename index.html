@@ -91,6 +91,10 @@
 <p>The compilation toolchain can be removed by using:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/macos-rtools.html">macos_rtools_uninstall</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>You can optionally install OpenMP support as well using:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/openmp.html">openmp_install</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Note:</strong> Apple does not include OpenMP in their version of clang. OpenMP usage is optional, but recommended for advanced users who wish to compile packages that use OpenMP for parallel processing.</p>
 </div>
 </div>
 <div class="section level2">
@@ -101,23 +105,27 @@
 <h3 id="diagnose">Diagnose<a class="anchor" aria-label="anchor" href="#diagnose"></a>
 </h3>
 <p>The package features two tools that seek to identify if core components are installed:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can check if Xcode CLI is present using:</span></span>
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-cli.html">is_xcode_cli_installed</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># We can verify gfortran is present as well</span></span>
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/gfortran.html">is_gfortran_installed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The package can also check to see if the full version of the Xcode (Xcode.app IDE) is installed.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># See if Xcode.app IDE is in use</span></span>
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-app-ide.html">is_xcode_app_installed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The Xcode.app is a significantly larger development toolkit compared to Xcode CLI.</p>
+<p>Optionally, you can also check to see if OpenMP is installed and configured:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Check if OpenMP is installed and configured</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/openmp.html">is_openmp_installed</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <p>The next set of functions focus primarily on installing different binary packages into the required locations.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can perform a non-interactive installation of Xcode CLI with:</span></span>
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-cli.html">xcode_cli_install</a></span><span class="op">(</span><span class="op">)</span> </span>
 <span></span>
@@ -125,18 +133,29 @@
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/gfortran.html">gfortran_install</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># And other binaries required for compiling R using:</span></span>
-<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/recipes_binary_install.html">recipes_binary_install</a></span><span class="op">(</span><span class="st">'r-base-dev'</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/recipes_binary_install.html">recipes_binary_install</a></span><span class="op">(</span><span class="st">'r-base-dev'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Installs OpenMP and configures Makevars</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/openmp.html">openmp_install</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="uninstall">Uninstall<a class="anchor" aria-label="anchor" href="#uninstall"></a>
 </h3>
 <p>If we no longer have interest in having development tools present, we can remove the development tools using:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We can remove Xcode CLI using</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-cli.html">xcode_cli_uninstall</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Note:</strong> This does not remove binaries obtained from recipes, OpenMP, or Xcode.app IDE.</p>
+<p>We can individually remove components as well:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Remove just Xcode CLI</span></span>
 <span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/xcode-cli.html">xcode_cli_uninstall</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># We can uninstall gfortran using:</span></span>
-<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/gfortran.html">gfortran_uninstall</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Remove just gfortran</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/gfortran.html">gfortran_uninstall</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Remove just OpenMP (includes Makevars cleanup)</span></span>
+<span><span class="fu">macrtools</span><span class="fu">::</span><span class="fu"><a href="reference/openmp.html">openmp_uninstall</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Note:</strong> This does not yet uninstall the <em>R</em> development binaries.</p>
 </div>
 </div>
