@@ -79,7 +79,6 @@ reference:
   contents:
   - openmp_install
   - openmp_uninstall
-  - openmp_update
   - openmp_version
   - is_openmp_installed
 
