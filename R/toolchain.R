@@ -271,8 +271,6 @@ macos_rtools_install <- function(
         "r-base-dev", sudo = TRUE, password = entered_password, verbose = verbose
     )
 
-    if (verbose) cli::cli_progress_update(pb_id, 0.9)
-
     # Finalize installation
     if (verbose) {
         cli::cli_progress_update(pb_id, 1.0)
@@ -299,8 +297,6 @@ macos_rtools_install <- function(
 
         current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
         cli::cli_alert_info("Installation completed at: {.val {current_time}}")
-        cli::cli_text("If you encounter issues with package installation, run:")
-        cli::cli_code("pkgbuild::check_build_tools(debug = TRUE)")
     } else {
         cli::cli_abort(c(
             "{.pkg macrtools}: Installation failed. Some components could not be installed properly.",
