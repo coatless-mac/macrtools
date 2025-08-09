@@ -32,8 +32,8 @@ openmp_test()
 
 \item{verbose}{Display messages indicating status}
 
-\item{configure_makevars}{Remove OpenMP configuration from ~/.R/Makevars
-during uninstall. Default is \code{TRUE}.}
+\item{configure_makevars}{Automatically configure ~/.R/Makevars with or without OpenMP flags.
+Default is \code{TRUE}.}
 }
 \description{
 Set of functions that seek to identify whether OpenMP was installed,

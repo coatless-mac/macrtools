@@ -220,9 +220,6 @@ openmp_install <- function(password = base::getOption("macrtools.password"), ver
 #' Note that `ompx.h` was included in LLVM 19.1.0 and
 #' may not exist in older OpenMP versions.
 #'
-#'
-#' @param configure_makevars Remove OpenMP configuration from ~/.R/Makevars
-#'                           during uninstall. Default is `TRUE`.
 #' @export
 #' @rdname openmp
 openmp_uninstall <- function(password = base::getOption("macrtools.password"),
