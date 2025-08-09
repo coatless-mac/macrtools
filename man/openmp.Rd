@@ -41,13 +41,23 @@ allow OpenMP to be installed, and removing OpenMP.
 }
 \details{
 The \verb{openmp_*()} suite of functions attempts to locate, install, and uninstall
-OpenMP runtime library based on the Xcode version. OpenMP is installed to:
+the OpenMP runtime library based on the installed Xcode version. These functions
+mirror the logic described on the \href{https://mac.r-project.org/openmp/}{macOS R Project OpenMP page}
+and should be used by advanced users who wish to compile R packages
+that use OpenMP for parallel processing. They are not required for most users.#'
+
+OpenMP runtime is downloaded from the R-project repository for macOS and installed to:
 \itemize{
 \item Library: \verb{/usr/local/lib/libomp.dylib}
-\item Headers: \verb{/usr/local/include/omp.h}, \verb{/usr/local/include/ompt.h}, \verb{/usr/local/include/omp-tools.h}
+\item Headers:
+\itemize{
+\item \verb{/usr/local/include/omp.h};
+\item \verb{/usr/local/include/ompt.h}; and,
+\item \verb{/usr/local/include/omp-tools.h}
+}
 }
 
-Apple has explicitly disabled OpenMP support in Xcode compilers, but the
+\strong{Note:} Apple has explicitly disabled OpenMP support in Xcode compilers, but the
 runtime library can be installed separately and used with \code{-Xclang -fopenmp}
 compiler flags.
 }
