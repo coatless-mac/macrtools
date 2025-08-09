@@ -26,7 +26,15 @@
 #' @section Check if `OpenMP` is installed:
 #'
 #' Checks the local file system for whether OpenMP runtime library is installed
-#' in the default installation location.
+#' in the default installation location. Specifically, it checks for the
+#' `libomp.dylib` library file and the `omp.h` header file, e.g:
+#'
+#' ```sh
+#' # Check if OpenMP library exists
+#' [ -f /usr/local/lib/libomp.dylib ] && echo "Library found" || echo "Library not found"
+#' # Check if OpenMP header files exist
+#' [ -f /usr/local/include/omp.h ] && echo "Headers found" || echo "Headers not found"
+#' ```
 #'
 #' @rdname openmp
 #' @export
@@ -433,19 +441,11 @@ install_openmp_from_url <- function(url, password = NULL, verbose = TRUE) {
 }
 
 #' @section Testing OpenMP Installation:
-#' After installing OpenMP, you can test if it's working by creating a simple
-#' test package or by adding the following to your `~/.R/Makevars` file:
+#' After installing OpenMP, you can test if it's working by checking the
+#' `~/.R/Makevars` file for the correct flags and verifying the library signature.
 #'
-#' ```sh
-#' CPPFLAGS += -Xclang -fopenmp
-#' LDFLAGS += -lomp
-#' ```
-#'
-#' Then try installing a package that uses OpenMP, such as:
-#'
-#' ```r
-#' install.packages("data.table", type = "source")
-#' ```
+#' **Note:** This function does not attempt to compile any code, it only checks
+#' the configuration and library signature.
 #'
 #' @export
 #' @rdname openmp

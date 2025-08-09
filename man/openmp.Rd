@@ -66,7 +66,14 @@ compiler flags.
 
 
 Checks the local file system for whether OpenMP runtime library is installed
-in the default installation location.
+in the default installation location. Specifically, it checks for the
+\code{libomp.dylib} library file and the \code{omp.h} header file, e.g:
+
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{# Check if OpenMP library exists
+[ -f /usr/local/lib/libomp.dylib ] && echo "Library found" || echo "Library not found"
+# Check if OpenMP header files exist
+[ -f /usr/local/include/omp.h ] && echo "Headers found" || echo "Headers not found"
+}\if{html}{\out{</div>}}
 }
 
 \section{Installing \code{OpenMP}}{
@@ -128,17 +135,11 @@ may not exist in older OpenMP versions.
 
 \section{Testing OpenMP Installation}{
 
-After installing OpenMP, you can test if it's working by creating a simple
-test package or by adding the following to your \verb{~/.R/Makevars} file:
+After installing OpenMP, you can test if it's working by checking the
+\verb{~/.R/Makevars} file for the correct flags and verifying the library signature.
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{CPPFLAGS += -Xclang -fopenmp
-LDFLAGS += -lomp
-}\if{html}{\out{</div>}}
-
-Then try installing a package that uses OpenMP, such as:
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{install.packages("data.table", type = "source")
-}\if{html}{\out{</div>}}
+\strong{Note:} This function does not attempt to compile any code, it only checks
+the configuration and library signature.
 }
 
 \examples{
