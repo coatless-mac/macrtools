@@ -288,20 +288,20 @@ macos_rtools_install <- function(
 
     if(rtools_install_clean) {
         # Get component information for summary
-        xcode_info <- base::tryCatch(
-            sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout),
-            error = function(e) "Unknown"
-        )
-        gfortran_info <- base::tryCatch(
-            sys::as_text(sys::exec_internal('gfortran', '--version')$stdout),
-            error = function(e) "Unknown"
-        )
+        # Some systems had more than 1 line being output?
+        xcode_info <- base::tryCatch({
+            result <- sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout)
+            if (length(result) > 0) result[1] else "Unknown"
+        }, error = function(e) "Unknown")
+
+        gfortran_info <- base::tryCatch({
+            result <- sys::as_text(sys::exec_internal('gfortran', '--version')$stdout)
+            if (length(result) > 0) result[1] else "Unknown"
+        }, error = function(e) "Unknown")
 
         # If version info is too long, truncate it
-        xcode_summary <- base::substr(xcode_info, 1, 20)
-        gfortran_summary <- base::substr(gfortran_info, 1, 20)
-        if(base::nchar(xcode_info) > 20) xcode_summary <- base::paste0(xcode_summary, "...")
-        if(base::nchar(gfortran_info) > 20) gfortran_summary <- base::paste0(gfortran_summary, "...")
+        if(base::nchar(xcode_info) > 20) xcode_summary <- base::paste0(base::substr(xcode_info, 1, 20), "...")
+        if(base::nchar(gfortran_info) > 20) gfortran_summary <- base::paste0(base::substr(gfortran_info, 1, 20), "...")
 
         cli::cli_h3("Installation Summary: Success")
         cli::cli_ul(c(
