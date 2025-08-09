@@ -8,15 +8,16 @@
 #' the OpenMP runtime library based on the installed Xcode version. These functions
 #' mirror the logic described on the [macOS R Project OpenMP page](https://mac.r-project.org/openmp/)
 #' and should be used by advanced users who wish to compile R packages
-#' that use OpenMP for parallel processing. They are not required for most users.#'
+#' that use OpenMP for parallel processing. They are not required for most users.
 #'
 #' OpenMP runtime is downloaded from the R-project repository for macOS and installed to:
 #'
 #' - Library: `/usr/local/lib/libomp.dylib`
 #' - Headers:
 #'   - `/usr/local/include/omp.h`;
-#'   - `/usr/local/include/ompt.h`; and,
-#'   - `/usr/local/include/omp-tools.h`
+#'   - `/usr/local/include/ompt.h`;
+#'   - `/usr/local/include/omp-tools.h`; and,
+#'   - `/usr/local/include/ompx.h` (added in LLVM 19.1.0).
 #'
 #' **Note:** Apple has explicitly disabled OpenMP support in Xcode compilers, but the
 #' runtime library can be installed separately and used with `-Xclang -fopenmp`
@@ -70,31 +71,29 @@ openmp_version <- function() {
 #' downloads the corresponding OpenMP runtime from the R-project repository:
 #'
 #' ```sh
+#' VERSION="19.1.0"
+#'
 #' # Download the appropriate version
-#' curl -O https://mac.r-project.org/openmp/openmp-VERSION-darwin20-Release.tar.gz
+#' curl -O https://mac.r-project.org/openmp/openmp-${VERSION}-darwin20-Release.tar.gz
 #'
 #' # Install to system directories
-#' sudo tar fvxz openmp-VERSION-darwin20-Release.tar.gz -C /
+#' sudo tar fvxz openmp-${VERSION}-darwin20-Release.tar.gz -C /
 #' ```
-#'
-#' The installation includes:
-#'
-#' - `/usr/local/lib/libomp.dylib` - Main OpenMP runtime library
-#' - `/usr/local/include/omp.h` - OpenMP API header
-#' - `/usr/local/include/ompt.h` - OpenMP Tools interface header
-#' - `/usr/local/include/omp-tools.h` - OpenMP Tools header
 #'
 #' ### Using OpenMP in R Packages
 #'
-#' After installation, you can enable OpenMP support in R packages by adding
-#' the following to your `~/.R/Makevars` file:
+#' During installation, we will automatically configure your `~/.R/Makevars`
+#' file to include the necessary compiler flags for OpenMP support.
 #'
 #' ```sh
+#' # macrtools - OpenMP: start
 #' CPPFLAGS += -Xclang -fopenmp
 #' LDFLAGS += -lomp
+#' # macrtools - OpenMP: end
 #' ```
 #'
-#' Or install packages with:
+#' Alternatively, you can manually add the lines to your `~/.R/Makevars` file.
+#' Or, install packages from command line with:
 #'
 #' ```sh
 #' PKG_CPPFLAGS='-Xclang -fopenmp' PKG_LIBS=-lomp R CMD INSTALL myPackage
@@ -225,7 +224,7 @@ openmp_install <- function(password = base::getOption("macrtools.password"), ver
 #' sudo rm -f /usr/local/include/ompx.h
 #' ```
 #'
-#' Note that `ompx.h` was included in LLVM 19.1.0 and
+#' **Note:** `ompx.h` was included in LLVM 19.1.0 and
 #' may not exist in older OpenMP versions.
 #'
 #' @export
