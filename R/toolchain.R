@@ -68,17 +68,12 @@ macos_rtools_install <- function(
     os_release <- base::Sys.info()['release']
     arch <- system_arch()
     r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
-    disk_space <- base::tryCatch(
-        base::round(base::as.numeric(base::system('df -h / | tail -1 | awk \'{print $4}\'', intern=TRUE)), 2),
-        error = function(e) "Unknown"
-    )
 
     cli::cli_alert_info("System requirements check:")
     cli::cli_bullets(c(
         "Operating system: {.val {os_version}} ({.val {os_release}})",
         "Architecture: {.val {arch}}",
         "R version: {.val {r_version}}",
-        "Available disk space: {.val {disk_space}} GB",
         "Administrator privileges: Required"
     ))
     cli::cli_text("") # Add spacing
@@ -87,8 +82,8 @@ macos_rtools_install <- function(
     cli::cli_bullets(c(
         "Ensure you have a stable internet connection",
         "Connect your computer to a power source",
-        "Estimated installation time: 15-25 minutes",
-        "Required disk space: Approximately 5-7 GB"
+        "Estimated installation time: 17-25 minutes",
+        "Required disk space: Approximately 6-9 GB"
     ))
     cli::cli_text("") # Add spacing
 
@@ -134,7 +129,7 @@ macos_rtools_install <- function(
                     "Source: Apple Software Update",
                     "Installation method: softwareupdate command",
                     "Status: Not installed",
-                    "Estimated time: 5-10 minutes"
+                    "Estimated time: 10-15 minutes"
                 ))
                 cli::cli_text("") # Add spacing
             }
