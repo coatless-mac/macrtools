@@ -74,6 +74,14 @@ reference:
   - gfortran_version
   - is_gfortran_installed
 
+- title: "OpenMP"
+  desc: "Functions for installing, updating, and managing OpenMP"
+  contents:
+  - openmp_install
+  - openmp_uninstall
+  - openmp_version
+  - is_openmp_installed
+
 - title: "R Development Libraries"
   desc: "Functions for installing binary packages from the R-macOS recipes project"
   contents:

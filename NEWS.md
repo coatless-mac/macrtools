@@ -1,3 +1,18 @@
+# macrtools 0.0.6.1
+
+## Features
+
+- Added `openmp_*()` to install the LLVM OpenMP library for macOS. ([#10](https://github.com/coatless-mac/macrtools/issues/10))
+  - `openmp_install()` to install the OpenMP library and set flags in `~/.R/Makevars`.
+  - `openmp_uninstall()` to uninstall the OpenMP library and set flags in `~/.R/Makevars`.
+  - `openmp_test()` for detailed overview of OpenMP install.
+  - `is_openmp_installed()` to check if the OpenMP library is installed.
+
+## Bug Fixes
+
+- Fixed `macrtools::macos_rtools_install()` erroring during the summary
+  portion.
+
 # macrtools 0.0.6
 
 ## Features
