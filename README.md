@@ -66,6 +66,16 @@ The compilation toolchain can be removed by using:
 macrtools::macos_rtools_uninstall()
 ```
 
+You can optionally install OpenMP support as well using:
+
+``` r
+macrtools::openmp_install()
+```
+
+**Note:** Apple does not include OpenMP in their version of clang.
+OpenMP usage is optional, but recommended for advanced users who wish to
+compile packages that use OpenMP for parallel processing.
+
 ## Usage
 
 The package is designed to help diagnose, install, and uninstall
@@ -95,6 +105,14 @@ macrtools::is_xcode_app_installed()
 The Xcode.app is a significantly larger development toolkit compared to
 Xcode CLI.
 
+Optionally, you can also check to see if OpenMP is installed and
+configured:
+
+``` r
+# Check if OpenMP is installed and configured
+macrtools::is_openmp_installed()
+```
+
 ### Installation
 
 The next set of functions focus primarily on installing different binary
@@ -109,6 +127,9 @@ macrtools::gfortran_install()
 
 # And other binaries required for compiling R using:
 macrtools::recipes_binary_install('r-base-dev')
+
+# Installs OpenMP and configures Makevars
+macrtools::openmp_install()
 ```
 
 ### Uninstall
@@ -119,9 +140,22 @@ can remove the development tools using:
 ``` r
 # We can remove Xcode CLI using
 macrtools::xcode_cli_uninstall()
+```
 
-# We can uninstall gfortran using:
+**Note:** This does not remove binaries obtained from recipes, OpenMP,
+or Xcode.app IDE.
+
+We can individually remove components as well:
+
+``` r
+# Remove just Xcode CLI
+macrtools::xcode_cli_uninstall()
+
+# Remove just gfortran
 macrtools::gfortran_uninstall()
+
+# Remove just OpenMP (includes Makevars cleanup)
+macrtools::openmp_uninstall()
 ```
 
 **Note:** This does not yet uninstall the *R* development binaries.
