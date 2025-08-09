@@ -141,14 +141,25 @@ and sales tax of about ~\$6 leading to an annual expense of ~\$105 per
 year. Given that we only used the Developer account to sign and notarize
 only the installers packages, we opted not to continue on this path.
 
-That said, we are grateful to [Professor Timothy
-Bates](http://www.ed.ac.uk/profile/timothy-bates) of the [University of
-Edinburgh](http://www.ed.ac.uk/). He provided the initial financial
-support that allowed for the installer to be signed and tested.
+That said, we are grateful to Professor Timothy Bates of the [University
+of Edinburgh](http://www.ed.ac.uk/). He provided the [initial financial
+support](https://github.com/coatless-mac/r-macos-clang/issues/5) that
+allowed for the installer to be signed and tested.
 
 Moreover, we hope that by placing the logic inside of an *R* package,
 the community of *R* developers will be able to play a more active role
 in feature development.
+
+### Acknowledgements
+
+We would like to thank the following individuals for their contributions
+to this project:
+
+- Professor Timothy Bates of the [University of
+  Edinburgh](http://www.ed.ac.uk/) for his financial support in the
+  initial development of the installer package.
+- [Anonymous](https://buymeacoffee.com/coatless/t/3983674) for providing
+  a general financial contribution.
 
 ## License
 
