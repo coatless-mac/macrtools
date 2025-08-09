@@ -282,25 +282,6 @@ macos_rtools_install <- function(
     rtools_install_clean <- result_gfortran && result_xcode && base::isTRUE(result_base_dev)
 
     if(rtools_install_clean) {
-        # Get component information for summary
-        # Some systems had more than 1 line being output?
-        xcode_info <- base::tryCatch({
-            result <- sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout)
-            if (length(result) > 0) result[1] else "Unknown"
-        }, error = function(e) "Unknown")
-
-        gfortran_info <- base::tryCatch({
-            # Use the gfortran binary path to get version info
-            path_gfortran_bin <- base::file.path(gfortran_install_location(), "gfortran", "bin", "gfortran")
-            result <- sys::as_text(sys::exec_internal(path_gfortran_bin, '--version')$stdout)
-            if (length(result) > 0) result[1] else "Unknown"
-        }, error = function(e) "Unknown")
-
-        # If version info is too long, truncate it
-        xcode_summary <- base::substr(xcode_info, 1, 40)
-        gfortran_summary <- base::substr(gfortran_info, 1, 40)
-        if(base::nchar(xcode_info) > 40) xcode_summary <- base::paste0(xcode_summary, "...")
-        if(base::nchar(gfortran_info) > 40) gfortran_summary <- base::paste0(gfortran_summary, "...")
 
         cli::cli_h3("Installation Summary: Success")
         cli::cli_ul(c(
@@ -311,15 +292,6 @@ macos_rtools_install <- function(
         cli::cli_text("") # Add spacing
 
         cli::cli_alert_success("{.pkg macrtools}: macOS R development toolchain has been successfully installed!")
-        cli::cli_text("") # Add spacing
-        cli::cli_text("System configuration:")
-        cli::cli_bullets(c(
-            "macOS version: {.val {os_version}}",
-            "Architecture: {.val {arch}}",
-            "R version: {.val {r_version}}",
-            "Xcode tools: {.val {xcode_summary}}",
-            "Fortran: {.val {gfortran_summary}}"
-        ))
         cli::cli_text("") # Add spacing
         cli::cli_text("Your system is now configured for R package development.")
         cli::cli_text("You can install packages from source with: {.code install.packages('package_name', type = 'source')}")
