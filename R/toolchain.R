@@ -300,8 +300,10 @@ macos_rtools_install <- function(
         }, error = function(e) "Unknown")
 
         # If version info is too long, truncate it
-        if(base::nchar(xcode_info) > 20) xcode_summary <- base::paste0(base::substr(xcode_info, 1, 20), "...")
-        if(base::nchar(gfortran_info) > 20) gfortran_summary <- base::paste0(base::substr(gfortran_info, 1, 20), "...")
+        xcode_summary <- base::substr(xcode_info, 1, 20)
+        gfortran_summary <- base::substr(gfortran_info, 1, 20)
+        if(base::nchar(xcode_info) > 20) xcode_summary <- base::paste0(xcode_summary, "...")
+        if(base::nchar(gfortran_info) > 20) gfortran_summary <- base::paste0(gfortran_summary, "...")
 
         cli::cli_h3("Installation Summary: Success")
         cli::cli_ul(c(
