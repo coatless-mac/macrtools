@@ -1,6 +1,6 @@
 Package: macrtools
 Title: macOS Rtools package
-Version: 0.0.6.1
+Version: 0.0.6.2
 Authors@R: c(
     person(given = "James Joseph", 
            family = "Balamuta", 
@@ -18,7 +18,7 @@ Description: Sets up the macOS Rtools compiled code toolchain.
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 OS_type: unix
 SystemRequirements: macOS
 Imports: 

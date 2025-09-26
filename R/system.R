@@ -52,10 +52,30 @@ shell_mac_version <- function() {
 #' @keywords internal
 is_macos_r_supported <- function() {
     mac_version <- shell_mac_version()
-    version_between(mac_version, "10.13.0", "16.0.0")
+    version_between(mac_version, "10.13.0", "26.0")
+}
+
+#' Check if macOS Tahoe
+#'
+#' Tahoe is macOS 26.x, released in late 2025.
+#'
+#' @details
+#' macOS Tahoe (version 26.x) is the successor to macOS Sequoia (version 15.x).
+#'
+#' @return TRUE if system is macOS Tahoe, FALSE otherwise
+#' @keywords internal
+is_macos_tahoe <- function() {
+    mac_version <- shell_mac_version()
+    version_between(mac_version, "26.0", "27.0")
 }
 
 #' Check if macOS Sequoia
+#'
+#' Sequoia is macOS 15.x, released in late 2024.
+#'
+#' @details
+#' macOS Sequoia (version 15.x) is the successor to macOS
+#' Sonoma (version 14.x).
 #'
 #' @return TRUE if system is macOS Sequoia, FALSE otherwise
 #' @keywords internal
@@ -65,6 +85,12 @@ is_macos_sequoia <- function() {
 }
 
 #' Check if macOS Sonoma
+#'
+#' Sonoma is macOS 14.x, released in late 2023.
+#'
+#' @details
+#' macOS Sonoma (version 14.x) is the successor to macOS
+#' Ventura (version 13.x).
 #'
 #' @return TRUE if system is macOS Sonoma, FALSE otherwise
 #' @keywords internal

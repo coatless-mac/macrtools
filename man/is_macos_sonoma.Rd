@@ -10,6 +10,10 @@ is_macos_sonoma()
 TRUE if system is macOS Sonoma, FALSE otherwise
 }
 \description{
-Check if macOS Sonoma
+Sonoma is macOS 14.x, released in late 2023.
+}
+\details{
+macOS Sonoma (version 14.x) is the successor to macOS
+Ventura (version 13.x).
 }
 \keyword{internal}
