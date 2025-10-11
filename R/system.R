@@ -52,7 +52,7 @@ shell_mac_version <- function() {
 #' @keywords internal
 is_macos_r_supported <- function() {
     mac_version <- shell_mac_version()
-    version_between(mac_version, "10.13.0", "26.0")
+    version_between(mac_version, "10.13.0", "27.0")
 }
 
 #' Check if macOS Tahoe
