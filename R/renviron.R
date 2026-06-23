@@ -4,7 +4,7 @@ use_r_environ = function(option, value, path = "~/.Renviron",
 
     if (!base::file.exists(path)) {
         base::message("`", path ,"` file not found at location.")
-        base::message("Creating a new Renviron file at: ~/.Renviron")
+        base::message("Creating a new Renviron file at: ", path)
         base::file.create(path)
     }
 
