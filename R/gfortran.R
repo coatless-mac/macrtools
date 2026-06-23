@@ -71,7 +71,7 @@ gfortran_version <- function() {
 #'
 #' ```sh
 #' touch ~/.Renviron
-#' cat << "EOF" > ~./Renviron
+#' cat << "EOF" > ~/.Renviron
 #' ## macrtools - gfortran: start
 #' PATH=${PATH}:/opt/gfortran/bin
 #' ## macrtools - gfortran: end
@@ -96,7 +96,7 @@ gfortran_version <- function() {
 #'
 #' ```sh
 #' touch ~/.Renviron
-#' cat << "EOF" > ~./Renviron
+#' cat << "EOF" > ~/.Renviron
 #' ## macrtools - gfortran: start
 #' PATH=${PATH}:/opt/gfortran/bin
 #' ## macrtools - gfortran: end
@@ -126,7 +126,7 @@ gfortran_version <- function() {
 #'
 #' ```sh
 #' touch ~/.Renviron
-#' cat << "EOF" > ~./Renviron
+#' cat << "EOF" > ~/.Renviron
 #' ## macrtools - gfortran: start
 #' PATH=${PATH}:/usr/local/gfortran/bin
 #' ## macrtools - gfortran: end
@@ -166,7 +166,7 @@ gfortran_version <- function() {
 #'
 #' ```sh
 #' touch ~/.Renviron
-#' cat << "EOF" > ~./Renviron
+#' cat << "EOF" > ~/.Renviron
 #' ## macrtools - gfortran: start
 #' PATH=${PATH}:/opt/R/arm64/gfortran/bin
 #' ## macrtools - gfortran: end

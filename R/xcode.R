@@ -189,7 +189,7 @@ xcode_cli_path <- function() {
 #' Finally, we remove the temporary installation file.
 #'
 #' ```sh
-#' touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+#' rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
 #' ```
 #'
 #' These steps were obtained from Timothy Sutton's
