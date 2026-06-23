@@ -11,7 +11,12 @@ install_strip_level <- function(arch = system_arch()) {
 }
 
 recipe_binary_install_strip_level <- function(arch = system_arch()) {
-    if (is_r_version("4.3") || is_r_version("4.4") || is_r_version("4.5")) {
+    if (!is_r_version_supported()) {
+        supported_min <- minimum_supported_r_version()
+        supported_max <- maximum_supported_r_version()
+        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R {supported_min}.x through R {supported_max}.x.")
+    }
+    if (is_r_version_at_least("4.3")) {
         base::switch(
             arch,
             "arm64" = 3,
@@ -19,10 +24,8 @@ recipe_binary_install_strip_level <- function(arch = system_arch()) {
             "x86_64" = 3,
             cli::cli_abort("{.pkg macrtools}: Architecture {.val {arch}} not recognized. Please ensure you are on either an Apple Silicon (arm64) or Intel (x86_64) system.")
         )
-    } else if (is_r_version("4.0") || is_r_version("4.1") || is_r_version("4.2")) {
-        install_strip_level()
     } else {
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R 4.0.x through 4.5.x.")
+        install_strip_level()
     }
 }
 
@@ -37,7 +40,12 @@ install_location <- function(arch = system_arch()) {
 }
 
 recipe_binary_install_location <- function(arch = system_arch()) {
-    if (is_r_version("4.3") || is_r_version("4.4") || is_r_version("4.5")) {
+    if (!is_r_version_supported()) {
+        supported_min <- minimum_supported_r_version()
+        supported_max <- maximum_supported_r_version()
+        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R {supported_min}.x through R {supported_max}.x.")
+    }
+    if (is_r_version_at_least("4.3")) {
         base::switch(
             arch,
             "arm64" = install_directory_arm64(),
@@ -45,20 +53,21 @@ recipe_binary_install_location <- function(arch = system_arch()) {
             "x86_64" = install_directory_x86_64_r_version_4_3(),
             cli::cli_abort("{.pkg macrtools}: Architecture {.val {arch}} not recognized. Please ensure you are on either an Apple Silicon (arm64) or Intel (x86_64) system.")
         )
-    } else if (is_r_version("4.0") || is_r_version("4.1") || is_r_version("4.2")) {
-        install_location()
     } else {
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R 4.0.x through 4.5.x.")
+        install_location()
     }
 }
 
 gfortran_install_location <- function(arch = system_arch()) {
-    if (is_r_version("4.3") || is_r_version("4.4") || is_r_version("4.5")) {
+    if (!is_r_version_supported()) {
+        supported_min <- minimum_supported_r_version()
+        supported_max <- maximum_supported_r_version()
+        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support gfortran installation for R {supported_min}.x through R {supported_max}.x.")
+    }
+    if (is_r_version_at_least("4.3")) {
         "/opt"
-    } else if (is_r_version("4.0") || is_r_version("4.1") || is_r_version("4.2")) {
-        install_location()
     } else {
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support gfortran installation for R 4.0.x through 4.5.x.")
+        install_location()
     }
 }
 

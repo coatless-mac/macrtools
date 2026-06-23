@@ -1,3 +1,37 @@
+# macrtools 0.0.7
+
+## Features
+
+- Added support for R 4.6.0 on macOS.
+  - `gfortran` continues to use the universal GNU Fortran 14.2 installer
+    (unchanged from R 4.5).
+  - On Apple Silicon, R 4.6 (macOS 14 Sonoma and higher) installs the
+    `recipes` binaries from the new `darwin23/arm64` repository. The
+    repository is detected automatically and installs to the same
+    `/opt/R/arm64` prefix as before, so no path changes are required.
+- Updated the bundled LLVM OpenMP runtime from 19.1.0 to 19.1.5 to match the
+  current release on <https://mac.r-project.org/openmp/>. The 19.1.x runtime
+  covers Apple clang 1700.x and up (Xcode 16.3 through Xcode 26.x, the R 4.6
+  Apple Silicon toolchain), so existing systems remain correctly matched.
+
+## Internal
+
+- Centralized the supported R version window behind
+  `minimum_supported_r_version()` / `maximum_supported_r_version()` and replaced
+  the repeated `is_r_version("4.x") || ...` chains with range checks
+  (`is_r_version_at_least()`, `is_r_version_supported()`). Supporting a future R
+  release that keeps the existing toolchain is now a one-line change.
+- `gfortran_update()` now requires "R 4.2 or above" (matching its documentation)
+  rather than an explicit, hard-coded list of versions.
+
+# macrtools 0.0.6.2
+
+## Features
+
+- Added support for macOS Tahoe (26.x).
+- Fixed the macOS version check so Tahoe (26.x) is recognized as supported.
+  ([#28](https://github.com/coatless-mac/macrtools/issues/28))
+
 # macrtools 0.0.6.1
 
 ## Features

@@ -51,7 +51,8 @@ test_that("gfortran_install installs correct version for R 4.3+", {
     mockery::stub(gfortran_install, "assert_macos_supported", function() NULL)
     mockery::stub(gfortran_install, "assert_r_version_supported", function() NULL)
     mockery::stub(gfortran_install, "is_gfortran_installed", function() FALSE)
-    mockery::stub(gfortran_install, "is_r_version", function(v) v == "4.3")
+    mockery::stub(gfortran_install, "is_r_version_at_least",
+                  function(target, ...) utils::compareVersion("4.3", target) >= 0)
     mockery::stub(gfortran_install, "gfortran_install_location", function() "/opt")
     mockery::stub(gfortran_install, "base::file.path", function(...) "/opt/gfortran/bin")
     mockery::stub(gfortran_install, "base::paste0", function(...) "$PATH:/opt/gfortran/bin")
@@ -68,12 +69,41 @@ test_that("gfortran_install installs correct version for R 4.3+", {
     expect_true(result)
 })
 
+test_that("gfortran_install uses the 14.2 universal installer for R 4.6", {
+    # Mock dependencies
+    mockery::stub(gfortran_install, "assert_mac", function() NULL)
+    mockery::stub(gfortran_install, "assert_macos_supported", function() NULL)
+    mockery::stub(gfortran_install, "assert_r_version_supported", function() NULL)
+    mockery::stub(gfortran_install, "is_gfortran_installed", function() FALSE)
+    mockery::stub(gfortran_install, "is_r_version_at_least",
+                  function(target, ...) utils::compareVersion("4.6", target) >= 0)
+    mockery::stub(gfortran_install, "gfortran_install_location", function() "/opt")
+    mockery::stub(gfortran_install, "base::file.path", function(...) "/opt/gfortran/bin")
+    mockery::stub(gfortran_install, "base::paste0", function(...) "$PATH:/opt/gfortran/bin")
+    mockery::stub(gfortran_install, "force_password", function(pw) "mockpw")
+    mockery::stub(gfortran_install, "create_install_location", function(...) TRUE)
+    # The 14.2 universal installer must be chosen for R 4.6; fail loudly otherwise.
+    mockery::stub(gfortran_install, "install_gfortran_14_2_universal", function(...) TRUE)
+    mockery::stub(gfortran_install, "install_gfortran_12_2_universal",
+                  function(...) stop("wrong installer: 12.2 used for R 4.6"))
+    mockery::stub(gfortran_install, "renviron_gfortran_path", function(...) NULL)
+    mockery::stub(gfortran_install, "cli::cli_alert_info", function(...) NULL)
+    mockery::stub(gfortran_install, "cli::cli_bullets", function(...) NULL)
+    mockery::stub(gfortran_install, "cli::cli_text", function(...) NULL)
+    mockery::stub(gfortran_install, "cli::cli_alert_success", function(...) NULL)
+
+    result <- gfortran_install(verbose = TRUE)
+    expect_true(result)
+})
+
 test_that("gfortran_install handles Intel Mac with R 4.2", {
     # Mock dependencies
     mockery::stub(gfortran_install, "assert_mac", function() NULL)
     mockery::stub(gfortran_install, "assert_macos_supported", function() NULL)
     mockery::stub(gfortran_install, "assert_r_version_supported", function() NULL)
     mockery::stub(gfortran_install, "is_gfortran_installed", function() FALSE)
+    mockery::stub(gfortran_install, "is_r_version_at_least",
+                  function(target, ...) utils::compareVersion("4.2", target) >= 0)
     mockery::stub(gfortran_install, "is_r_version", function(v) v == "4.2")
     mockery::stub(gfortran_install, "is_x86_64", function() TRUE)
     mockery::stub(gfortran_install, "is_aarch64", function() FALSE)

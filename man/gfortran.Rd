@@ -70,11 +70,12 @@ the default installation location.
 The \code{gfortran_install()} function aims to install \code{gfortran} into the
 appropriate location for \strong{Intel} (\code{x86_64}) or \strong{M-series} (\code{arm64}/\code{aarch64})
 depending on the R version used.
-\subsection{gfortran Installation for R 4.5}{
+\subsection{gfortran Installation for R 4.5-4.6}{
 
-The \code{gfortran} installer for R 4.5 is a universal installer that places
+The \code{gfortran} installer for R 4.5-4.6 is a universal installer that places
 \code{gfortran} into the \verb{/opt/gfortran} for both \strong{Intel} (\code{x86_64}) and
-\strong{M-series} (\code{arm64}/\code{aarch64}) macs.
+\strong{M-series} (\code{arm64}/\code{aarch64}) macs. R 4.6 uses the same GNU Fortran 14.2
+universal compiler as R 4.5.
 
 \if{html}{\out{<div class="sourceCode sh">}}\preformatted{# Install the downloaded package into root
 sudo installer \\

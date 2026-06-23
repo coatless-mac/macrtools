@@ -56,8 +56,14 @@ repository and the install path are either:\tabular{lll}{
    Name \tab Installation Location \tab Target \cr
    \href{https://mac.r-project.org/bin/darwin17/x86_64}{darwin17/x86_64} \tab /usr/local \tab macOS 10.13, Intel (x86_64) \cr
    \href{https://mac.r-project.org/bin/darwin20/x86_64}{darwin20/x86_64} \tab /opt/R/x86_64 \tab macOS 11, Intel (x86_64) \cr
-   \href{https://mac.r-project.org/bin/darwin20/arm64}{darwin20/arm64} \tab /opt/R/arm64 \tab macOS 11, Apple M1 (arm64) \cr
+   \href{https://mac.r-project.org/bin/darwin20/arm64}{darwin20/arm64} \tab /opt/R/arm64 \tab macOS 11, Apple Silicon (arm64) \cr
+   \href{https://mac.r-project.org/bin/darwin23/arm64}{darwin23/arm64} \tab /opt/R/arm64 \tab macOS 14 (Sonoma), Apple Silicon (arm64), used by R 4.6 \cr
 }
+
+The correct repository is detected automatically: the highest \code{darwin}
+version less than or equal to your macOS is selected for your architecture.
+R 4.6 on Apple Silicon (macOS 14+) therefore resolves to \code{darwin23/arm64},
+which installs to the same \verb{/opt/R/arm64} prefix as \code{darwin20/arm64}.
 }
 \section{Differences}{
 

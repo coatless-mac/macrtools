@@ -79,3 +79,30 @@ test_that("is_r_version correctly identifies R versions", {
     expect_true(simplified_is_r_version_full("4.2.1", compare_major_minor = FALSE))
     expect_false(simplified_is_r_version_full("4.2.0", compare_major_minor = FALSE))
 })
+
+test_that("is_r_version_at_least compares major.minor versions", {
+    expect_true(is_r_version_at_least("4.3", version = "4.6"))
+    expect_true(is_r_version_at_least("4.3", version = "4.3"))
+    expect_false(is_r_version_at_least("4.5", version = "4.3"))
+    expect_true(is_r_version_at_least("4.0", version = "4.6"))
+    expect_false(is_r_version_at_least("4.0", version = "3.6"))
+    # The running R (>= 4.0) is always at least 4.0
+    expect_true(is_r_version_at_least("4.0"))
+})
+
+test_that("is_r_version_supported honors the supported window", {
+    for (v in c("4.0", "4.1", "4.2", "4.3", "4.4", "4.5", "4.6")) {
+        expect_true(is_r_version_supported(version = v), info = v)
+    }
+    for (v in c("3.6", "4.7", "5.0")) {
+        expect_false(is_r_version_supported(version = v), info = v)
+    }
+})
+
+test_that("supported R version window is the single source of truth", {
+    expect_equal(minimum_supported_r_version(), "4.0")
+    expect_equal(maximum_supported_r_version(), "4.6")
+    # The window endpoints must themselves be supported
+    expect_true(is_r_version_supported(version = minimum_supported_r_version()))
+    expect_true(is_r_version_supported(version = maximum_supported_r_version()))
+})
