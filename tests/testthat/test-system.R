@@ -37,13 +37,21 @@ test_that("shell_mac_version returns the correct macOS version", {
 })
 
 test_that("is_macos_r_supported correctly identifies supported macOS versions", {
-    mockery::stub(is_macos_r_supported, "shell_mac_version", function() "10.13.0")
-    mockery::stub(is_macos_r_supported, "version_between", function(...) TRUE)
+    # Mock at the namespace level so the stub reaches shell_mac_version through
+    # the shared macos_version_in_range() helper, and exercise the real
+    # version_between() logic.
+    local_mocked_bindings(shell_mac_version = function() "10.13.0")
     expect_true(is_macos_r_supported())
 
-    mockery::stub(is_macos_r_supported, "shell_mac_version", function() "10.12.0")
-    mockery::stub(is_macos_r_supported, "version_between", function(...) FALSE)
+    local_mocked_bindings(shell_mac_version = function() "10.12.0")
     expect_false(is_macos_r_supported())
+})
+
+test_that("macos_version_in_range checks the running macOS version against bounds", {
+    local_mocked_bindings(shell_mac_version = function() "14.2.0")
+    expect_true(macos_version_in_range("14.0.0", "15.0.0"))
+    expect_false(macos_version_in_range("15.0.0", "16.0.0"))
+    expect_false(macos_version_in_range("13.0.0", "14.0.0"))
 })
 
 test_that("version_between correctly determines if version is within bounds", {
