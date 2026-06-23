@@ -64,10 +64,9 @@ shell_sudo_command <- function(cmd, password, verbose = TRUE, prefix = "sudo -kS
 #' @param sudo Whether to use sudo (default: FALSE)
 #' @param password User password for sudo (only required when sudo=TRUE)
 #' @param verbose Display the command being executed
-#' @param timeout Timeout in seconds (default: 300)
 #' @return The exit status of the command (0 for success)
 #' @keywords internal
-shell_execute <- function(cmd, sudo = FALSE, password = NULL, verbose = TRUE, timeout = 300) {
+shell_execute <- function(cmd, sudo = FALSE, password = NULL, verbose = TRUE) {
     command_start_time <- base::Sys.time()
 
     result <- if (sudo) {
