@@ -13,7 +13,7 @@ test_that("assert_mac succeeds on macOS", {
 
 test_that("assert_mac throws error on non-macOS", {
     mockery::stub(assert_mac, "is_macos", function() FALSE)
-    mockery::stub(assert_mac, "base::Sys.info", function() c(sysname = "Linux"))
+    mockery::stub(assert_mac, "system_os", function() "linux")
     expect_error(assert_mac(), regexp = "This function requires macOS")
 })
 

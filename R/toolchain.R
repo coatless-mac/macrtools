@@ -67,7 +67,7 @@ macos_rtools_install <- function(
     os_version <- shell_mac_version()
     os_release <- base::Sys.info()['release']
     arch <- system_arch()
-    r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
+    r_version <- r_version_full()
 
     cli::cli_alert_info("System requirements check:")
     cli::cli_bullets(c(

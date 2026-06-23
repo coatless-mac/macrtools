@@ -100,7 +100,7 @@ test_that("pkg_install handles successful installation", {
 
 test_that("recipe_binary_install_strip_level follows the toolchain tiers", {
     # Modern tier (R >= 4.3): strip 3 for every architecture
-    mockery::stub(recipe_binary_install_strip_level, "is_r_version_supported", function(...) TRUE)
+    mockery::stub(recipe_binary_install_strip_level, "assert_supported_r_version_for", function(...) invisible(NULL))
     mockery::stub(recipe_binary_install_strip_level, "is_r_version_at_least", function(...) TRUE)
     expect_equal(recipe_binary_install_strip_level("arm64"), 3)
     expect_equal(recipe_binary_install_strip_level("aarch64"), 3)
@@ -112,13 +112,13 @@ test_that("recipe_binary_install_strip_level follows the toolchain tiers", {
     expect_equal(recipe_binary_install_strip_level("arm64"), 99)
 
     # Unsupported R version: abort
-    mockery::stub(recipe_binary_install_strip_level, "is_r_version_supported", function(...) FALSE)
+    mockery::stub(recipe_binary_install_strip_level, "assert_supported_r_version_for", function(...) stop("Unsupported R version"))
     expect_error(recipe_binary_install_strip_level("arm64"), regexp = "Unsupported R version")
 })
 
 test_that("recipe_binary_install_location follows the toolchain tiers", {
     # Modern tier (R >= 4.3): /opt/R/<arch>
-    mockery::stub(recipe_binary_install_location, "is_r_version_supported", function(...) TRUE)
+    mockery::stub(recipe_binary_install_location, "assert_supported_r_version_for", function(...) invisible(NULL))
     mockery::stub(recipe_binary_install_location, "is_r_version_at_least", function(...) TRUE)
     expect_equal(recipe_binary_install_location("arm64"), "/opt/R/arm64")
     expect_equal(recipe_binary_install_location("aarch64"), "/opt/R/arm64")
@@ -130,13 +130,13 @@ test_that("recipe_binary_install_location follows the toolchain tiers", {
     expect_equal(recipe_binary_install_location("x86_64"), "/legacy/loc")
 
     # Unsupported R version: abort
-    mockery::stub(recipe_binary_install_location, "is_r_version_supported", function(...) FALSE)
+    mockery::stub(recipe_binary_install_location, "assert_supported_r_version_for", function(...) stop("Unsupported R version"))
     expect_error(recipe_binary_install_location("arm64"), regexp = "Unsupported R version")
 })
 
 test_that("gfortran_install_location follows the toolchain tiers", {
     # Modern tier (R >= 4.3): /opt
-    mockery::stub(gfortran_install_location, "is_r_version_supported", function(...) TRUE)
+    mockery::stub(gfortran_install_location, "assert_supported_r_version_for", function(...) invisible(NULL))
     mockery::stub(gfortran_install_location, "is_r_version_at_least", function(...) TRUE)
     expect_equal(gfortran_install_location("arm64"), "/opt")
 
@@ -146,7 +146,7 @@ test_that("gfortran_install_location follows the toolchain tiers", {
     expect_equal(gfortran_install_location("x86_64"), "/legacy/loc")
 
     # Unsupported R version: abort
-    mockery::stub(gfortran_install_location, "is_r_version_supported", function(...) FALSE)
+    mockery::stub(gfortran_install_location, "assert_supported_r_version_for", function(...) stop("Unsupported R version"))
     expect_error(gfortran_install_location("arm64"), regexp = "Unsupported R version")
 })
 

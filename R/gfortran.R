@@ -205,7 +205,7 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
     if (verbose) {
         # Get system info
         arch_info <- system_arch()
-        r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
+        r_version <- r_version_full()
 
         cli::cli_alert_info("{.pkg macrtools}: Preparing to download and install gfortran.")
         cli::cli_bullets(c(
@@ -294,7 +294,7 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
     if(base::isFALSE(gfortran_status)) {
         install_path <- gfortran_install_location()
         arch_info <- system_arch()
-        r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
+        r_version <- r_version_full()
 
         cli::cli_abort(c(
             "{.pkg macrtools}: Failed to install gfortran.",
@@ -437,7 +437,7 @@ gfortran_update <- function(password = base::getOption("macrtools.password"), ve
         cli::cli_bullets(c(
             "Update tool: {.path {path_gfortran_update}}",
             "Architecture: {.val {system_arch()}}",
-            "R version: {.val {base::paste(base::R.version$major, base::R.version$minor, sep='.')}}"
+            "R version: {.val {r_version_full()}}"
         ))
         cli::cli_text("") # Add spacing
     }
