@@ -354,8 +354,8 @@ dmg_package_install <- function(path_to_dmg,
     status <- shell_execute(detach_cmd, sudo = FALSE)
 
     if (status != 0) {
-        cli::cli_alert_warning(c(
-            "{.pkg macrtools}: Failed to unmount disk image.",
+        cli::cli_alert_warning("{.pkg macrtools}: Failed to unmount disk image.")
+        cli::cli_bullets(c(
             "i" = "You may need to unmount it manually."
         ))
         cli::cli_text("") # Add spacing

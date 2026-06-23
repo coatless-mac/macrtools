@@ -30,8 +30,8 @@ force_password <- function(supplied_password) {
     if(base::is.null(entered_password)) {
         current_user <- base::Sys.info()['user']
 
-        cli::cli_alert_info(c(
-            "{.pkg macrtools}: Administrative privileges required.",
+        cli::cli_alert_info("{.pkg macrtools}: Administrative privileges required.")
+        cli::cli_bullets(c(
             "Your user account password is needed to execute privileged operations.",
             "This password will not be stored and is only used for the current session.",
             "Current user: {.val {current_user}}"

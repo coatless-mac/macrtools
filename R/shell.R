@@ -45,8 +45,8 @@ shell_sudo_command <- function(cmd, password, verbose = TRUE, prefix = "sudo -kS
     }
 
     if (verbose && result != 0) {
-        cli::cli_alert_warning(c(
-            "{.pkg macrtools}: Command execution failed.",
+        cli::cli_alert_warning("{.pkg macrtools}: Command execution failed.")
+        cli::cli_bullets(c(
             "Status code: {.val {result}}",
             "This might indicate permission issues or syntax errors."
         ))
