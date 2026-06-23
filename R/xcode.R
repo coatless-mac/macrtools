@@ -230,26 +230,17 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
         cli::cli_text("") # Add spacing
     }
 
-    product_information <-
-        base::system("softwareupdate -l |
-          grep '\\*.*Command Line' |
-          tail -n 1 |
-          awk -F\"*\" '{print $2}' |
-          sed -e 's/^ *//' |
-          sed 's/Label: //g' |
-          tr -d '\n'", intern = TRUE)
+    product_information <- xcode_cli_available_label()
 
     if (base::length(product_information) == 0) {
+        # Remove temporary in-progress file if left in place before aborting.
+        if(base::file.exists(temporary_xcli_file)) {
+            base::file.remove(temporary_xcli_file)
+        }
         cli::cli_abort(c(
             "{.pkg macrtools}: Could not find Xcode CLI in software updates.",
             "i" = "Try installing manually with 'xcode-select --install' in Terminal."
         ))
-
-        # Remove temporary in-progress file if left in place
-        if(base::file.exists(temporary_xcli_file)) {
-            base::file.remove(temporary_xcli_file)
-        }
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -278,7 +269,6 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
             "{.pkg macrtools}: We were not able to install Xcode CLI.",
             "i" = "Please try to manually install using: https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html#xcode-cli-installation"
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -287,6 +277,18 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
     }
 
     return(base::invisible(xcli_clean))
+}
+
+# Query softwareupdate for the label of the latest available Command Line Tools.
+# Returns a length-0 character vector when none is found.
+xcode_cli_available_label <- function() {
+    base::system("softwareupdate -l |
+          grep '\\*.*Command Line' |
+          tail -n 1 |
+          awk -F\"*\" '{print $2}' |
+          sed -e 's/^ *//' |
+          sed 's/Label: //g' |
+          tr -d '\n'", intern = TRUE)
 }
 
 
@@ -363,7 +365,6 @@ xcode_cli_uninstall <- function(password = base::getOption("macrtools.password")
             "{.pkg macrtools}: We were not able to uninstall Xcode CLI.",
             "i" = "Please try to manually uninstall using: https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html#uninstalling-xcode-cli"
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -423,7 +424,6 @@ xcode_cli_switch <- function(password = base::getOption("macrtools.password"), v
 
     if(base::isFALSE(xcli_switch_clean)) {
         cli::cli_abort("{.pkg macrtools}: Failed to switch Xcode CLI path.")
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -464,7 +464,6 @@ xcode_cli_reset <- function(password = base::getOption("macrtools.password"), ve
 
     if(base::isFALSE(xcli_reset_clean)) {
         cli::cli_abort("{.pkg macrtools}: Failed to reset Xcode CLI settings.")
-        return(base::invisible(FALSE))
     }
 
     if(verbose) {

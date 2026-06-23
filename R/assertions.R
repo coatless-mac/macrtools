@@ -22,7 +22,7 @@ assert <- function(condition, message = NULL, call = caller_env()) {
 #' @export
 assert_mac <- function(call = caller_env()) {
     if (!is_macos()) {
-        current_os <- base::tolower(base::Sys.info()[['sysname']])
+        current_os <- system_os()
         cli::cli_abort(c(
             "{.pkg macrtools}: This function requires macOS.",
             "{.pkg macrtools}: The current operating system is {.val {current_os}}."
@@ -80,7 +80,7 @@ assert_x86_64 <- function(call = caller_env()) {
 #' @export
 assert_r_version_supported <- function(call = caller_env()) {
     if (!is_r_version_supported()) {
-        version_number <- base::paste(base::R.version$major, base::R.version$minor, sep = ".")
+        version_number <- r_version_full()
         supported_min <- minimum_supported_r_version()
         supported_max <- maximum_supported_r_version()
         cli::cli_abort(c(

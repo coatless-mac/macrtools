@@ -4,7 +4,7 @@
 
     # Check if it's actually macOS
     if (!is_macos()) {
-        os_info <- base::tolower(base::Sys.info()[['sysname']])
+        os_info <- system_os()
         base::packageStartupMessage(cli::format_inline(
             "{.pkg macrtools}: {.emph Warning: This package is designed for macOS only.}",
             "\n{.pkg macrtools}: {.emph Current OS: {.val {os_info}}}",

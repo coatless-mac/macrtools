@@ -60,6 +60,7 @@ repository and the install path are either:\tabular{lll}{
    \href{https://mac.r-project.org/bin/darwin23/arm64}{darwin23/arm64} \tab /opt/R/arm64 \tab macOS 14 (Sonoma), Apple Silicon (arm64), used by R 4.6 \cr
 }
 
+
 The correct repository is detected automatically: the highest \code{darwin}
 version less than or equal to your macOS is selected for your architecture.
 R 4.6 on Apple Silicon (macOS 14+) therefore resolves to \code{darwin23/arm64},

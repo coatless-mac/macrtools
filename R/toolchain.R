@@ -53,7 +53,51 @@ macos_rtools_install <- function(
     assert_macos_supported()
     assert_r_version_supported()
 
-    # Installation heading and components list - proper formatting
+    # System information shared across the announcement and the install steps
+    os_version <- shell_mac_version()
+    os_release <- base::Sys.info()['release']
+    arch <- system_arch()
+    r_version <- r_version_full()
+
+    rtools_install_announce(os_version, os_release, arch, r_version)
+
+    entered_password <- password
+    if(base::is.null(entered_password)) {
+        cli::cli_alert_info("Administrative privileges are required for installation.")
+        entered_password <- askpass::askpass("Please enter your administrator password:")
+    }
+
+    describe_steps <- base::isTRUE(verbose)
+
+    # Create a detailed progress bar (pb_id stays NULL when not verbose)
+    pb_id <- NULL
+    if (verbose) {
+        pb_id <- cli::cli_progress_bar(
+            format = "{.pkg macrtools}: {.strong Installing R development toolchain} {cli::pb_bar} {cli::pb_percent} {cli::pb_spin}",
+            format_done = "{.pkg macrtools}: {.strong Installation complete} {cli::symbol$tick}",
+            total = 100
+        )
+
+        current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+        cli::cli_alert_info("Installation process started at: {.val {current_time}}")
+        cli::cli_text("") # Add spacing
+    }
+
+    result_xcode <- rtools_install_xcode_cli(entered_password, verbose, describe_steps, pb_id)
+    result_gfortran <- rtools_install_gfortran(entered_password, verbose, describe_steps, pb_id, arch, r_version)
+    result_base_dev <- rtools_install_recipes(entered_password, verbose, pb_id, arch)
+
+    # Finalize installation
+    if (verbose) {
+        cli::cli_progress_update(id = pb_id, set = 100)
+        cli::cli_progress_done(pb_id)
+    }
+
+    base::invisible(rtools_install_summary(result_xcode, result_gfortran, result_base_dev))
+}
+
+# Announce the toolchain install: heading, system requirements, and prerequisites.
+rtools_install_announce <- function(os_version, os_release, arch, r_version) {
     cli::cli_h3("Installing macOS R Development Toolchain")
     cli::cli_text("This process will install all required components:")
     cli::cli_ul(c(
@@ -62,12 +106,6 @@ macos_rtools_install <- function(
         "r-base-dev - Essential libraries from the R-macOS Recipes project"
     ))
     cli::cli_text("") # Add spacing
-
-    # System information with temporary variables
-    os_version <- shell_mac_version()
-    os_release <- base::Sys.info()['release']
-    arch <- system_arch()
-    r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
 
     cli::cli_alert_info("System requirements check:")
     cli::cli_bullets(c(
@@ -86,29 +124,10 @@ macos_rtools_install <- function(
         "Required disk space: Approximately 6-9 GB"
     ))
     cli::cli_text("") # Add spacing
+}
 
-    entered_password <- password
-    if(base::is.null(entered_password)) {
-        cli::cli_alert_info("Administrative privileges are required for installation.")
-        entered_password <- askpass::askpass("Please enter your administrator password:")
-    }
-
-    describe_steps <- base::isTRUE(verbose)
-
-    # Create a detailed progress bar
-    if (verbose) {
-        pb_id <- cli::cli_progress_bar(
-            format = "{.pkg macrtools}: {.strong Installing R development toolchain} {cli::pb_bar} {cli::pb_percent} {cli::pb_spin}",
-            format_done = "{.pkg macrtools}: {.strong Installation complete} {cli::symbol$tick}",
-            total = 100
-        )
-
-        current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
-        cli::cli_alert_info("Installation process started at: {.val {current_time}}")
-        cli::cli_text("") # Add spacing
-    }
-
-    # COMPONENT 1: Xcode Command Line Tools
+# COMPONENT 1: Xcode Command Line Tools. Returns TRUE if installed/available.
+rtools_install_xcode_cli <- function(entered_password, verbose, describe_steps, pb_id) {
     cli::cli_h3("Component 1 of 3: Xcode Command Line Tools")
     cli::cli_text("Apple's development utilities providing compilers and build tools")
     cli::cli_ul(c(
@@ -118,12 +137,11 @@ macos_rtools_install <- function(
     ))
     cli::cli_text("") # Add spacing
 
-    # Step 1: Xcode CLI
     result_xcode <- TRUE
     if(!is_xcode_app_installed()) {
         if(!is_xcode_cli_installed()) {
             if (verbose) {
-                cli::cli_progress_update(pb_id, 0.1)
+                cli::cli_progress_update(id = pb_id, set = 10)
                 cli::cli_alert_info("{.pkg macrtools}: Need to install Xcode Command Line Tools.")
                 cli::cli_bullets(c(
                     "Source: Apple Software Update",
@@ -134,7 +152,7 @@ macos_rtools_install <- function(
                 cli::cli_text("") # Add spacing
             }
 
-            if (verbose) cli::cli_progress_update(pb_id, 0.2)
+            if (verbose) cli::cli_progress_update(id = pb_id, set = 20)
             result_xcode <- xcode_cli_install(password = entered_password, verbose = describe_steps)
 
             if(!result_xcode) {
@@ -146,7 +164,7 @@ macos_rtools_install <- function(
                 ))
             }
 
-            if (verbose) cli::cli_progress_update(pb_id, 0.3)
+            if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
         } else {
             if(describe_steps) {
                 # Get Xcode CLI version information
@@ -163,7 +181,7 @@ macos_rtools_install <- function(
                 ))
                 cli::cli_text("") # Add spacing
             }
-            if (verbose) cli::cli_progress_update(pb_id, 0.3)
+            if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
         }
     } else {
         if(describe_steps) {
@@ -181,10 +199,14 @@ macos_rtools_install <- function(
             ))
             cli::cli_text("") # Add spacing
         }
-        if (verbose) cli::cli_progress_update(pb_id, 0.3)
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
     }
 
-    # COMPONENT 2: GNU Fortran Compiler
+    result_xcode
+}
+
+# COMPONENT 2: GNU Fortran compiler. Returns TRUE if installed/available.
+rtools_install_gfortran <- function(entered_password, verbose, describe_steps, pb_id, arch, r_version) {
     cli::cli_h3("Component 2 of 3: GNU Fortran Compiler")
     cli::cli_text("Essential compiler for scientific computing and many CRAN packages")
     cli::cli_ul(c(
@@ -194,8 +216,7 @@ macos_rtools_install <- function(
     ))
     cli::cli_text("") # Add spacing
 
-    # Step 2: gfortran
-    if (verbose) cli::cli_progress_update(pb_id, 0.4)
+    if (verbose) cli::cli_progress_update(id = pb_id, set = 40)
     result_gfortran <- TRUE
     if(!is_gfortran_installed()) {
         if (verbose) {
@@ -210,7 +231,7 @@ macos_rtools_install <- function(
             cli::cli_text("") # Add spacing
         }
 
-        if (verbose) cli::cli_progress_update(pb_id, 0.5)
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 50)
         result_gfortran <- gfortran_install(password = entered_password, verbose = describe_steps)
         if(!result_gfortran) {
             cli::cli_abort(c(
@@ -221,7 +242,7 @@ macos_rtools_install <- function(
             ))
         }
 
-        if (verbose) cli::cli_progress_update(pb_id, 0.6)
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 60)
     } else {
         if(describe_steps) {
             # Get gfortran version information
@@ -240,10 +261,14 @@ macos_rtools_install <- function(
             ))
             cli::cli_text("") # Add spacing
         }
-        if (verbose) cli::cli_progress_update(pb_id, 0.6)
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 60)
     }
 
-    # COMPONENT 3: R Development Libraries
+    result_gfortran
+}
+
+# COMPONENT 3: R development libraries via recipes. Returns the install result.
+rtools_install_recipes <- function(entered_password, verbose, pb_id, arch) {
     cli::cli_h3("Component 3 of 3: R Development Libraries")
     cli::cli_text("Essential third-party libraries required for R package development")
     cli::cli_ul(c(
@@ -253,9 +278,8 @@ macos_rtools_install <- function(
     ))
     cli::cli_text("") # Add spacing
 
-    # Step 3: r-base-dev
     if (verbose) {
-        cli::cli_progress_update(pb_id, 0.7)
+        cli::cli_progress_update(id = pb_id, set = 70)
         cli::cli_alert_info("{.pkg macrtools}: Installing R development libraries.")
         cli::cli_bullets(c(
             "Source: R-Project macOS binary repository",
@@ -267,16 +291,14 @@ macos_rtools_install <- function(
         cli::cli_text("") # Add spacing
     }
 
-    result_base_dev <- recipes_binary_install(
+    recipes_binary_install(
         "r-base-dev", sudo = TRUE, password = entered_password, verbose = verbose
     )
+}
 
-    # Finalize installation
-    if (verbose) {
-        cli::cli_progress_update(pb_id, 1.0)
-        cli::cli_progress_done(pb_id)
-    }
-
+# Print the success summary or abort describing which components failed.
+# Returns TRUE when every component installed cleanly.
+rtools_install_summary <- function(result_xcode, result_gfortran, result_base_dev) {
     rtools_install_clean <- result_gfortran && result_xcode && base::isTRUE(result_base_dev)
 
     if(rtools_install_clean) {
@@ -309,7 +331,7 @@ macos_rtools_install <- function(
         ))
     }
 
-    base::invisible(rtools_install_clean)
+    rtools_install_clean
 }
 
 
@@ -355,7 +377,7 @@ macos_rtools_uninstall <- function(
     result_xcode <- TRUE
     if(is_xcode_cli_installed()) {
         if (verbose) {
-            cli::cli_progress_update(pb_id, 0.3)
+            cli::cli_progress_update(id = pb_id, set = 30)
             cli::cli_alert_info("{.pkg macrtools}: Uninstalling Xcode CLI...")
             cli::cli_text("") # Add spacing
         }
@@ -371,7 +393,7 @@ macos_rtools_uninstall <- function(
     }
 
     # Step 2: Uninstall gfortran
-    if (verbose) cli::cli_progress_update(pb_id, 0.7)
+    if (verbose) cli::cli_progress_update(id = pb_id, set = 70)
     result_gfortran <- TRUE
     if(is_gfortran_installed()) {
         if (verbose) {
@@ -390,7 +412,7 @@ macos_rtools_uninstall <- function(
     }
 
     if (verbose) {
-        cli::cli_progress_update(pb_id, 1.0)
+        cli::cli_progress_update(id = pb_id, set = 100)
         cli::cli_progress_done(pb_id)
     }
 

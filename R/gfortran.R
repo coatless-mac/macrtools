@@ -205,7 +205,7 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
     if (verbose) {
         # Get system info
         arch_info <- system_arch()
-        r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
+        r_version <- r_version_full()
 
         cli::cli_alert_info("{.pkg macrtools}: Preparing to download and install gfortran.")
         cli::cli_bullets(c(
@@ -243,60 +243,15 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
             password = entered_password_gfortran,
             verbose = verbose)
     } else if(is_r_version_at_least("4.0")) {
-        if (is_x86_64()) {
-            gfortran_status <- install_gfortran_82_mojave(
-                password = entered_password_gfortran,
-                verbose = verbose)
-        } else if (is_aarch64()) {
-            if (is_r_version("4.2")) {
-                if (verbose) {
-                    install_path <- install_location()
-                    cli::cli_alert_info("{.pkg macrtools}: Installing gfortran 12 for Apple Silicon with R 4.2")
-                    cli::cli_bullets(c(
-                        "Source: {.url https://mac.r-project.org/tools/}",
-                        "Target installation: {.path {install_path}}"
-                    ))
-                    cli::cli_text("") # Add spacing
-                }
-                gfortran_status <- install_gfortran_12_arm(
-                    password = entered_password_gfortran,
-                    verbose = verbose)
-            } else if(is_r_version("4.1")) {
-                if (verbose) {
-                    install_path <- install_location()
-                    cli::cli_alert_info("{.pkg macrtools}: Installing gfortran 11 for Apple Silicon with R 4.1")
-                    cli::cli_bullets(c(
-                        "Source: {.url https://mac.r-project.org/libs-arm64/}",
-                        "Target installation: {.path {install_path}}"
-                    ))
-                    cli::cli_text("") # Add spacing
-                }
-                gfortran_status <- install_gfortran_11_arm(
-                    password = entered_password_gfortran,
-                    verbose = verbose)
-            } else {
-                cli::cli_abort(c(
-                    "{.pkg macrtools}: Unable to install gfortran for Apple Silicon (arm64/aarch64).",
-                    "i" = "Official R support for Apple Silicon began in R 4.1.",
-                    "i" = "Please upgrade R to version 4.1 or higher.",
-                    "i" = "Visit https://cran.r-project.org/bin/macosx/ to download a compatible R version for Apple Silicon."
-                ))
-                return(base::invisible(FALSE))
-            }
-        } else {
-            arch <- system_arch()
-            cli::cli_abort(c(
-                "{.pkg macrtools}: Unsupported macOS architecture: {.val {arch}}",
-                "i" = "Only Intel (x86_64) and Apple Silicon (arm64/aarch64) architectures are supported."
-            ))
-            return(base::invisible(FALSE))
-        }
+        gfortran_status <- install_gfortran_legacy(
+            password = entered_password_gfortran,
+            verbose = verbose)
     }
 
     if(base::isFALSE(gfortran_status)) {
         install_path <- gfortran_install_location()
         arch_info <- system_arch()
-        r_version <- base::paste(base::R.version$major, base::R.version$minor, sep='.')
+        r_version <- r_version_full()
 
         cli::cli_abort(c(
             "{.pkg macrtools}: Failed to install gfortran.",
@@ -305,7 +260,6 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
             "i" = "R version: {.val {r_version}}",
             "i" = "Please try to manually install following the instructions at: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#installing-gfortran"
         ))
-        return(base::invisible(FALSE))
     }
 
     renviron_gfortran_path(path_variable)
@@ -392,7 +346,6 @@ gfortran_uninstall <- function(password = base::getOption("macrtools.password"),
             "{.pkg macrtools}: We were not able to uninstall gfortran.",
             "i" = "Please try to manually uninstall using: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#uninstalling-gfortran"
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -434,7 +387,6 @@ gfortran_update <- function(password = base::getOption("macrtools.password"), ve
     # Verify that the tool exists
     if (!base::file.exists(path_gfortran_update)) {
         cli::cli_abort("{.pkg macrtools}: Could not find gfortran-update-sdk at {.path {path_gfortran_update}}")
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -442,7 +394,7 @@ gfortran_update <- function(password = base::getOption("macrtools.password"), ve
         cli::cli_bullets(c(
             "Update tool: {.path {path_gfortran_update}}",
             "Architecture: {.val {system_arch()}}",
-            "R version: {.val {base::paste(base::R.version$major, base::R.version$minor, sep='.')}}"
+            "R version: {.val {r_version_full()}}"
         ))
         cli::cli_text("") # Add spacing
     }
@@ -458,7 +410,6 @@ gfortran_update <- function(password = base::getOption("macrtools.password"), ve
             "{.pkg macrtools}: We were not able to update gfortran.",
             "i" = "Please try to manually update using: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#updating-gfortran"
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -474,7 +425,7 @@ gfortran <- function(args) {
         sys::exec_internal("gfortran", args = args, error = FALSE),
         error = function(e) {
             base::list(
-                output = e,
+                stdout = base::charToRaw(base::paste0(base::conditionMessage(e), "\n")),
                 status = -127L
             )
         }
@@ -487,6 +438,62 @@ gfortran <- function(args) {
         ),
         class = c("gfortran", "cli")
     )
+}
+
+#' Install gfortran for the legacy R 4.0-4.2 toolchain
+#'
+#' @details
+#' Intel Macs use the gfortran 8.2 Mojave DMG; Apple Silicon uses the gfortran 12
+#' (R 4.2) or gfortran 11 (R 4.1) arm64 tarball. Apple Silicon on R 4.0 and any
+#' other architecture are unsupported and abort.
+#'
+#' @noRd
+install_gfortran_legacy <- function(password = base::getOption("macrtools.password"),
+                                    verbose = TRUE) {
+    if (is_x86_64()) {
+        return(install_gfortran_82_mojave(password = password, verbose = verbose))
+    }
+
+    if (!is_aarch64()) {
+        arch <- system_arch()
+        cli::cli_abort(c(
+            "{.pkg macrtools}: Unsupported macOS architecture: {.val {arch}}",
+            "i" = "Only Intel (x86_64) and Apple Silicon (arm64/aarch64) architectures are supported."
+        ))
+    }
+
+    if (is_r_version("4.2")) {
+        if (verbose) {
+            install_path <- install_location()
+            cli::cli_alert_info("{.pkg macrtools}: Installing gfortran 12 for Apple Silicon with R 4.2")
+            cli::cli_bullets(c(
+                "Source: {.url https://mac.r-project.org/tools/}",
+                "Target installation: {.path {install_path}}"
+            ))
+            cli::cli_text("") # Add spacing
+        }
+        return(install_gfortran_12_arm(password = password, verbose = verbose))
+    }
+
+    if (is_r_version("4.1")) {
+        if (verbose) {
+            install_path <- install_location()
+            cli::cli_alert_info("{.pkg macrtools}: Installing gfortran 11 for Apple Silicon with R 4.1")
+            cli::cli_bullets(c(
+                "Source: {.url https://mac.r-project.org/libs-arm64/}",
+                "Target installation: {.path {install_path}}"
+            ))
+            cli::cli_text("") # Add spacing
+        }
+        return(install_gfortran_11_arm(password = password, verbose = verbose))
+    }
+
+    cli::cli_abort(c(
+        "{.pkg macrtools}: Unable to install gfortran for Apple Silicon (arm64/aarch64).",
+        "i" = "Official R support for Apple Silicon began in R 4.1.",
+        "i" = "Please upgrade R to version 4.1 or higher.",
+        "i" = "Visit https://cran.r-project.org/bin/macosx/ to download a compatible R version for Apple Silicon."
+    ))
 }
 
 #' Download and Install gfortran 8.2 for Intel Macs
@@ -520,7 +527,6 @@ install_gfortran_82_mojave <- function(password = base::getOption("macrtools.pas
 
     if (!success) {
         cli::cli_abort("{.pkg macrtools}: Error installing the gfortran package")
-        return(FALSE)
     }
 
     # Remove unused gfortran file

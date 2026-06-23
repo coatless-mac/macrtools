@@ -186,6 +186,14 @@ r_version_major_minor <- function() {
     base::paste(base::R.version$major, minor_value, sep = ".")
 }
 
+#' Running R Version as a Full major.minor.patch String
+#'
+#' @return The running R version as a `"major.minor.patch"` string, e.g. `"4.6.0"`.
+#' @keywords internal
+r_version_full <- function() {
+    base::paste(base::R.version$major, base::R.version$minor, sep = ".")
+}
+
 #' Supported R Version Window
 #'
 #' Single source of truth for the oldest and newest R minor versions whose
@@ -241,7 +249,7 @@ is_r_version <- function(target_version, compare_major_minor = TRUE) {
         r_version_major_minor()
     } else {
         # If x.y.z, this compares against the full x.y.z
-        base::paste(base::R.version$major, base::R.version$minor, sep = ".")
+        r_version_full()
     }
 
     # Check for equality.

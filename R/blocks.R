@@ -108,7 +108,7 @@ block_replace = function(desc, value, path,
 
     if (base::is.null(block_lines)) {
         base::message("Copy and paste the following lines into ", path, ":")
-        base::paste0(base::c(block_start, value, block_end), collapse = "\n")
+        base::message(base::paste0(base::c(block_start, value, block_end), collapse = "\n"))
         return(base::invisible(FALSE))
     }
 

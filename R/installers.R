@@ -1,57 +1,51 @@
 # Installation directories ----
 
-install_strip_level <- function(arch = system_arch()) {
+# Dispatch on architecture, mapping arm64/aarch64 to the same value, with a
+# shared error for anything that is not Apple Silicon or Intel.
+arch_switch <- function(arch, arm64, x86_64) {
     base::switch(
         arch,
-        "arm64" = 3,
-        "aarch64" = 3,
-        "x86_64" = 2,
+        "arm64" = arm64,
+        "aarch64" = arm64,
+        "x86_64" = x86_64,
         cli::cli_abort("{.pkg macrtools}: Architecture {.val {arch}} not recognized. Please ensure you are on either an Apple Silicon (arm64) or Intel (x86_64) system.")
     )
 }
 
-recipe_binary_install_strip_level <- function(arch = system_arch()) {
+# Guard the recipe/gfortran installers against unsupported R versions, naming
+# the component that is unavailable.
+assert_supported_r_version_for <- function(component) {
     if (!is_r_version_supported()) {
         supported_min <- minimum_supported_r_version()
         supported_max <- maximum_supported_r_version()
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R {supported_min}.x through R {supported_max}.x.")
+        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support {component} for R {supported_min}.x through R {supported_max}.x.")
     }
+}
+
+install_strip_level <- function(arch = system_arch()) {
+    arch_switch(arch, arm64 = 3, x86_64 = 2)
+}
+
+recipe_binary_install_strip_level <- function(arch = system_arch()) {
+    assert_supported_r_version_for("recipe binary installation")
     if (is_r_version_at_least("4.3")) {
-        base::switch(
-            arch,
-            "arm64" = 3,
-            "aarch64" = 3,
-            "x86_64" = 3,
-            cli::cli_abort("{.pkg macrtools}: Architecture {.val {arch}} not recognized. Please ensure you are on either an Apple Silicon (arm64) or Intel (x86_64) system.")
-        )
+        arch_switch(arch, arm64 = 3, x86_64 = 3)
     } else {
         install_strip_level()
     }
 }
 
 install_location <- function(arch = system_arch()) {
-    base::switch(
-        arch,
-        "arm64" = install_directory_arm64(),
-        "aarch64" = install_directory_arm64(),
-        "x86_64" = install_directory_x86_64(),
-        cli::cli_abort("{.pkg macrtools}: Architecture {.val {arch}} not recognized. Please ensure you are on either an Apple Silicon (arm64) or Intel (x86_64) system.")
-    )
+    arch_switch(arch, arm64 = install_directory_arm64(), x86_64 = install_directory_x86_64())
 }
 
 recipe_binary_install_location <- function(arch = system_arch()) {
-    if (!is_r_version_supported()) {
-        supported_min <- minimum_supported_r_version()
-        supported_max <- maximum_supported_r_version()
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support recipe binary installation for R {supported_min}.x through R {supported_max}.x.")
-    }
+    assert_supported_r_version_for("recipe binary installation")
     if (is_r_version_at_least("4.3")) {
-        base::switch(
+        arch_switch(
             arch,
-            "arm64" = install_directory_arm64(),
-            "aarch64" = install_directory_arm64(),
-            "x86_64" = install_directory_x86_64_r_version_4_3(),
-            cli::cli_abort("{.pkg macrtools}: Architecture {.val {arch}} not recognized. Please ensure you are on either an Apple Silicon (arm64) or Intel (x86_64) system.")
+            arm64 = install_directory_arm64(),
+            x86_64 = install_directory_x86_64_r_version_4_3()
         )
     } else {
         install_location()
@@ -59,11 +53,7 @@ recipe_binary_install_location <- function(arch = system_arch()) {
 }
 
 gfortran_install_location <- function(arch = system_arch()) {
-    if (!is_r_version_supported()) {
-        supported_min <- minimum_supported_r_version()
-        supported_max <- maximum_supported_r_version()
-        cli::cli_abort("{.pkg macrtools}: Unsupported R version. We only support gfortran installation for R {supported_min}.x through R {supported_max}.x.")
-    }
+    assert_supported_r_version_for("gfortran installation")
     if (is_r_version_at_least("4.3")) {
         "/opt"
     } else {
@@ -275,7 +265,7 @@ tar_package_install <- function(path_to_tar,
     status <- shell_execute(cmd, sudo = sudo, password = password, verbose = verbose)
 
     # Verify installation is okay:
-    if (status < 0) {
+    if (status != 0) {
         cli::cli_abort("{.pkg macrtools}: Failed to install from {.path {path_to_tar}}")
     }
 
@@ -347,15 +337,14 @@ dmg_package_install <- function(path_to_dmg,
     install_status <- shell_execute(cmd, sudo = TRUE, password = password)
 
     if (install_status != 0) {
+        # Unmount the volume before surfacing the failure so we do not leak it.
+        cmd <- base::paste("hdiutil", "detach", base::shQuote(base::file.path("/Volumes", bare_volume)))
+        shell_execute(cmd, sudo = FALSE)
         cli::cli_abort(c(
             "{.pkg macrtools}: Failed to install package from disk image.",
             "Disk image: {.file {volume_with_extension}}",
             "Status code: {.val {install_status}}"
         ))
-        # Attempt to unmount anyway
-        cmd <- base::paste("hdiutil", "detach", base::shQuote(base::file.path("/Volumes", bare_volume)))
-        shell_execute(cmd, sudo = FALSE)
-        return(FALSE)
     }
 
     if (verbose) {
