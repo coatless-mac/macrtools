@@ -162,3 +162,13 @@ test_that("gfortran_uninstall removes installed gfortran", {
     result <- gfortran_uninstall(verbose = TRUE)
     expect_true(result)
 })
+
+test_that("gfortran() surfaces the error message when the binary is missing", {
+    # Regression test: the error handler must carry the message in $stdout so the
+    # caller (which reads out$stdout) does not silently drop it.
+    mockery::stub(gfortran, "sys::exec_internal", function(...) stop("gfortran not found"))
+
+    res <- gfortran("--version")
+    expect_equal(res$status, -127L)
+    expect_match(paste(res$output, collapse = " "), "gfortran not found")
+})

@@ -474,7 +474,7 @@ gfortran <- function(args) {
         sys::exec_internal("gfortran", args = args, error = FALSE),
         error = function(e) {
             base::list(
-                output = e,
+                stdout = base::charToRaw(base::paste0(base::conditionMessage(e), "\n")),
                 status = -127L
             )
         }

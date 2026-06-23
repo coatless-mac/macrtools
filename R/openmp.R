@@ -298,7 +298,7 @@ openmp_uninstall <- function(password = base::getOption("macrtools.password"),
     }
 
     # Remove Makevars configuration if requested
-    if (remove_makevars_config) {
+    if (configure_makevars) {
         makevars_removal_status <- remove_openmp_makevars_config(verbose = verbose)
         if (!makevars_removal_status && verbose) {
             cli::cli_alert_warning("{.pkg macrtools}: OpenMP uninstalled but Makevars cleanup failed.")
@@ -504,15 +504,18 @@ configure_openmp_makevars <- function(verbose = TRUE) {
     # Create ~/.R directory if it doesn't exist
     r_dir <- base::path.expand("~/.R")
     if (!base::dir.exists(r_dir)) {
-        base::tryCatch(
-            base::dir.create(r_dir, recursive = TRUE),
-            error = function(e) {
-                if (verbose) {
-                    cli::cli_alert_warning("{.pkg macrtools}: Could not create ~/.R directory: {.val {e$message}}")
-                }
-                return(FALSE)
+        dir_created <- base::tryCatch({
+            base::dir.create(r_dir, recursive = TRUE)
+            TRUE
+        }, error = function(e) {
+            if (verbose) {
+                cli::cli_alert_warning("{.pkg macrtools}: Could not create ~/.R directory: {.val {e$message}}")
             }
-        )
+            FALSE
+        })
+        if (!dir_created) {
+            return(FALSE)
+        }
     }
 
     if (verbose) {

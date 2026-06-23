@@ -123,7 +123,7 @@ macos_rtools_install <- function(
     if(!is_xcode_app_installed()) {
         if(!is_xcode_cli_installed()) {
             if (verbose) {
-                cli::cli_progress_update(pb_id, 0.1)
+                cli::cli_progress_update(id = pb_id, set = 10)
                 cli::cli_alert_info("{.pkg macrtools}: Need to install Xcode Command Line Tools.")
                 cli::cli_bullets(c(
                     "Source: Apple Software Update",
@@ -134,7 +134,7 @@ macos_rtools_install <- function(
                 cli::cli_text("") # Add spacing
             }
 
-            if (verbose) cli::cli_progress_update(pb_id, 0.2)
+            if (verbose) cli::cli_progress_update(id = pb_id, set = 20)
             result_xcode <- xcode_cli_install(password = entered_password, verbose = describe_steps)
 
             if(!result_xcode) {
@@ -146,7 +146,7 @@ macos_rtools_install <- function(
                 ))
             }
 
-            if (verbose) cli::cli_progress_update(pb_id, 0.3)
+            if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
         } else {
             if(describe_steps) {
                 # Get Xcode CLI version information
@@ -163,7 +163,7 @@ macos_rtools_install <- function(
                 ))
                 cli::cli_text("") # Add spacing
             }
-            if (verbose) cli::cli_progress_update(pb_id, 0.3)
+            if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
         }
     } else {
         if(describe_steps) {
@@ -181,7 +181,7 @@ macos_rtools_install <- function(
             ))
             cli::cli_text("") # Add spacing
         }
-        if (verbose) cli::cli_progress_update(pb_id, 0.3)
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
     }
 
     # COMPONENT 2: GNU Fortran Compiler
@@ -195,7 +195,7 @@ macos_rtools_install <- function(
     cli::cli_text("") # Add spacing
 
     # Step 2: gfortran
-    if (verbose) cli::cli_progress_update(pb_id, 0.4)
+    if (verbose) cli::cli_progress_update(id = pb_id, set = 40)
     result_gfortran <- TRUE
     if(!is_gfortran_installed()) {
         if (verbose) {
@@ -210,7 +210,7 @@ macos_rtools_install <- function(
             cli::cli_text("") # Add spacing
         }
 
-        if (verbose) cli::cli_progress_update(pb_id, 0.5)
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 50)
         result_gfortran <- gfortran_install(password = entered_password, verbose = describe_steps)
         if(!result_gfortran) {
             cli::cli_abort(c(
@@ -221,7 +221,7 @@ macos_rtools_install <- function(
             ))
         }
 
-        if (verbose) cli::cli_progress_update(pb_id, 0.6)
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 60)
     } else {
         if(describe_steps) {
             # Get gfortran version information
@@ -240,7 +240,7 @@ macos_rtools_install <- function(
             ))
             cli::cli_text("") # Add spacing
         }
-        if (verbose) cli::cli_progress_update(pb_id, 0.6)
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 60)
     }
 
     # COMPONENT 3: R Development Libraries
@@ -255,7 +255,7 @@ macos_rtools_install <- function(
 
     # Step 3: r-base-dev
     if (verbose) {
-        cli::cli_progress_update(pb_id, 0.7)
+        cli::cli_progress_update(id = pb_id, set = 70)
         cli::cli_alert_info("{.pkg macrtools}: Installing R development libraries.")
         cli::cli_bullets(c(
             "Source: R-Project macOS binary repository",
@@ -273,7 +273,7 @@ macos_rtools_install <- function(
 
     # Finalize installation
     if (verbose) {
-        cli::cli_progress_update(pb_id, 1.0)
+        cli::cli_progress_update(id = pb_id, set = 100)
         cli::cli_progress_done(pb_id)
     }
 
@@ -355,7 +355,7 @@ macos_rtools_uninstall <- function(
     result_xcode <- TRUE
     if(is_xcode_cli_installed()) {
         if (verbose) {
-            cli::cli_progress_update(pb_id, 0.3)
+            cli::cli_progress_update(id = pb_id, set = 30)
             cli::cli_alert_info("{.pkg macrtools}: Uninstalling Xcode CLI...")
             cli::cli_text("") # Add spacing
         }
@@ -371,7 +371,7 @@ macos_rtools_uninstall <- function(
     }
 
     # Step 2: Uninstall gfortran
-    if (verbose) cli::cli_progress_update(pb_id, 0.7)
+    if (verbose) cli::cli_progress_update(id = pb_id, set = 70)
     result_gfortran <- TRUE
     if(is_gfortran_installed()) {
         if (verbose) {
@@ -390,7 +390,7 @@ macos_rtools_uninstall <- function(
     }
 
     if (verbose) {
-        cli::cli_progress_update(pb_id, 1.0)
+        cli::cli_progress_update(id = pb_id, set = 100)
         cli::cli_progress_done(pb_id)
     }
 

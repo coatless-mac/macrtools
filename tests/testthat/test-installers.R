@@ -149,3 +149,19 @@ test_that("gfortran_install_location follows the toolchain tiers", {
     mockery::stub(gfortran_install_location, "is_r_version_supported", function(...) FALSE)
     expect_error(gfortran_install_location("arm64"), regexp = "Unsupported R version")
 })
+
+test_that("tar_package_install aborts on a positive (non-zero) exit status", {
+    # A real tar failure exits with a positive status; it must be treated as a
+    # failure, not silently ignored (regression test for status < 0 vs != 0).
+    mockery::stub(tar_package_install, "base::shQuote", function(x) paste0("'", x, "'"))
+    mockery::stub(tar_package_install, "base::normalizePath", function(path) path)
+    mockery::stub(tar_package_install, "base::basename", function(path) "test.tar.gz")
+    mockery::stub(tar_package_install, "cli::cli_alert_info", function(...) NULL)
+    mockery::stub(tar_package_install, "cli::cli_bullets", function(...) NULL)
+    mockery::stub(tar_package_install, "cli::cli_text", function(...) NULL)
+    mockery::stub(tar_package_install, "shell_execute", function(...) 1)
+    mockery::stub(tar_package_install, "cli::cli_abort", function(...) stop("Installation failed"))
+
+    expect_error(tar_package_install("/tmp/test.tar.gz", "/opt", 2, verbose = TRUE),
+                 "Installation failed")
+})

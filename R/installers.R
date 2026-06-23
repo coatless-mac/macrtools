@@ -275,7 +275,7 @@ tar_package_install <- function(path_to_tar,
     status <- shell_execute(cmd, sudo = sudo, password = password, verbose = verbose)
 
     # Verify installation is okay:
-    if (status < 0) {
+    if (status != 0) {
         cli::cli_abort("{.pkg macrtools}: Failed to install from {.path {path_to_tar}}")
     }
 
@@ -347,15 +347,14 @@ dmg_package_install <- function(path_to_dmg,
     install_status <- shell_execute(cmd, sudo = TRUE, password = password)
 
     if (install_status != 0) {
+        # Unmount the volume before surfacing the failure so we do not leak it.
+        cmd <- base::paste("hdiutil", "detach", base::shQuote(base::file.path("/Volumes", bare_volume)))
+        shell_execute(cmd, sudo = FALSE)
         cli::cli_abort(c(
             "{.pkg macrtools}: Failed to install package from disk image.",
             "Disk image: {.file {volume_with_extension}}",
             "Status code: {.val {install_status}}"
         ))
-        # Attempt to unmount anyway
-        cmd <- base::paste("hdiutil", "detach", base::shQuote(base::file.path("/Volumes", bare_volume)))
-        shell_execute(cmd, sudo = FALSE)
-        return(FALSE)
     }
 
     if (verbose) {
