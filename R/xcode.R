@@ -189,7 +189,7 @@ xcode_cli_path <- function() {
 #' Finally, we remove the temporary installation file.
 #'
 #' ```sh
-#' touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+#' rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
 #' ```
 #'
 #' These steps were obtained from Timothy Sutton's
@@ -234,9 +234,7 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
 
     if (base::length(product_information) == 0) {
         # Remove temporary in-progress file if left in place before aborting.
-        if(base::file.exists(temporary_xcli_file)) {
-            base::file.remove(temporary_xcli_file)
-        }
+        remove_file_if_exists(temporary_xcli_file)
         cli::cli_abort(c(
             "{.pkg macrtools}: Could not find Xcode CLI in software updates.",
             "i" = "Try installing manually with 'xcode-select --install' in Terminal."
@@ -258,9 +256,7 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
                                  sudo = TRUE, password = password, verbose = verbose)
 
     # Remove temporary in-progress file if left in place
-    if(base::file.exists(temporary_xcli_file)) {
-        base::file.remove(temporary_xcli_file)
-    }
+    remove_file_if_exists(temporary_xcli_file)
 
     xcli_clean <- base::identical(xcli_status, 0L)
 
@@ -460,7 +456,7 @@ xcode_cli_reset <- function(password = base::getOption("macrtools.password"), ve
                                        password = password,
                                        verbose = verbose)
 
-    xcli_reset_clean <- xcli_reset_status == 0L
+    xcli_reset_clean <- base::identical(xcli_reset_status, 0L)
 
     if(base::isFALSE(xcli_reset_clean)) {
         cli::cli_abort("{.pkg macrtools}: Failed to reset Xcode CLI settings.")

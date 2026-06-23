@@ -20,35 +20,6 @@ print.cli <- function(x, ...) {
     return(base::invisible(x))
 }
 
-#' Verify Status of Operation
-#'
-#' @param status Status code from operation
-#' @param program Name of the program being installed or uninstalled
-#' @param url Optional URL for manual instructions
-#' @param type Type of operation ("uninstall" or "install")
-#' @return TRUE if status is successful, FALSE otherwise (invisibly)
-#' @keywords internal
-verify_status <- function(status, program, url, type = c("uninstall", "install")) {
-    type <- base::match.arg(type)
-
-    if(base::isFALSE(status)) {
-        time_of_failure <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
-        url_info <- if(!base::missing(url)) c("Manual instructions available at:", "{.url {url}}") else NULL
-
-        cli::cli_abort(c(
-            "{.pkg macrtools}: Operation failed: Could not {type} {.pkg {program}}.",
-            "{.pkg macrtools}: Status: {.val {status}}",
-            "{.pkg macrtools}: Operation type: {.val {type}}",
-            "{.pkg macrtools}: Time of failure: {.val {time_of_failure}}",
-            url_info
-        ),
-        advice = base::paste0("You may need to run this operation with administrative privileges or check for system compatibility issues."))
-        return(base::invisible(FALSE))
-    }
-
-    base::invisible(TRUE)
-}
-
 #' Force Password Entry if Not Provided
 #'
 #' @param supplied_password Password provided by user (may be NULL)
@@ -59,8 +30,8 @@ force_password <- function(supplied_password) {
     if(base::is.null(entered_password)) {
         current_user <- base::Sys.info()['user']
 
-        cli::cli_alert_info(c(
-            "{.pkg macrtools}: Administrative privileges required.",
+        cli::cli_alert_info("{.pkg macrtools}: Administrative privileges required.")
+        cli::cli_bullets(c(
             "Your user account password is needed to execute privileged operations.",
             "This password will not be stored and is only used for the current session.",
             "Current user: {.val {current_user}}"
@@ -80,13 +51,20 @@ caller_env <- function(n = 1) {
     base::parent.frame(n + 1)
 }
 
-#' Null Coalesce Operator
+#' Current Timestamp as a Formatted String
 #'
-#' @param x First value (may be NULL)
-#' @param y Default value if x is NULL
-#' @return x if not NULL, otherwise y
-#' @name null_coalesce
+#' @return The current time formatted as `"%Y-%m-%d %H:%M:%S"`.
 #' @keywords internal
-`%||%` <- function(x, y) {
-    if (base::is.null(x)) y else x
+timestamp_now <- function() {
+    base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+}
+
+#' Remove a File if it Exists
+#'
+#' @param path Path to the file to remove.
+#' @keywords internal
+remove_file_if_exists <- function(path) {
+    if (base::file.exists(path)) {
+        base::file.remove(path)
+    }
 }

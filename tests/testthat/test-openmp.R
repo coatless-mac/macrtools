@@ -1,5 +1,5 @@
 test_that("is_openmp_installed checks for the library and header", {
-    mockery::stub(is_openmp_installed, "assert_mac", function() NULL)
+    local_mocked_bindings(assert_mac = function(...) NULL)
 
     mockery::stub(is_openmp_installed, "base::file.exists", function(p) TRUE)
     expect_true(is_openmp_installed())
@@ -10,8 +10,9 @@ test_that("is_openmp_installed checks for the library and header", {
 
 test_that("get_openmp_url_for_xcode maps Apple clang build numbers to runtimes", {
     pick <- function(build) {
-        mockery::stub(get_openmp_url_for_xcode, "get_apple_clang_version",
-                      function() list(build_number = build))
+        local_mocked_bindings(
+            get_apple_clang_version = function() list(build_number = build)
+        )
         get_openmp_url_for_xcode()
     }
 
@@ -30,10 +31,12 @@ test_that("get_openmp_url_for_xcode maps Apple clang build numbers to runtimes",
 test_that("openmp_uninstall honors configure_makevars without erroring", {
     # Regression: openmp_uninstall() previously referenced an undefined
     # `remove_makevars_config`, erroring after removing the libraries.
-    mockery::stub(openmp_uninstall, "assert_mac", function() NULL)
-    mockery::stub(openmp_uninstall, "is_openmp_installed", function() TRUE)
+    local_mocked_bindings(
+        assert_mac = function(...) NULL,
+        is_openmp_installed = function() TRUE,
+        remove_openmp_makevars_config = function(...) TRUE
+    )
     mockery::stub(openmp_uninstall, "base::file.exists", function(...) FALSE)
-    mockery::stub(openmp_uninstall, "remove_openmp_makevars_config", function(...) TRUE)
     mockery::stub(openmp_uninstall, "cli::cli_alert_info", function(...) NULL)
     mockery::stub(openmp_uninstall, "cli::cli_bullets", function(...) NULL)
     mockery::stub(openmp_uninstall, "cli::cli_text", function(...) NULL)

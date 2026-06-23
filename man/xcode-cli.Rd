@@ -100,7 +100,7 @@ where \verb{$product_information} is obtained from the previous command.
 
 Finally, we remove the temporary installation file.
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
 }\if{html}{\out{</div>}}
 
 These steps were obtained from Timothy Sutton's

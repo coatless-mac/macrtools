@@ -7,23 +7,25 @@ test_that("system_os returns the correct OS name", {
 })
 
 test_that("system_arch returns the correct architecture", {
-    # Instead of trying to mock R.version directly, we test the function itself
-    expected_arch <- base::R.version$arch
-    expect_equal(system_arch(), expected_arch)
+    # We can't mock R.version, so test the function against the real value.
+    expect_equal(system_arch(), base::R.version$arch)
+})
 
-    # For additional coverage, we test that the functions that use system_arch work
-    mockery::stub(is_aarch64, "system_arch", function() "aarch64")
+test_that("is_aarch64 and is_x86_64 reflect the system architecture", {
+    local_mocked_bindings(system_arch = function() "aarch64")
     expect_true(is_aarch64())
+    expect_false(is_x86_64())
 
-    mockery::stub(is_x86_64, "system_arch", function() "x86_64")
+    local_mocked_bindings(system_arch = function() "x86_64")
+    expect_false(is_aarch64())
     expect_true(is_x86_64())
 })
 
 test_that("is_macos correctly identifies macOS", {
-    mockery::stub(is_macos, "system_os", function() "darwin")
+    local_mocked_bindings(system_os = function() "darwin")
     expect_true(is_macos())
 
-    mockery::stub(is_macos, "system_os", function() "linux")
+    local_mocked_bindings(system_os = function() "linux")
     expect_false(is_macos())
 })
 
@@ -37,13 +39,21 @@ test_that("shell_mac_version returns the correct macOS version", {
 })
 
 test_that("is_macos_r_supported correctly identifies supported macOS versions", {
-    mockery::stub(is_macos_r_supported, "shell_mac_version", function() "10.13.0")
-    mockery::stub(is_macos_r_supported, "version_between", function(...) TRUE)
+    # Mock at the namespace level so the stub reaches shell_mac_version through
+    # the shared macos_version_in_range() helper, and exercise the real
+    # version_between() logic.
+    local_mocked_bindings(shell_mac_version = function() "10.13.0")
     expect_true(is_macos_r_supported())
 
-    mockery::stub(is_macos_r_supported, "shell_mac_version", function() "10.12.0")
-    mockery::stub(is_macos_r_supported, "version_between", function(...) FALSE)
+    local_mocked_bindings(shell_mac_version = function() "10.12.0")
     expect_false(is_macos_r_supported())
+})
+
+test_that("macos_version_in_range checks the running macOS version against bounds", {
+    local_mocked_bindings(shell_mac_version = function() "14.2.0")
+    expect_true(macos_version_in_range("14.0.0", "15.0.0"))
+    expect_false(macos_version_in_range("15.0.0", "16.0.0"))
+    expect_false(macos_version_in_range("13.0.0", "14.0.0"))
 })
 
 test_that("version_between correctly determines if version is within bounds", {
@@ -54,30 +64,20 @@ test_that("version_between correctly determines if version is within bounds", {
 })
 
 test_that("is_r_version correctly identifies R versions", {
-    # We can't easily mock R.version, so instead we test a simplified version
-    # of the function that uses mock data
-    simplified_is_r_version <- function(target_version, r_major = "4", r_minor = "2.1") {
-        minor_value <- strsplit(r_minor, ".", fixed = TRUE)[[1]][1]
-        version_string <- paste(r_major, minor_value, sep = ".")
-        return(version_string == target_version)
-    }
+    # Mock the version helpers so we exercise the real is_r_version() against a
+    # controlled R version, rather than testing a reimplemented copy.
+    local_mocked_bindings(
+        r_version_major_minor = function() "4.2",
+        r_version_full = function() "4.2.1"
+    )
 
-    expect_true(simplified_is_r_version("4.2"))
-    expect_false(simplified_is_r_version("4.1"))
+    # Default compares major.minor
+    expect_true(is_r_version("4.2"))
+    expect_false(is_r_version("4.1"))
 
-    # Test with compare_major_minor = FALSE (directly using full version)
-    simplified_is_r_version_full <- function(target_version, r_major = "4", r_minor = "2.1", compare_major_minor = FALSE) {
-        if (compare_major_minor) {
-            minor_value <- strsplit(r_minor, ".", fixed = TRUE)[[1]][1]
-        } else {
-            minor_value <- r_minor
-        }
-        version_string <- paste(r_major, minor_value, sep = ".")
-        return(version_string == target_version)
-    }
-
-    expect_true(simplified_is_r_version_full("4.2.1", compare_major_minor = FALSE))
-    expect_false(simplified_is_r_version_full("4.2.0", compare_major_minor = FALSE))
+    # compare_major_minor = FALSE compares the full major.minor.patch
+    expect_true(is_r_version("4.2.1", compare_major_minor = FALSE))
+    expect_false(is_r_version("4.2.0", compare_major_minor = FALSE))
 })
 
 test_that("is_r_version_at_least compares major.minor versions", {

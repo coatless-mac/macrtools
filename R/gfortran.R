@@ -71,7 +71,7 @@ gfortran_version <- function() {
 #'
 #' ```sh
 #' touch ~/.Renviron
-#' cat << "EOF" > ~./Renviron
+#' cat << "EOF" > ~/.Renviron
 #' ## macrtools - gfortran: start
 #' PATH=${PATH}:/opt/gfortran/bin
 #' ## macrtools - gfortran: end
@@ -96,7 +96,7 @@ gfortran_version <- function() {
 #'
 #' ```sh
 #' touch ~/.Renviron
-#' cat << "EOF" > ~./Renviron
+#' cat << "EOF" > ~/.Renviron
 #' ## macrtools - gfortran: start
 #' PATH=${PATH}:/opt/gfortran/bin
 #' ## macrtools - gfortran: end
@@ -126,7 +126,7 @@ gfortran_version <- function() {
 #'
 #' ```sh
 #' touch ~/.Renviron
-#' cat << "EOF" > ~./Renviron
+#' cat << "EOF" > ~/.Renviron
 #' ## macrtools - gfortran: start
 #' PATH=${PATH}:/usr/local/gfortran/bin
 #' ## macrtools - gfortran: end
@@ -166,7 +166,7 @@ gfortran_version <- function() {
 #'
 #' ```sh
 #' touch ~/.Renviron
-#' cat << "EOF" > ~./Renviron
+#' cat << "EOF" > ~/.Renviron
 #' ## macrtools - gfortran: start
 #' PATH=${PATH}:/opt/R/arm64/gfortran/bin
 #' ## macrtools - gfortran: end
@@ -187,10 +187,7 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
         if(verbose) {
             # Get gfortran path and version info
             install_path <- base::file.path(gfortran_install_location(), 'gfortran')
-            version_info <- base::tryCatch(
-                sys::as_text(sys::exec_internal('gfortran', '--version')$stdout),
-                error = function(e) 'Unknown'
-            )
+            version_info <- exec_text('gfortran', '--version')
 
             cli::cli_alert_info("{.pkg macrtools}: gfortran is already installed.")
             cli::cli_bullets(c(
@@ -536,17 +533,18 @@ install_gfortran_82_mojave <- function(password = base::getOption("macrtools.pas
 }
 
 
-install_gfortran_12_arm <- function(password = base::getOption("macrtools.password"),
-                                    verbose = TRUE) {
-
-    gfortran_12_url <- "https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz"
+# Shared download + tar install for the arm64 legacy gfortran builds; the two
+# named entry points differ only in their download URL.
+install_gfortran_arm_tar <- function(url,
+                                     password = base::getOption("macrtools.password"),
+                                     verbose = TRUE) {
 
     # Figure out installation directories
     install_directory <- install_location()
     strip_levels <- install_strip_level()
 
     # Download tar
-    path_to_tar <- binary_download(gfortran_12_url, verbose = verbose)
+    path_to_tar <- binary_download(url, verbose = verbose)
 
     # Install tar into the appropriate location
     tar_package_install(path_to_tar,
@@ -558,25 +556,38 @@ install_gfortran_12_arm <- function(password = base::getOption("macrtools.passwo
 }
 
 
+install_gfortran_12_arm <- function(password = base::getOption("macrtools.password"),
+                                    verbose = TRUE) {
+    install_gfortran_arm_tar(
+        "https://mac.r-project.org/tools/gfortran-12.0.1-20220312-is-darwin20-arm64.tar.xz",
+        password = password,
+        verbose = verbose)
+}
+
+
 install_gfortran_11_arm <- function(password = base::getOption("macrtools.password"),
                                     verbose = TRUE) {
+    install_gfortran_arm_tar(
+        "https://mac.r-project.org/libs-arm64/gfortran-f51f1da0-darwin20.0-arm64.tar.gz",
+        password = password,
+        verbose = verbose)
+}
 
-    gfortran_11_url <- "https://mac.r-project.org/libs-arm64/gfortran-f51f1da0-darwin20.0-arm64.tar.gz"
 
-    # Figure out installation directories
-    install_directory <- install_location()
-    strip_levels <- install_strip_level()
+# Shared download + pkg install for the universal gfortran builds; the two
+# named entry points differ only in their download URL.
+install_gfortran_universal_pkg <- function(url,
+                                           password = base::getOption("macrtools.password"),
+                                           verbose = TRUE) {
 
-    # Download tar
-    path_to_tar <- binary_download(gfortran_11_url, verbose = verbose)
+    # Download pkg
+    path_to_pkg <- binary_download(url, verbose = verbose)
 
-    # Install tar into the appropriate location
-    tar_package_install(path_to_tar,
-                        install_directory,
-                        strip_levels,
-                        password = password,
-                        verbose = verbose)
-
+    # Install pkg into the appropriate location
+    pkg_install(path_to_pkg,
+                "/",
+                password = password,
+                verbose = verbose)
 }
 
 
@@ -590,18 +601,10 @@ install_gfortran_11_arm <- function(password = base::getOption("macrtools.passwo
 install_gfortran_14_2_universal <- function(
         password = base::getOption("macrtools.password"),
         verbose = TRUE) {
-
-    # URL for gfortran 14.2 universal installer for R 4.5-4.6
-    gfortran_14_universal <- "https://github.com/R-macos/gcc-14-branch/releases/download/gcc-14.2-darwin-r2.1/gfortran-14.2-universal.pkg"
-
-    # Download pkg
-    path_to_pkg <- binary_download(gfortran_14_universal, verbose = verbose)
-
-    # Install pkg into the appropriate location
-    pkg_install(path_to_pkg,
-                "/",
-                password = password,
-                verbose = verbose)
+    install_gfortran_universal_pkg(
+        "https://github.com/R-macos/gcc-14-branch/releases/download/gcc-14.2-darwin-r2.1/gfortran-14.2-universal.pkg",
+        password = password,
+        verbose = verbose)
 }
 
 
@@ -615,16 +618,8 @@ install_gfortran_14_2_universal <- function(
 install_gfortran_12_2_universal <- function(
         password = base::getOption("macrtools.password"),
         verbose = TRUE) {
-
-    # URL
-    gfortran_12_universal <- "https://mac.r-project.org/tools/gfortran-12.2-universal.pkg"
-
-    # Download tar
-    path_to_pkg <- binary_download(gfortran_12_universal, verbose = verbose)
-
-    # Install pkg into the appropriate location
-    pkg_install(path_to_pkg,
-                "/",
-                password = password,
-                verbose = verbose)
+    install_gfortran_universal_pkg(
+        "https://mac.r-project.org/tools/gfortran-12.2-universal.pkg",
+        password = password,
+        verbose = verbose)
 }

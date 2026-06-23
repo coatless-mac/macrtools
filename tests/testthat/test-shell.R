@@ -53,11 +53,13 @@ test_that("shell_execute routes commands correctly", {
     mockery::stub(shell_execute, "cli::cli_bullets", function(...) NULL)
 
     # Test regular command
-    mockery::stub(shell_execute, "shell_command", function(cmd, verbose) {
-        if (cmd == "echo test") return(0)
-        return(1)
-    })
-    mockery::stub(shell_execute, "shell_sudo_command", function(cmd, password, verbose) 1)
+    local_mocked_bindings(
+        shell_command = function(cmd, verbose) {
+            if (cmd == "echo test") return(0)
+            return(1)
+        },
+        shell_sudo_command = function(cmd, password, verbose) 1
+    )
     mockery::stub(shell_execute, "base::Sys.time", function() Sys.time())
     mockery::stub(shell_execute, "base::difftime", function(...) 1)
     mockery::stub(shell_execute, "base::round", function(...) 1)
@@ -67,11 +69,13 @@ test_that("shell_execute routes commands correctly", {
     expect_equal(result, 0)
 
     # Test sudo command
-    mockery::stub(shell_execute, "shell_command", function(cmd, verbose) 1)
-    mockery::stub(shell_execute, "shell_sudo_command", function(cmd, password, verbose) {
-        if (cmd == "echo test" && password == "password") return(0)
-        return(1)
-    })
+    local_mocked_bindings(
+        shell_command = function(cmd, verbose) 1,
+        shell_sudo_command = function(cmd, password, verbose) {
+            if (cmd == "echo test" && password == "password") return(0)
+            return(1)
+        }
+    )
 
     result <- shell_execute("echo test", sudo = TRUE, password = "password", verbose = TRUE)
     expect_equal(result, 0)

@@ -45,8 +45,8 @@ is_openmp_installed <- function() {
     assert_mac()
 
     # Check if the main library file exists
-    library_path <- "/usr/local/lib/libomp.dylib"
-    header_path <- "/usr/local/include/omp.h"
+    library_path <- openmp_library_path()
+    header_path <- openmp_header_path()
 
     # Both library and header should exist
     base::file.exists(library_path) && base::file.exists(header_path)
@@ -60,11 +60,8 @@ openmp_version <- function() {
     }
 
     # Try to get version information from the library
-    library_path <- "/usr/local/lib/libomp.dylib"
-    version_info <- base::tryCatch(
-        sys::as_text(sys::exec_internal('otool', c('-L', library_path))$stdout),
-        error = function(e) 'Unknown'
-    )
+    library_path <- openmp_library_path()
+    version_info <- exec_text('otool', c('-L', library_path))
 
     version_info
 }
@@ -123,7 +120,7 @@ openmp_install <- function(password = base::getOption("macrtools.password"), ver
     if(base::isTRUE(is_openmp_installed())) {
         if(verbose) {
             # Get OpenMP version info
-            library_path <- "/usr/local/lib/libomp.dylib"
+            library_path <- openmp_library_path()
             version_info <- base::tryCatch(
                 base::system(base::paste('otool -L', library_path, '| grep libomp'), intern = TRUE),
                 error = function(e) 'Unknown'
@@ -198,16 +195,14 @@ openmp_install <- function(password = base::getOption("macrtools.password"), ver
             cli::cli_alert_warning("{.pkg macrtools}: OpenMP installed but Makevars configuration failed.")
             cli::cli_bullets(c(
                 "You may need to manually add the following to ~/.R/Makevars:",
-                "  CPPFLAGS += -Xclang -fopenmp",
-                "  LDFLAGS += -lomp"
+                base::paste0("  ", openmp_makevars_lines())
             ))
             cli::cli_text("") # Add spacing
         }
     } else if (verbose) {
         cli::cli_alert_info("{.pkg macrtools}: To use OpenMP, add the following to your ~/.R/Makevars:")
         cli::cli_bullets(c(
-            "  CPPFLAGS += -Xclang -fopenmp",
-            "  LDFLAGS += -lomp"
+            base::paste0("  ", openmp_makevars_lines())
         ))
         cli::cli_text("") # Add spacing
     }
@@ -250,8 +245,8 @@ openmp_uninstall <- function(password = base::getOption("macrtools.password"),
 
     # Files to remove
     files_to_remove <- c(
-        "/usr/local/lib/libomp.dylib",
-        "/usr/local/include/omp.h",
+        openmp_library_path(),
+        openmp_header_path(),
         "/usr/local/include/ompt.h",
         "/usr/local/include/omp-tools.h",
         "/usr/local/include/ompx.h"  # May not exist in older versions
@@ -311,13 +306,18 @@ openmp_uninstall <- function(password = base::getOption("macrtools.password"),
 
 # Helper functions ----
 
+# Default OpenMP install locations and Makevars flags, kept here as the single
+# source of truth for the library/header paths and compiler flags.
+openmp_library_path <- function() "/usr/local/lib/libomp.dylib"
+openmp_header_path <- function() "/usr/local/include/omp.h"
+openmp_makevars_lines <- function() {
+    c("CPPFLAGS += -Xclang -fopenmp", "LDFLAGS += -lomp")
+}
+
 #' Get Apple Clang Version Information
 #' @noRd
 get_apple_clang_version <- function() {
-    version_info <- base::tryCatch(
-        sys::as_text(sys::exec_internal('clang', '--version')$stdout),
-        error = function(e) NULL
-    )
+    version_info <- exec_text('clang', '--version', fallback = NULL)
 
     if (base::is.null(version_info)) {
         return(list(version_string = "Unknown", build_number = 0))
@@ -391,7 +391,7 @@ get_openmp_url_for_xcode <- function() {
 
     if (base::is.null(selected_file)) {
         # Default to latest if version is too new or couldn't be detected
-        selected_file <- "openmp-19.1.5-darwin20-Release.tar.gz"
+        selected_file <- openmp_mapping$filename[1]
     }
 
     base::paste0("https://mac.r-project.org/openmp/", selected_file)
@@ -465,21 +465,19 @@ openmp_test <- function() {
             cli::cli_alert_warning("{.pkg macrtools}: OpenMP flags not found in ~/.R/Makevars")
             cli::cli_bullets(c(
                 "Add the following lines to ~/.R/Makevars:",
-                "  CPPFLAGS += -Xclang -fopenmp",
-                "  LDFLAGS += -lomp"
+                base::paste0("  ", openmp_makevars_lines())
             ))
         }
     } else {
         cli::cli_alert_info("{.pkg macrtools}: ~/.R/Makevars not found.")
         cli::cli_bullets(c(
             "Create ~/.R/Makevars with the following content:",
-            "  CPPFLAGS += -Xclang -fopenmp",
-            "  LDFLAGS += -lomp"
+            base::paste0("  ", openmp_makevars_lines())
         ))
     }
 
     # Test library signature
-    library_path <- "/usr/local/lib/libomp.dylib"
+    library_path <- openmp_library_path()
     signature_info <- base::tryCatch(
         sys::as_text(sys::exec_internal('codesign', c('-d', '-vv', library_path))$stderr),
         error = function(e) "Could not verify signature"
@@ -530,10 +528,7 @@ configure_openmp_makevars <- function(verbose = TRUE) {
     }
 
     # Define the OpenMP configuration
-    openmp_config <- c(
-        "CPPFLAGS += -Xclang -fopenmp",
-        "LDFLAGS += -lomp"
-    )
+    openmp_config <- openmp_makevars_lines()
 
     # Use the block system to add configuration
     config_result <- base::tryCatch({
@@ -555,8 +550,7 @@ configure_openmp_makevars <- function(verbose = TRUE) {
     if (config_result && verbose) {
         cli::cli_alert_success("{.pkg macrtools}: OpenMP flags added to ~/.R/Makevars")
         cli::cli_bullets(c(
-            "CPPFLAGS += -Xclang -fopenmp",
-            "LDFLAGS += -lomp",
+            openmp_makevars_lines(),
             "You may need to restart R for the changes to take effect."
         ))
         cli::cli_text("") # Add spacing

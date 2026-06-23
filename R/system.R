@@ -46,13 +46,40 @@ shell_mac_version <- function() {
     sys::as_text(sys::exec_internal("sw_vers", "-productVersion")$stdout)
 }
 
+#' Capture the Text Output of an External Command
+#'
+#' Runs `command` with `args` via [sys::exec_internal()] and returns its
+#' standard output as trimmed text. If the command cannot be run, `fallback`
+#' is returned instead.
+#'
+#' @param command  Name of the program to execute.
+#' @param args     Character vector of arguments passed to the program.
+#' @param fallback Value returned when execution fails. Default `"Unknown"`.
+#' @return The command's standard output as text, or `fallback` on error.
+#' @keywords internal
+exec_text <- function(command, args, fallback = "Unknown") {
+    base::tryCatch(
+        sys::as_text(sys::exec_internal(command, args)$stdout),
+        error = function(e) fallback
+    )
+}
+
+#' Check if the macOS Version Falls in a Range
+#'
+#' @param lower Lower bound for the macOS version (inclusive).
+#' @param upper Upper bound for the macOS version (exclusive).
+#' @return TRUE if the running macOS version is in `[lower, upper)`.
+#' @keywords internal
+macos_version_in_range <- function(lower, upper) {
+    version_between(shell_mac_version(), lower, upper)
+}
+
 #' Check if macOS Version is Supported for R
 #'
 #' @return TRUE if macOS version is supported, FALSE otherwise
 #' @keywords internal
 is_macos_r_supported <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "10.13.0", "27.0")
+    macos_version_in_range("10.13.0", "27.0")
 }
 
 #' Check if macOS Tahoe
@@ -65,8 +92,7 @@ is_macos_r_supported <- function() {
 #' @return TRUE if system is macOS Tahoe, FALSE otherwise
 #' @keywords internal
 is_macos_tahoe <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "26.0", "27.0")
+    macos_version_in_range("26.0", "27.0")
 }
 
 #' Check if macOS Sequoia
@@ -80,8 +106,7 @@ is_macos_tahoe <- function() {
 #' @return TRUE if system is macOS Sequoia, FALSE otherwise
 #' @keywords internal
 is_macos_sequoia <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "15.0.0", "16.0.0")
+    macos_version_in_range("15.0.0", "16.0.0")
 }
 
 #' Check if macOS Sonoma
@@ -95,8 +120,7 @@ is_macos_sequoia <- function() {
 #' @return TRUE if system is macOS Sonoma, FALSE otherwise
 #' @keywords internal
 is_macos_sonoma <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "14.0.0", "15.0.0")
+    macos_version_in_range("14.0.0", "15.0.0")
 }
 
 #' Check if macOS Ventura
@@ -104,8 +128,7 @@ is_macos_sonoma <- function() {
 #' @return TRUE if system is macOS Ventura, FALSE otherwise
 #' @keywords internal
 is_macos_ventura <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "13.0.0", "14.0.0")
+    macos_version_in_range("13.0.0", "14.0.0")
 }
 
 #' Check if macOS Monterey
@@ -113,8 +136,7 @@ is_macos_ventura <- function() {
 #' @return TRUE if system is macOS Monterey, FALSE otherwise
 #' @keywords internal
 is_macos_monterey <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "12.0.0", "13.0.0")
+    macos_version_in_range("12.0.0", "13.0.0")
 }
 
 #' Check if macOS Big Sur
@@ -122,8 +144,7 @@ is_macos_monterey <- function() {
 #' @return TRUE if system is macOS Big Sur, FALSE otherwise
 #' @keywords internal
 is_macos_big_sur <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "11.0.0", "12.0.0")
+    macos_version_in_range("11.0.0", "12.0.0")
 }
 
 #' Check if macOS Catalina
@@ -131,8 +152,7 @@ is_macos_big_sur <- function() {
 #' @return TRUE if system is macOS Catalina, FALSE otherwise
 #' @keywords internal
 is_macos_catalina <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "10.15.0", "10.16.0")
+    macos_version_in_range("10.15.0", "10.16.0")
 }
 
 #' Check if macOS Mojave
@@ -140,8 +160,7 @@ is_macos_catalina <- function() {
 #' @return TRUE if system is macOS Mojave, FALSE otherwise
 #' @keywords internal
 is_macos_mojave <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "10.14.0", "10.15.0")
+    macos_version_in_range("10.14.0", "10.15.0")
 }
 
 #' Check if macOS High Sierra
@@ -149,18 +168,7 @@ is_macos_mojave <- function() {
 #' @return TRUE if system is macOS High Sierra, FALSE otherwise
 #' @keywords internal
 is_macos_high_sierra <- function() {
-    mac_version <- shell_mac_version()
-    version_between(mac_version, "10.13.0", "10.14.0")
-}
-
-#' Check if Version is Above Threshold
-#'
-#' @param software_version Version string to check
-#' @param than Threshold version to compare against
-#' @return TRUE if software_version is above than, FALSE otherwise
-#' @keywords internal
-version_above <- function(software_version, than) {
-    utils::compareVersion(software_version, than) == 1L
+    macos_version_in_range("10.13.0", "10.14.0")
 }
 
 #' Check if Version is Between Bounds

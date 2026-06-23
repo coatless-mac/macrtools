@@ -1,7 +1,7 @@
 #' Install and Uninstall the macOS R Toolchain
 #'
 #' The `macos_rtools_install()` function aims to install all required dependencies
-#' for the macOS R compilation toolchain. Meanwhile, the `macros_rtools_uninstall()`
+#' for the macOS R compilation toolchain. Meanwhile, the `macos_rtools_uninstall()`
 #' function aims to remove any installed files from your computer.
 #'
 #' @param password Password for user account to request `sudo` access.
@@ -14,11 +14,11 @@
 #' 2. gfortran
 #' 3. A series of binary packages from the [`recipes`](https://github.com/R-macos/recipes) system to compile R.
 #'
-#' The `mac_rtools_install()` function attempts to install each of the required
+#' The `macos_rtools_install()` function attempts to install each of the required
 #' components. If we detect that the Xcode.app IDE is installed, we'll skip
 #' attempting to install the Xcode CLI software.
 #'
-#' Meanwhile, the `mac_rtools_uninstall()` function aims to
+#' Meanwhile, the `macos_rtools_uninstall()` function aims to
 #' delete or uninstall the Xcode CLI and gfortran binaries. At the present moment,
 #' there is no support for uninstalling the binary packages from `recipes`.
 #'
@@ -61,11 +61,7 @@ macos_rtools_install <- function(
 
     rtools_install_announce(os_version, os_release, arch, r_version)
 
-    entered_password <- password
-    if(base::is.null(entered_password)) {
-        cli::cli_alert_info("Administrative privileges are required for installation.")
-        entered_password <- askpass::askpass("Please enter your administrator password:")
-    }
+    entered_password <- force_password(password)
 
     describe_steps <- base::isTRUE(verbose)
 
@@ -78,7 +74,7 @@ macos_rtools_install <- function(
             total = 100
         )
 
-        current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+        current_time <- timestamp_now()
         cli::cli_alert_info("Installation process started at: {.val {current_time}}")
         cli::cli_text("") # Add spacing
     }
@@ -168,10 +164,7 @@ rtools_install_xcode_cli <- function(entered_password, verbose, describe_steps, 
         } else {
             if(describe_steps) {
                 # Get Xcode CLI version information
-                xcode_version <- base::tryCatch(
-                    sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout),
-                    error = function(e) 'Unknown'
-                )
+                xcode_version <- exec_text('xcode-select', '--version')
 
                 cli::cli_alert_info("{.pkg macrtools}: Xcode Command Line Tools already installed.")
                 cli::cli_bullets(c(
@@ -186,10 +179,7 @@ rtools_install_xcode_cli <- function(entered_password, verbose, describe_steps, 
     } else {
         if(describe_steps) {
             # Get full Xcode app version information
-            xcode_app_info <- base::tryCatch(
-                sys::as_text(sys::exec_internal('xcodebuild', '-version')$stdout),
-                error = function(e) "Unknown"
-            )
+            xcode_app_info <- exec_text('xcodebuild', '-version')
 
             cli::cli_alert_info("{.pkg macrtools}: Full Xcode.app IDE is installed.")
             cli::cli_bullets(c(
@@ -246,10 +236,7 @@ rtools_install_gfortran <- function(entered_password, verbose, describe_steps, p
     } else {
         if(describe_steps) {
             # Get gfortran version information
-            gfortran_version_info <- base::tryCatch(
-                sys::as_text(sys::exec_internal('gfortran', '--version')$stdout),
-                error = function(e) 'Unknown'
-            )
+            gfortran_version_info <- exec_text('gfortran', '--version')
 
             install_path <- base::file.path(gfortran_install_location(), 'gfortran')
 
@@ -317,7 +304,7 @@ rtools_install_summary <- function(result_xcode, result_gfortran, result_base_de
         cli::cli_text("You can install packages from source with: {.code install.packages('package_name', type = 'source')}")
         cli::cli_text("") # Add spacing
 
-        current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+        current_time <- timestamp_now()
         cli::cli_alert_info("Installation completed at: {.val {current_time}}")
     } else {
         cli::cli_abort(c(
@@ -359,10 +346,7 @@ macos_rtools_uninstall <- function(
     ))
     cli::cli_text("") # Add spacing
 
-    if(base::is.null(password)) {
-        cli::cli_alert_info("{.pkg macrtools}: Administrative privileges required.")
-        password <- askpass::askpass("Please enter your password to continue:")
-    }
+    password <- force_password(password)
 
     # Create a progress bar
     if (verbose) {

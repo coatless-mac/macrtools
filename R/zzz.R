@@ -40,9 +40,6 @@
 }
 
 .onLoad <- function(libname, pkgname) {
-    # Import rlang functions
-    rlang::check_installed("rlang")
-
     # Set cli options
     op <- base::options()
     op.macrtools <- base::list(
