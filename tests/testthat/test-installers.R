@@ -50,7 +50,7 @@ test_that("tar_package_install handles successful installation", {
     mockery::stub(tar_package_install, "cli::cli_alert_info", function(...) NULL)
     mockery::stub(tar_package_install, "cli::cli_bullets", function(...) NULL)
     mockery::stub(tar_package_install, "cli::cli_text", function(...) NULL)
-    mockery::stub(tar_package_install, "shell_execute", function(...) 0)
+    local_mocked_bindings(shell_execute = function(...) 0)
     mockery::stub(tar_package_install, "base::unlink", function(...) NULL)
     mockery::stub(tar_package_install, "cli::cli_alert_success", function(...) NULL)
 
@@ -66,7 +66,7 @@ test_that("tar_package_install handles installation errors", {
     mockery::stub(tar_package_install, "cli::cli_alert_info", function(...) NULL)
     mockery::stub(tar_package_install, "cli::cli_bullets", function(...) NULL)
     mockery::stub(tar_package_install, "cli::cli_text", function(...) NULL)
-    mockery::stub(tar_package_install, "shell_execute", function(...) -1)
+    local_mocked_bindings(shell_execute = function(...) -1)
     mockery::stub(tar_package_install, "cli::cli_abort", function(...) stop("Installation failed"))
 
     expect_error(tar_package_install("/tmp/test.tar.gz", "/opt", 2, verbose = TRUE),
@@ -75,7 +75,7 @@ test_that("tar_package_install handles installation errors", {
 
 test_that("create_install_location succeeds when directory exists", {
     # Mock dependencies
-    mockery::stub(create_install_location, "install_location", function(...) "/opt/test")
+    local_mocked_bindings(install_location = function(...) "/opt/test")
     mockery::stub(create_install_location, "base::dir.exists", function(...) TRUE)
 
     result <- create_install_location()
@@ -90,7 +90,7 @@ test_that("pkg_install handles successful installation", {
     mockery::stub(pkg_install, "cli::cli_bullets", function(...) NULL)
     mockery::stub(pkg_install, "cli::cli_text", function(...) NULL)
     mockery::stub(pkg_install, "base::paste", function(...) "sudo -kS installer -pkg test.pkg -target /")
-    mockery::stub(pkg_install, "shell_execute", function(...) 0)
+    local_mocked_bindings(shell_execute = function(...) 0)
     mockery::stub(pkg_install, "cli::cli_alert_success", function(...) NULL)
     mockery::stub(pkg_install, "cli::cli_abort", function(...) NULL)
 
@@ -100,53 +100,65 @@ test_that("pkg_install handles successful installation", {
 
 test_that("recipe_binary_install_strip_level follows the toolchain tiers", {
     # Modern tier (R >= 4.3): strip 3 for every architecture
-    mockery::stub(recipe_binary_install_strip_level, "assert_supported_r_version_for", function(...) invisible(NULL))
-    mockery::stub(recipe_binary_install_strip_level, "is_r_version_at_least", function(...) TRUE)
+    local_mocked_bindings(
+        assert_supported_r_version_for = function(...) invisible(NULL),
+        is_r_version_at_least = function(...) TRUE
+    )
     expect_equal(recipe_binary_install_strip_level("arm64"), 3)
     expect_equal(recipe_binary_install_strip_level("aarch64"), 3)
     expect_equal(recipe_binary_install_strip_level("x86_64"), 3)
 
     # Legacy tier (4.0 <= R < 4.3): delegates to install_strip_level()
-    mockery::stub(recipe_binary_install_strip_level, "is_r_version_at_least", function(...) FALSE)
-    mockery::stub(recipe_binary_install_strip_level, "install_strip_level", function(...) 99)
+    local_mocked_bindings(
+        is_r_version_at_least = function(...) FALSE,
+        install_strip_level = function(...) 99
+    )
     expect_equal(recipe_binary_install_strip_level("arm64"), 99)
 
     # Unsupported R version: abort
-    mockery::stub(recipe_binary_install_strip_level, "assert_supported_r_version_for", function(...) stop("Unsupported R version"))
+    local_mocked_bindings(assert_supported_r_version_for = function(...) stop("Unsupported R version"))
     expect_error(recipe_binary_install_strip_level("arm64"), regexp = "Unsupported R version")
 })
 
 test_that("recipe_binary_install_location follows the toolchain tiers", {
     # Modern tier (R >= 4.3): /opt/R/<arch>
-    mockery::stub(recipe_binary_install_location, "assert_supported_r_version_for", function(...) invisible(NULL))
-    mockery::stub(recipe_binary_install_location, "is_r_version_at_least", function(...) TRUE)
+    local_mocked_bindings(
+        assert_supported_r_version_for = function(...) invisible(NULL),
+        is_r_version_at_least = function(...) TRUE
+    )
     expect_equal(recipe_binary_install_location("arm64"), "/opt/R/arm64")
     expect_equal(recipe_binary_install_location("aarch64"), "/opt/R/arm64")
     expect_equal(recipe_binary_install_location("x86_64"), "/opt/R/x86_64")
 
     # Legacy tier (4.0 <= R < 4.3): delegates to install_location()
-    mockery::stub(recipe_binary_install_location, "is_r_version_at_least", function(...) FALSE)
-    mockery::stub(recipe_binary_install_location, "install_location", function(...) "/legacy/loc")
+    local_mocked_bindings(
+        is_r_version_at_least = function(...) FALSE,
+        install_location = function(...) "/legacy/loc"
+    )
     expect_equal(recipe_binary_install_location("x86_64"), "/legacy/loc")
 
     # Unsupported R version: abort
-    mockery::stub(recipe_binary_install_location, "assert_supported_r_version_for", function(...) stop("Unsupported R version"))
+    local_mocked_bindings(assert_supported_r_version_for = function(...) stop("Unsupported R version"))
     expect_error(recipe_binary_install_location("arm64"), regexp = "Unsupported R version")
 })
 
 test_that("gfortran_install_location follows the toolchain tiers", {
     # Modern tier (R >= 4.3): /opt
-    mockery::stub(gfortran_install_location, "assert_supported_r_version_for", function(...) invisible(NULL))
-    mockery::stub(gfortran_install_location, "is_r_version_at_least", function(...) TRUE)
+    local_mocked_bindings(
+        assert_supported_r_version_for = function(...) invisible(NULL),
+        is_r_version_at_least = function(...) TRUE
+    )
     expect_equal(gfortran_install_location("arm64"), "/opt")
 
     # Legacy tier (4.0 <= R < 4.3): delegates to install_location()
-    mockery::stub(gfortran_install_location, "is_r_version_at_least", function(...) FALSE)
-    mockery::stub(gfortran_install_location, "install_location", function(...) "/legacy/loc")
+    local_mocked_bindings(
+        is_r_version_at_least = function(...) FALSE,
+        install_location = function(...) "/legacy/loc"
+    )
     expect_equal(gfortran_install_location("x86_64"), "/legacy/loc")
 
     # Unsupported R version: abort
-    mockery::stub(gfortran_install_location, "assert_supported_r_version_for", function(...) stop("Unsupported R version"))
+    local_mocked_bindings(assert_supported_r_version_for = function(...) stop("Unsupported R version"))
     expect_error(gfortran_install_location("arm64"), regexp = "Unsupported R version")
 })
 
@@ -159,7 +171,7 @@ test_that("tar_package_install aborts on a positive (non-zero) exit status", {
     mockery::stub(tar_package_install, "cli::cli_alert_info", function(...) NULL)
     mockery::stub(tar_package_install, "cli::cli_bullets", function(...) NULL)
     mockery::stub(tar_package_install, "cli::cli_text", function(...) NULL)
-    mockery::stub(tar_package_install, "shell_execute", function(...) 1)
+    local_mocked_bindings(shell_execute = function(...) 1)
     mockery::stub(tar_package_install, "cli::cli_abort", function(...) stop("Installation failed"))
 
     expect_error(tar_package_install("/tmp/test.tar.gz", "/opt", 2, verbose = TRUE),
