@@ -230,14 +230,7 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
         cli::cli_text("") # Add spacing
     }
 
-    product_information <-
-        base::system("softwareupdate -l |
-          grep '\\*.*Command Line' |
-          tail -n 1 |
-          awk -F\"*\" '{print $2}' |
-          sed -e 's/^ *//' |
-          sed 's/Label: //g' |
-          tr -d '\n'", intern = TRUE)
+    product_information <- xcode_cli_available_label()
 
     if (base::length(product_information) == 0) {
         # Remove temporary in-progress file if left in place before aborting.
@@ -284,6 +277,18 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
     }
 
     return(base::invisible(xcli_clean))
+}
+
+# Query softwareupdate for the label of the latest available Command Line Tools.
+# Returns a length-0 character vector when none is found.
+xcode_cli_available_label <- function() {
+    base::system("softwareupdate -l |
+          grep '\\*.*Command Line' |
+          tail -n 1 |
+          awk -F\"*\" '{print $2}' |
+          sed -e 's/^ *//' |
+          sed 's/Label: //g' |
+          tr -d '\n'", intern = TRUE)
 }
 
 

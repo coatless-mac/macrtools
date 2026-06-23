@@ -16,98 +16,110 @@ test_that("macos_rtools_install performs system checks first", {
     expect_error(macos_rtools_install(), "Unsupported macOS")
 })
 
-test_that("macos_rtools_install handles component installations", {
-    # Mock all system checks
+test_that("macos_rtools_install orchestrates the component steps", {
     mockery::stub(macos_rtools_install, "assert_mac", function() NULL)
     mockery::stub(macos_rtools_install, "assert_macos_supported", function() NULL)
     mockery::stub(macos_rtools_install, "assert_r_version_supported", function() NULL)
-
-    # Mock system info gathering
     mockery::stub(macos_rtools_install, "shell_mac_version", function() "14.0")
     mockery::stub(macos_rtools_install, "system_arch", function() "aarch64")
     mockery::stub(macos_rtools_install, "base::Sys.info", function() c(release = "23.0"))
-    mockery::stub(macos_rtools_install, "base::R.version", list(major = "4", minor = "3"))
-    mockery::stub(macos_rtools_install, "base::paste", function(...) "4.3")
-    mockery::stub(macos_rtools_install, "base::tryCatch", function(...) 10)
-    mockery::stub(macos_rtools_install, "base::round", function(...) 10)
-    mockery::stub(macos_rtools_install, "base::as.numeric", function(...) 10)
-    mockery::stub(macos_rtools_install, "base::format", function(...) "2023-01-01 12:00:00")
-    mockery::stub(macos_rtools_install, "base::Sys.time", function() Sys.time())
+    mockery::stub(macos_rtools_install, "rtools_install_announce", function(...) NULL)
 
-    # Mock all CLI functions
-    mockery::stub(macos_rtools_install, "cli::cli_h3", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_text", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_ul", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_alert_info", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_bullets", function(...) NULL)
+    # The three component steps are the seams; orchestration just wires them up.
+    mockery::stub(macos_rtools_install, "rtools_install_xcode_cli", function(...) TRUE)
+    mockery::stub(macos_rtools_install, "rtools_install_gfortran", function(...) TRUE)
+    mockery::stub(macos_rtools_install, "rtools_install_recipes", function(...) TRUE)
+    mockery::stub(macos_rtools_install, "rtools_install_summary",
+                  function(x, g, b) x && g && base::isTRUE(b))
+
+    # Progress-bar scaffolding lives in macos_rtools_install itself
     mockery::stub(macos_rtools_install, "cli::cli_progress_bar", function(...) 1)
     mockery::stub(macos_rtools_install, "cli::cli_progress_update", function(...) NULL)
     mockery::stub(macos_rtools_install, "cli::cli_progress_done", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_alert_success", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_code", function(...) NULL)
+    mockery::stub(macos_rtools_install, "cli::cli_alert_info", function(...) NULL)
+    mockery::stub(macos_rtools_install, "cli::cli_text", function(...) NULL)
 
-    # Mock password entry
-    mockery::stub(macos_rtools_install, "askpass::askpass", function(...) "password")
-
-    # Mock Xcode installation
-    mockery::stub(macos_rtools_install, "is_xcode_app_installed", function() FALSE)
-    mockery::stub(macos_rtools_install, "is_xcode_cli_installed", function() FALSE)
-    mockery::stub(macos_rtools_install, "xcode_cli_install", function(...) TRUE)
-
-    # Mock gfortran installation
-    mockery::stub(macos_rtools_install, "is_gfortran_installed", function() FALSE)
-    mockery::stub(macos_rtools_install, "gfortran_install", function(...) TRUE)
-
-    # Mock recipe installation
-    mockery::stub(macos_rtools_install, "recipe_binary_install_location", function(...) "/opt/R/arm64")
-    mockery::stub(macos_rtools_install, "recipes_binary_install", function(...) TRUE)
-
-    # Mock version info for summary
-    mockery::stub(macos_rtools_install, "base::tryCatch", function(...) "Mock version info")
-    mockery::stub(macos_rtools_install, "base::substr", function(...) "Mock version")
-    mockery::stub(macos_rtools_install, "base::paste0", function(...) "Mock version...")
-    mockery::stub(macos_rtools_install, "base::nchar", function(...) 30)
-
-    result <- macos_rtools_install(verbose = TRUE)
+    result <- macos_rtools_install(password = "password", verbose = TRUE)
     expect_true(result)
 })
 
-test_that("macos_rtools_install handles component failures", {
-    # Mock all system checks
+test_that("macos_rtools_install aborts when a component step fails", {
     mockery::stub(macos_rtools_install, "assert_mac", function() NULL)
     mockery::stub(macos_rtools_install, "assert_macos_supported", function() NULL)
     mockery::stub(macos_rtools_install, "assert_r_version_supported", function() NULL)
-
-    # Mock system info gathering
     mockery::stub(macos_rtools_install, "shell_mac_version", function() "14.0")
     mockery::stub(macos_rtools_install, "system_arch", function() "aarch64")
     mockery::stub(macos_rtools_install, "base::Sys.info", function() c(release = "23.0"))
-    mockery::stub(macos_rtools_install, "base::R.version", list(major = "4", minor = "3"))
-    mockery::stub(macos_rtools_install, "base::paste", function(...) "4.3")
-    mockery::stub(macos_rtools_install, "base::tryCatch", function(...) 10)
-    mockery::stub(macos_rtools_install, "base::round", function(...) 10)
-    mockery::stub(macos_rtools_install, "base::as.numeric", function(...) 10)
+    mockery::stub(macos_rtools_install, "rtools_install_announce", function(...) NULL)
 
-    # Mock all CLI functions
-    mockery::stub(macos_rtools_install, "cli::cli_h3", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_text", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_ul", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_alert_info", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_bullets", function(...) NULL)
+    mockery::stub(macos_rtools_install, "rtools_install_xcode_cli", function(...) TRUE)
+    mockery::stub(macos_rtools_install, "rtools_install_gfortran", function(...) TRUE)
+    mockery::stub(macos_rtools_install, "rtools_install_recipes", function(...) FALSE)
+
     mockery::stub(macos_rtools_install, "cli::cli_progress_bar", function(...) 1)
     mockery::stub(macos_rtools_install, "cli::cli_progress_update", function(...) NULL)
     mockery::stub(macos_rtools_install, "cli::cli_progress_done", function(...) NULL)
-    mockery::stub(macos_rtools_install, "cli::cli_abort", function(...) stop("Installation failed"))
+    mockery::stub(macos_rtools_install, "cli::cli_alert_info", function(...) NULL)
+    mockery::stub(macos_rtools_install, "cli::cli_text", function(...) NULL)
 
-    # Mock component failures
-    mockery::stub(macos_rtools_install, "is_xcode_app_installed", function() FALSE)
-    mockery::stub(macos_rtools_install, "is_xcode_cli_installed", function() FALSE)
-    mockery::stub(macos_rtools_install, "xcode_cli_install", function(...) FALSE)
-    mockery::stub(macos_rtools_install, "is_gfortran_installed", function() FALSE)
-    mockery::stub(macos_rtools_install, "gfortran_install", function(...) FALSE)
-    mockery::stub(macos_rtools_install, "recipes_binary_install", function(...) FALSE)
+    # rtools_install_summary runs for real and aborts on the failed component
+    expect_error(macos_rtools_install(password = "password", verbose = TRUE),
+                 "Installation failed")
+})
 
-    expect_error(macos_rtools_install(verbose = TRUE), "Installation failed")
+test_that("rtools_install_summary returns TRUE on success and aborts on failure", {
+    mockery::stub(rtools_install_summary, "cli::cli_h3", function(...) NULL)
+    mockery::stub(rtools_install_summary, "cli::cli_ul", function(...) NULL)
+    mockery::stub(rtools_install_summary, "cli::cli_text", function(...) NULL)
+    mockery::stub(rtools_install_summary, "cli::cli_alert_info", function(...) NULL)
+    mockery::stub(rtools_install_summary, "cli::cli_alert_success", function(...) NULL)
+    mockery::stub(rtools_install_summary, "base::format", function(...) "now")
+
+    expect_true(rtools_install_summary(TRUE, TRUE, TRUE))
+    expect_error(rtools_install_summary(TRUE, FALSE, TRUE), "Installation failed")
+})
+
+test_that("rtools_install_xcode_cli installs when missing and aborts on failure", {
+    mockery::stub(rtools_install_xcode_cli, "cli::cli_h3", function(...) NULL)
+    mockery::stub(rtools_install_xcode_cli, "cli::cli_text", function(...) NULL)
+    mockery::stub(rtools_install_xcode_cli, "cli::cli_ul", function(...) NULL)
+    mockery::stub(rtools_install_xcode_cli, "cli::cli_alert_info", function(...) NULL)
+    mockery::stub(rtools_install_xcode_cli, "cli::cli_bullets", function(...) NULL)
+    mockery::stub(rtools_install_xcode_cli, "cli::cli_progress_update", function(...) NULL)
+    mockery::stub(rtools_install_xcode_cli, "is_xcode_app_installed", function() FALSE)
+    mockery::stub(rtools_install_xcode_cli, "is_xcode_cli_installed", function() FALSE)
+
+    mockery::stub(rtools_install_xcode_cli, "xcode_cli_install", function(...) TRUE)
+    expect_true(rtools_install_xcode_cli("pw", FALSE, FALSE, NULL))
+
+    mockery::stub(rtools_install_xcode_cli, "xcode_cli_install", function(...) FALSE)
+    expect_error(rtools_install_xcode_cli("pw", FALSE, FALSE, NULL), "Failed to install Xcode")
+})
+
+test_that("rtools_install_gfortran installs when missing and aborts on failure", {
+    mockery::stub(rtools_install_gfortran, "cli::cli_h3", function(...) NULL)
+    mockery::stub(rtools_install_gfortran, "cli::cli_text", function(...) NULL)
+    mockery::stub(rtools_install_gfortran, "cli::cli_ul", function(...) NULL)
+    mockery::stub(rtools_install_gfortran, "cli::cli_alert_info", function(...) NULL)
+    mockery::stub(rtools_install_gfortran, "cli::cli_bullets", function(...) NULL)
+    mockery::stub(rtools_install_gfortran, "cli::cli_progress_update", function(...) NULL)
+    mockery::stub(rtools_install_gfortran, "is_gfortran_installed", function() FALSE)
+
+    mockery::stub(rtools_install_gfortran, "gfortran_install", function(...) TRUE)
+    expect_true(rtools_install_gfortran("pw", FALSE, FALSE, NULL, "aarch64", "4.6.0"))
+
+    mockery::stub(rtools_install_gfortran, "gfortran_install", function(...) FALSE)
+    expect_error(rtools_install_gfortran("pw", FALSE, FALSE, NULL, "aarch64", "4.6.0"),
+                 "Failed to install GNU Fortran")
+})
+
+test_that("rtools_install_recipes returns the recipes install result", {
+    mockery::stub(rtools_install_recipes, "cli::cli_h3", function(...) NULL)
+    mockery::stub(rtools_install_recipes, "cli::cli_text", function(...) NULL)
+    mockery::stub(rtools_install_recipes, "cli::cli_ul", function(...) NULL)
+    mockery::stub(rtools_install_recipes, "recipes_binary_install", function(...) TRUE)
+
+    expect_true(rtools_install_recipes("pw", FALSE, NULL, "aarch64"))
 })
 
 test_that("macos_rtools_uninstall handles component uninstallations", {
