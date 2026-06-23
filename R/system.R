@@ -176,6 +176,59 @@ version_between <- function(software_version, lower, greater_strict) {
     above && below
 }
 
+#' Running R Version as a Comparable major.minor String
+#'
+#' @return The running R version as a `"major.minor"` string, e.g. `"4.6"`.
+#' @keywords internal
+r_version_major_minor <- function() {
+    # If R.version$minor is "y.z", this retrieves just "y"
+    minor_value <- base::strsplit(base::R.version$minor, ".", fixed = TRUE)[[1]][1]
+    base::paste(base::R.version$major, minor_value, sep = ".")
+}
+
+#' Supported R Version Window
+#'
+#' Single source of truth for the oldest and newest R minor versions whose
+#' macOS toolchain `macrtools` supports.
+#'
+#' @details
+#' To validate support for a new R release, bump
+#' [maximum_supported_r_version()]. A new toolchain *branch* (e.g. in
+#' [gfortran_install()] or the `installers.R` helpers) is only required when
+#' the toolchain itself changes for that release; the range checks
+#' ([is_r_version_at_least()]) otherwise carry the newest tier forward
+#' automatically.
+#'
+#' @return A `"major.minor"` version string.
+#' @keywords internal
+#' @name supported_r_version
+minimum_supported_r_version <- function() "4.0"
+
+#' @rdname supported_r_version
+#' @keywords internal
+maximum_supported_r_version <- function() "4.6"
+
+#' Check if the Running R Version is At Least a Target
+#'
+#' @param target  Target R version (e.g. `"4.3"`) to compare against.
+#' @param version The version to test, defaults to the running R version.
+#' @return TRUE if `version` is greater than or equal to `target`, FALSE otherwise
+#' @keywords internal
+is_r_version_at_least <- function(target, version = r_version_major_minor()) {
+    utils::compareVersion(version, target) >= 0L
+}
+
+#' Check if the Running R Version is Supported
+#'
+#' @param version The version to test, defaults to the running R version.
+#' @return TRUE if `version` falls within the supported window (inclusive),
+#'   FALSE otherwise
+#' @keywords internal
+is_r_version_supported <- function(version = r_version_major_minor()) {
+    utils::compareVersion(version, minimum_supported_r_version()) >= 0L &&
+        utils::compareVersion(version, maximum_supported_r_version()) <= 0L
+}
+
 #' Check R Version
 #'
 #' @param target_version Target R version to check against (e.g., "4.0")
@@ -183,16 +236,13 @@ version_between <- function(software_version, lower, greater_strict) {
 #' @return TRUE if R version matches target_version, FALSE otherwise
 #' @keywords internal
 is_r_version <- function(target_version, compare_major_minor = TRUE) {
-    minor_value <- if (compare_major_minor) {
-        # If x.y.z, this retrieves y
-        base::strsplit(base::R.version$minor, ".", fixed = TRUE)[[1]][1]
+    version_string <- if (compare_major_minor) {
+        # If x.y.z, this compares against x.y
+        r_version_major_minor()
     } else {
-        # If x.y.z, this retrieves y.z
-        base::R.version$minor
+        # If x.y.z, this compares against the full x.y.z
+        base::paste(base::R.version$major, base::R.version$minor, sep = ".")
     }
-
-    # Build the version string of x.y or x.y.z
-    version_string <- base::paste(base::R.version$major, minor_value, sep = ".")
 
     # Check for equality.
     return(version_string == target_version)

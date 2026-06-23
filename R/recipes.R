@@ -44,7 +44,13 @@
 #' | ---------------------------------------------------------------- | --------------------- | ---------------------------------- |
 #' | [darwin17/x86_64](https://mac.r-project.org/bin/darwin17/x86_64) | /usr/local            | macOS 10.13, Intel (x86_64)        |
 #' | [darwin20/x86_64](https://mac.r-project.org/bin/darwin20/x86_64) | /opt/R/x86_64         | macOS 11, Intel (x86_64)           |
-#' | [darwin20/arm64](https://mac.r-project.org/bin/darwin20/arm64)   | /opt/R/arm64          | macOS 11, Apple M1 (arm64)         |
+#' | [darwin20/arm64](https://mac.r-project.org/bin/darwin20/arm64)   | /opt/R/arm64          | macOS 11, Apple Silicon (arm64)    |
+#' | [darwin23/arm64](https://mac.r-project.org/bin/darwin23/arm64)   | /opt/R/arm64          | macOS 14 (Sonoma), Apple Silicon (arm64), used by R 4.6 |
+#'
+#' The correct repository is detected automatically: the highest `darwin`
+#' version less than or equal to your macOS is selected for your architecture.
+#' R 4.6 on Apple Silicon (macOS 14+) therefore resolves to `darwin23/arm64`,
+#' which installs to the same `/opt/R/arm64` prefix as `darwin20/arm64`.
 #'
 #' @section Differences:
 #' The official implementation uses `quiet` as a parameter to suppress output

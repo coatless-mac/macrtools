@@ -59,15 +59,14 @@ test_that("assert_x86_64 throws error on non-Intel", {
 })
 
 test_that("assert_r_version_supported succeeds on supported R version", {
-    # Instead of mocking R.version, mock is_r_version to return the expected values
-    mockery::stub(assert_r_version_supported, "is_r_version",
-                  function(version) version %in% c("4.0", "4.1", "4.2", "4.3", "4.4"))
+    # Mock the supported-window check to report a supported version
+    mockery::stub(assert_r_version_supported, "is_r_version_supported", function(...) TRUE)
     expect_no_error(assert_r_version_supported())
 })
 
 test_that("assert_r_version_supported throws error on unsupported R version", {
-    # Mock is_r_version to return FALSE for any input
-    mockery::stub(assert_r_version_supported, "is_r_version", function(...) FALSE)
+    # Report an unsupported version
+    mockery::stub(assert_r_version_supported, "is_r_version_supported", function(...) FALSE)
     # Instead of trying to mock R.version, mock paste to return a known version
     mockery::stub(assert_r_version_supported, "base::paste", function(...) "3.6.0")
     # Mock cli::cli_abort to track error message but not actually throw

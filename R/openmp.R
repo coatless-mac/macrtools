@@ -79,7 +79,7 @@ openmp_version <- function() {
 #' downloads the corresponding OpenMP runtime from the R-project repository:
 #'
 #' ```sh
-#' VERSION="19.1.0"
+#' VERSION="19.1.5"
 #'
 #' # Download the appropriate version
 #' curl -O https://mac.r-project.org/openmp/openmp-${VERSION}-darwin20-Release.tar.gz
@@ -367,7 +367,7 @@ get_openmp_url_for_xcode <- function() {
     openmp_mapping <- base::data.frame(
         min_clang = c(1700, 1600, 1500, 1403, 1400, 1316, 1300, 1205, 1200, 1103, 1100, 1001),
         filename = c(
-            "openmp-19.1.0-darwin20-Release.tar.gz",  # Xcode 16.3+ (Apple clang 1700.x)
+            "openmp-19.1.5-darwin20-Release.tar.gz",  # Xcode 16.3-26.x (Apple clang 1700.x and up)
             "openmp-17.0.6-darwin20-Release.tar.gz",  # Xcode 16.0-16.2 (Apple clang 1600.x)
             "openmp-16.0.4-darwin20-Release.tar.gz",  # Xcode 15.x (Apple clang 1500.x)
             "openmp-15.0.7-darwin20-Release.tar.gz",  # Xcode 14.3.x (Apple clang 1403.x)
@@ -394,7 +394,7 @@ get_openmp_url_for_xcode <- function() {
 
     if (base::is.null(selected_file)) {
         # Default to latest if version is too new or couldn't be detected
-        selected_file <- "openmp-19.1.0-darwin20-Release.tar.gz"
+        selected_file <- "openmp-19.1.5-darwin20-Release.tar.gz"
     }
 
     base::paste0("https://mac.r-project.org/openmp/", selected_file)
