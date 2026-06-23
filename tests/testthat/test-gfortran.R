@@ -38,7 +38,7 @@ test_that("gfortran_install skips when already installed", {
     mockery::stub(gfortran_install, "cli::cli_alert_info", function(...) NULL)
     mockery::stub(gfortran_install, "cli::cli_bullets", function(...) NULL)
     mockery::stub(gfortran_install, "cli::cli_text", function(...) NULL)
-    mockery::stub(gfortran_install, "base::tryCatch", function(...) "Mock version")
+    mockery::stub(gfortran_install, "exec_text", function(...) "Mock version")
     mockery::stub(gfortran_install, "base::file.path", function(...) "/opt/gfortran")
 
     result <- gfortran_install(verbose = TRUE)

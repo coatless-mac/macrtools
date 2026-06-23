@@ -73,7 +73,7 @@ test_that("rtools_install_summary returns TRUE on success and aborts on failure"
     mockery::stub(rtools_install_summary, "cli::cli_text", function(...) NULL)
     mockery::stub(rtools_install_summary, "cli::cli_alert_info", function(...) NULL)
     mockery::stub(rtools_install_summary, "cli::cli_alert_success", function(...) NULL)
-    mockery::stub(rtools_install_summary, "base::format", function(...) "now")
+    mockery::stub(rtools_install_summary, "timestamp_now", function(...) "now")
 
     expect_true(rtools_install_summary(TRUE, TRUE, TRUE))
     expect_error(rtools_install_summary(TRUE, FALSE, TRUE), "Installation failed")
