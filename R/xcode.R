@@ -234,9 +234,7 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
 
     if (base::length(product_information) == 0) {
         # Remove temporary in-progress file if left in place before aborting.
-        if(base::file.exists(temporary_xcli_file)) {
-            base::file.remove(temporary_xcli_file)
-        }
+        remove_file_if_exists(temporary_xcli_file)
         cli::cli_abort(c(
             "{.pkg macrtools}: Could not find Xcode CLI in software updates.",
             "i" = "Try installing manually with 'xcode-select --install' in Terminal."
@@ -258,9 +256,7 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
                                  sudo = TRUE, password = password, verbose = verbose)
 
     # Remove temporary in-progress file if left in place
-    if(base::file.exists(temporary_xcli_file)) {
-        base::file.remove(temporary_xcli_file)
-    }
+    remove_file_if_exists(temporary_xcli_file)
 
     xcli_clean <- base::identical(xcli_status, 0L)
 

@@ -50,3 +50,21 @@ force_password <- function(supplied_password) {
 caller_env <- function(n = 1) {
     base::parent.frame(n + 1)
 }
+
+#' Current Timestamp as a Formatted String
+#'
+#' @return The current time formatted as `"%Y-%m-%d %H:%M:%S"`.
+#' @keywords internal
+timestamp_now <- function() {
+    base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+}
+
+#' Remove a File if it Exists
+#'
+#' @param path Path to the file to remove.
+#' @keywords internal
+remove_file_if_exists <- function(path) {
+    if (base::file.exists(path)) {
+        base::file.remove(path)
+    }
+}

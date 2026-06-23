@@ -78,7 +78,7 @@ macos_rtools_install <- function(
             total = 100
         )
 
-        current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+        current_time <- timestamp_now()
         cli::cli_alert_info("Installation process started at: {.val {current_time}}")
         cli::cli_text("") # Add spacing
     }
@@ -308,7 +308,7 @@ rtools_install_summary <- function(result_xcode, result_gfortran, result_base_de
         cli::cli_text("You can install packages from source with: {.code install.packages('package_name', type = 'source')}")
         cli::cli_text("") # Add spacing
 
-        current_time <- base::format(base::Sys.time(), '%Y-%m-%d %H:%M:%S')
+        current_time <- timestamp_now()
         cli::cli_alert_info("Installation completed at: {.val {current_time}}")
     } else {
         cli::cli_abort(c(

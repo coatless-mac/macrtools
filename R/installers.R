@@ -61,6 +61,15 @@ gfortran_install_location <- function(arch = system_arch()) {
     }
 }
 
+# Parse selected space-delimited fields from `ls -ld <path>`, returning
+# "Unknown" if the command fails.
+ls_ld_fields <- function(path, fields) {
+    base::tryCatch(
+        base::paste(base::strsplit(base::system(base::paste('ls -ld', path), intern = TRUE), ' ')[[1]][fields], collapse = ' '),
+        error = function(e) "Unknown"
+    )
+}
+
 create_install_location <- function(arch = system_arch(), password = base::getOption("macrtools.password")) {
     install_dir <- install_location(arch)
 
@@ -70,10 +79,7 @@ create_install_location <- function(arch = system_arch(), password = base::getOp
     }
 
     # Get current directory permissions
-    dir_perms <- base::tryCatch(
-        base::paste(base::strsplit(base::system(base::paste('ls -ld', base::dirname(install_dir)), intern = TRUE), ' ')[[1]][1:3], collapse = ' '),
-        error = function(e) "Unknown"
-    )
+    dir_perms <- ls_ld_fields(base::dirname(install_dir), 1:3)
 
     current_user <- base::Sys.info()['user']
 
@@ -104,10 +110,7 @@ create_install_location <- function(arch = system_arch(), password = base::getOp
         ))
     } else {
         # Get owner of new directory
-        new_owner <- base::tryCatch(
-            base::paste(base::strsplit(base::system(base::paste('ls -ld', install_dir), intern = TRUE), ' ')[[1]][3], collapse = ' '),
-            error = function(e) "Unknown"
-        )
+        new_owner <- ls_ld_fields(install_dir, 3)
 
         cli::cli_alert_success("{.pkg macrtools}: Installation directory created successfully.")
         cli::cli_bullets(c(
@@ -288,6 +291,7 @@ dmg_package_install <- function(path_to_dmg,
 
     volume_with_extension <- base::basename(path_to_dmg)
     bare_volume <- tools::file_path_sans_ext(volume_with_extension)
+    detach_cmd <- base::paste("hdiutil", "detach", base::shQuote(base::file.path("/Volumes", bare_volume)))
 
     if (verbose) {
         cli::cli_alert_info("{.pkg macrtools}: Mounting disk image.")
@@ -331,8 +335,7 @@ dmg_package_install <- function(path_to_dmg,
 
     if (install_status != 0) {
         # Unmount the volume before surfacing the failure so we do not leak it.
-        cmd <- base::paste("hdiutil", "detach", base::shQuote(base::file.path("/Volumes", bare_volume)))
-        shell_execute(cmd, sudo = FALSE)
+        shell_execute(detach_cmd, sudo = FALSE)
         cli::cli_abort(c(
             "{.pkg macrtools}: Failed to install package from disk image.",
             "Disk image: {.file {volume_with_extension}}",
@@ -348,8 +351,7 @@ dmg_package_install <- function(path_to_dmg,
         cli::cli_text("") # Add spacing
     }
 
-    cmd <- base::paste("hdiutil", "detach", base::shQuote(base::file.path("/Volumes", bare_volume)))
-    status <- shell_execute(cmd, sudo = FALSE)
+    status <- shell_execute(detach_cmd, sudo = FALSE)
 
     if (status != 0) {
         cli::cli_alert_warning(c(
