@@ -5,13 +5,7 @@ Execute a command with or without sudo privileges
 ## Usage
 
 ``` r
-shell_execute(
-  cmd,
-  sudo = FALSE,
-  password = NULL,
-  verbose = TRUE,
-  timeout = 300
-)
+shell_execute(cmd, sudo = FALSE, password = NULL, verbose = TRUE)
 ```
 
 ## Arguments
@@ -31,10 +25,6 @@ shell_execute(
 - verbose:
 
   Display the command being executed
-
-- timeout:
-
-  Timeout in seconds (default: 300)
 
 ## Value
 

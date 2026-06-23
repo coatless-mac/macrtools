@@ -94,7 +94,7 @@ where `$product_information` is obtained from the previous command.
 
 Finally, we remove the temporary installation file.
 
-    touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+    rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
 
 These steps were obtained from Timothy Sutton's
 [xcode-cli-tools.sh](https://github.com/timsutton/osx-vm-templates/blob/ce8df8a7468faa7c5312444ece1b977c1b2f77a4/scripts/xcode-cli-tools.sh#L8-L14)

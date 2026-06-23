@@ -2,7 +2,7 @@
 
 The `macos_rtools_install()` function aims to install all required
 dependencies for the macOS R compilation toolchain. Meanwhile, the
-`macros_rtools_uninstall()` function aims to remove any installed files
+`macos_rtools_uninstall()` function aims to remove any installed files
 from your computer.
 
 ## Usage
@@ -40,11 +40,11 @@ The macOS R compilation toolchain consists of:
 3.  A series of binary packages from the
     [`recipes`](https://github.com/R-macos/recipes) system to compile R.
 
-The `mac_rtools_install()` function attempts to install each of the
+The `macos_rtools_install()` function attempts to install each of the
 required components. If we detect that the Xcode.app IDE is installed,
 we'll skip attempting to install the Xcode CLI software.
 
-Meanwhile, the `mac_rtools_uninstall()` function aims to delete or
+Meanwhile, the `macos_rtools_uninstall()` function aims to delete or
 uninstall the Xcode CLI and gfortran binaries. At the present moment,
 there is no support for uninstalling the binary packages from `recipes`.
 

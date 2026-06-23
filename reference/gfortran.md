@@ -88,7 +88,7 @@ the newly installed software by adding into the `~/.Renviron` file the
 following:
 
     touch ~/.Renviron
-    cat << "EOF" > ~./Renviron
+    cat << "EOF" > ~/.Renviron
     ## macrtools - gfortran: start
     PATH=${PATH}:/opt/gfortran/bin
     ## macrtools - gfortran: end
@@ -110,7 +110,7 @@ the newly installed software by adding into the `~/.Renviron` file the
 following:
 
     touch ~/.Renviron
-    cat << "EOF" > ~./Renviron
+    cat << "EOF" > ~/.Renviron
     ## macrtools - gfortran: start
     PATH=${PATH}:/opt/gfortran/bin
     ## macrtools - gfortran: end
@@ -137,7 +137,7 @@ Lastly, we modify the `PATH` environment variable to recognize the newly
 installed software by adding into the `~/.Renviron` file the following:
 
     touch ~/.Renviron
-    cat << "EOF" > ~./Renviron
+    cat << "EOF" > ~/.Renviron
     ## macrtools - gfortran: start
     PATH=${PATH}:/usr/local/gfortran/bin
     ## macrtools - gfortran: end
@@ -171,7 +171,7 @@ Lastly, we modify the `PATH` environment variable to recognize the newly
 installed software by adding into the `~/.Renviron` file the following:
 
     touch ~/.Renviron
-    cat << "EOF" > ~./Renviron
+    cat << "EOF" > ~/.Renviron
     ## macrtools - gfortran: start
     PATH=${PATH}:/opt/R/arm64/gfortran/bin
     ## macrtools - gfortran: end

@@ -6,6 +6,7 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/assert.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/binary_download.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/caller_env.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/exec_text.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/force_password.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/index.html</loc></url>
@@ -27,12 +28,13 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_r_version_supported.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_x86_64.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/macos-rtools.html</loc></url>
-<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/null_coalesce.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/macos_version_in_range.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/openmp.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/print.cli.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/r_version_full.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/r_version_major_minor.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/recipes_binary_install.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/remove_file_if_exists.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/shell_command.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/shell_execute.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/shell_mac_version.html</loc></url>
@@ -41,8 +43,7 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/system_arch.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/system_os.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/tar_package_install.html</loc></url>
-<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/verify_status.html</loc></url>
-<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/version_above.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/timestamp_now.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/version_between.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-app-ide.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html</loc></url>
