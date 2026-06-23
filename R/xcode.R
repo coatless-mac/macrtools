@@ -460,7 +460,7 @@ xcode_cli_reset <- function(password = base::getOption("macrtools.password"), ve
                                        password = password,
                                        verbose = verbose)
 
-    xcli_reset_clean <- xcli_reset_status == 0L
+    xcli_reset_clean <- base::identical(xcli_reset_status, 0L)
 
     if(base::isFALSE(xcli_reset_clean)) {
         cli::cli_abort("{.pkg macrtools}: Failed to reset Xcode CLI settings.")
