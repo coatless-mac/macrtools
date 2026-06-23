@@ -170,7 +170,7 @@ binary_download <- function(url, binary_file_name = base::basename(url), verbose
 
     # Download with progress and error handling
     download_start_time <- base::Sys.time()
-    download_result <- base::tryCatch({
+    base::tryCatch({
         utils::download.file(
             url,
             save_location,
@@ -180,7 +180,6 @@ binary_download <- function(url, binary_file_name = base::basename(url), verbose
             method = "auto",
             timeout = timeout
         )
-        TRUE
     }, error = function(e) {
         if (verbose) cli::cli_progress_done(pb_id)
 
@@ -195,14 +194,9 @@ binary_download <- function(url, binary_file_name = base::basename(url), verbose
             ">" = "Status code: {.val {status_info}}",
             "i" = "Check your internet connection or try again later. The server may be temporarily unavailable."
         ))
-        FALSE
     })
 
     download_duration <- base::difftime(base::Sys.time(), download_start_time, units = "secs")
-
-    if (!download_result) {
-        return(NULL)
-    }
 
     if (verbose) {
         file_size <- base::file.info(save_location)$size
@@ -313,7 +307,6 @@ dmg_package_install <- function(path_to_dmg,
             "Disk image: {.file {volume_with_extension}}",
             "Status code: {.val {mount_status}}"
         ))
-        return(FALSE)
     }
 
     if (verbose) {
@@ -409,7 +402,6 @@ pkg_install <- function(path_to_pkg,
             "Package: {.file {package_name}}",
             "Status code: {.val {status}}"
         ))
-        return(FALSE)
     }
 
     if (verbose) {

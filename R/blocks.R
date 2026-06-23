@@ -130,13 +130,6 @@ block_replace = function(desc, value, path,
     write_utf8(path, lines)
 }
 
-
-block_show = function(path, block_start = "# <<<", block_end = "# >>>") {
-    lines = read_utf8(path)
-    block = block_find(lines, block_start, block_end)
-    lines[seq2(block[[1]], block[[2]])]
-}
-
 block_find = function(lines, block_start = "# <<<", block_end = "# >>>") {
     # No file
     if (base::is.null(lines)) {

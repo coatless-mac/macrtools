@@ -153,16 +153,6 @@ is_macos_high_sierra <- function() {
     version_between(mac_version, "10.13.0", "10.14.0")
 }
 
-#' Check if Version is Above Threshold
-#'
-#' @param software_version Version string to check
-#' @param than Threshold version to compare against
-#' @return TRUE if software_version is above than, FALSE otherwise
-#' @keywords internal
-version_above <- function(software_version, than) {
-    utils::compareVersion(software_version, than) == 1L
-}
-
 #' Check if Version is Between Bounds
 #'
 #' @param software_version Version string to check
