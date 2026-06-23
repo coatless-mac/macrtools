@@ -20,9 +20,13 @@
 ### Internal
 
 - Centralized the supported R version window behind
-  `minimum_supported_r_version()` / `maximum_supported_r_version()` and
-  replaced the repeated `is_r_version("4.x") || ...` chains with range
-  checks (`is_r_version_at_least()`, `is_r_version_supported()`).
+  [`minimum_supported_r_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/supported_r_version.md)
+  /
+  [`maximum_supported_r_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/supported_r_version.md)
+  and replaced the repeated `is_r_version("4.x") || ...` chains with
+  range checks
+  ([`is_r_version_at_least()`](https://mac.thecoatlessprofessor.com/macrtools/reference/is_r_version_at_least.md),
+  [`is_r_version_supported()`](https://mac.thecoatlessprofessor.com/macrtools/reference/is_r_version_supported.md)).
   Supporting a future R release that keeps the existing toolchain is now
   a one-line change.
 - [`gfortran_update()`](https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.md)

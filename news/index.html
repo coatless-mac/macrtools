@@ -50,7 +50,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="internal-0-0-7">Internal<a class="anchor" aria-label="anchor" href="#internal-0-0-7"></a></h3>
-<ul><li>Centralized the supported R version window behind <code>minimum_supported_r_version()</code> / <code>maximum_supported_r_version()</code> and replaced the repeated <code>is_r_version("4.x") || ...</code> chains with range checks (<code>is_r_version_at_least()</code>, <code>is_r_version_supported()</code>). Supporting a future R release that keeps the existing toolchain is now a one-line change.</li>
+<ul><li>Centralized the supported R version window behind <code><a href="../reference/supported_r_version.html">minimum_supported_r_version()</a></code> / <code><a href="../reference/supported_r_version.html">maximum_supported_r_version()</a></code> and replaced the repeated <code>is_r_version("4.x") || ...</code> chains with range checks (<code><a href="../reference/is_r_version_at_least.html">is_r_version_at_least()</a></code>, <code><a href="../reference/is_r_version_supported.html">is_r_version_supported()</a></code>). Supporting a future R release that keeps the existing toolchain is now a one-line change.</li>
 <li>
 <code><a href="../reference/gfortran.html">gfortran_update()</a></code> now requires “R 4.2 or above” (matching its documentation) rather than an explicit, hard-coded list of versions.</li>
 </ul></div>
