@@ -61,10 +61,7 @@ openmp_version <- function() {
 
     # Try to get version information from the library
     library_path <- "/usr/local/lib/libomp.dylib"
-    version_info <- base::tryCatch(
-        sys::as_text(sys::exec_internal('otool', c('-L', library_path))$stdout),
-        error = function(e) 'Unknown'
-    )
+    version_info <- exec_text('otool', c('-L', library_path))
 
     version_info
 }
@@ -314,10 +311,7 @@ openmp_uninstall <- function(password = base::getOption("macrtools.password"),
 #' Get Apple Clang Version Information
 #' @noRd
 get_apple_clang_version <- function() {
-    version_info <- base::tryCatch(
-        sys::as_text(sys::exec_internal('clang', '--version')$stdout),
-        error = function(e) NULL
-    )
+    version_info <- exec_text('clang', '--version', fallback = NULL)
 
     if (base::is.null(version_info)) {
         return(list(version_string = "Unknown", build_number = 0))

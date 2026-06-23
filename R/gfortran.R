@@ -187,10 +187,7 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
         if(verbose) {
             # Get gfortran path and version info
             install_path <- base::file.path(gfortran_install_location(), 'gfortran')
-            version_info <- base::tryCatch(
-                sys::as_text(sys::exec_internal('gfortran', '--version')$stdout),
-                error = function(e) 'Unknown'
-            )
+            version_info <- exec_text('gfortran', '--version')
 
             cli::cli_alert_info("{.pkg macrtools}: gfortran is already installed.")
             cli::cli_bullets(c(

@@ -46,6 +46,24 @@ shell_mac_version <- function() {
     sys::as_text(sys::exec_internal("sw_vers", "-productVersion")$stdout)
 }
 
+#' Capture the Text Output of an External Command
+#'
+#' Runs `command` with `args` via [sys::exec_internal()] and returns its
+#' standard output as trimmed text. If the command cannot be run, `fallback`
+#' is returned instead.
+#'
+#' @param command  Name of the program to execute.
+#' @param args     Character vector of arguments passed to the program.
+#' @param fallback Value returned when execution fails. Default `"Unknown"`.
+#' @return The command's standard output as text, or `fallback` on error.
+#' @keywords internal
+exec_text <- function(command, args, fallback = "Unknown") {
+    base::tryCatch(
+        sys::as_text(sys::exec_internal(command, args)$stdout),
+        error = function(e) fallback
+    )
+}
+
 #' Check if macOS Version is Supported for R
 #'
 #' @return TRUE if macOS version is supported, FALSE otherwise

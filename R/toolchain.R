@@ -168,10 +168,7 @@ rtools_install_xcode_cli <- function(entered_password, verbose, describe_steps, 
         } else {
             if(describe_steps) {
                 # Get Xcode CLI version information
-                xcode_version <- base::tryCatch(
-                    sys::as_text(sys::exec_internal('xcode-select', '--version')$stdout),
-                    error = function(e) 'Unknown'
-                )
+                xcode_version <- exec_text('xcode-select', '--version')
 
                 cli::cli_alert_info("{.pkg macrtools}: Xcode Command Line Tools already installed.")
                 cli::cli_bullets(c(
@@ -186,10 +183,7 @@ rtools_install_xcode_cli <- function(entered_password, verbose, describe_steps, 
     } else {
         if(describe_steps) {
             # Get full Xcode app version information
-            xcode_app_info <- base::tryCatch(
-                sys::as_text(sys::exec_internal('xcodebuild', '-version')$stdout),
-                error = function(e) "Unknown"
-            )
+            xcode_app_info <- exec_text('xcodebuild', '-version')
 
             cli::cli_alert_info("{.pkg macrtools}: Full Xcode.app IDE is installed.")
             cli::cli_bullets(c(
@@ -246,10 +240,7 @@ rtools_install_gfortran <- function(entered_password, verbose, describe_steps, p
     } else {
         if(describe_steps) {
             # Get gfortran version information
-            gfortran_version_info <- base::tryCatch(
-                sys::as_text(sys::exec_internal('gfortran', '--version')$stdout),
-                error = function(e) 'Unknown'
-            )
+            gfortran_version_info <- exec_text('gfortran', '--version')
 
             install_path <- base::file.path(gfortran_install_location(), 'gfortran')
 
