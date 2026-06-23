@@ -127,7 +127,7 @@ test_that("macos_rtools_uninstall handles component uninstallations", {
     mockery::stub(macos_rtools_uninstall, "cli::cli_alert_info", function(...) NULL)
     mockery::stub(macos_rtools_uninstall, "cli::cli_bullets", function(...) NULL)
     mockery::stub(macos_rtools_uninstall, "cli::cli_text", function(...) NULL)
-    mockery::stub(macos_rtools_uninstall, "askpass::askpass", function(...) "password")
+    mockery::stub(macos_rtools_uninstall, "force_password", function(...) "password")
     mockery::stub(macos_rtools_uninstall, "cli::cli_progress_bar", function(...) 1)
     mockery::stub(macos_rtools_uninstall, "cli::cli_progress_update", function(...) NULL)
     mockery::stub(macos_rtools_uninstall, "cli::cli_progress_done", function(...) NULL)
@@ -158,6 +158,7 @@ test_that("macos_rtools_uninstall handles component failures", {
     mockery::stub(macos_rtools_uninstall, "cli::cli_progress_bar", function(...) 1)
     mockery::stub(macos_rtools_uninstall, "cli::cli_progress_update", function(...) NULL)
     mockery::stub(macos_rtools_uninstall, "cli::cli_abort", function(...) stop("Uninstallation failed"))
+    mockery::stub(macos_rtools_uninstall, "force_password", function(...) "password")
 
     # Mock component detection and uninstallation failure
     mockery::stub(macos_rtools_uninstall, "is_xcode_cli_installed", function() TRUE)

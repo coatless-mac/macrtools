@@ -61,11 +61,7 @@ macos_rtools_install <- function(
 
     rtools_install_announce(os_version, os_release, arch, r_version)
 
-    entered_password <- password
-    if(base::is.null(entered_password)) {
-        cli::cli_alert_info("Administrative privileges are required for installation.")
-        entered_password <- askpass::askpass("Please enter your administrator password:")
-    }
+    entered_password <- force_password(password)
 
     describe_steps <- base::isTRUE(verbose)
 
@@ -350,10 +346,7 @@ macos_rtools_uninstall <- function(
     ))
     cli::cli_text("") # Add spacing
 
-    if(base::is.null(password)) {
-        cli::cli_alert_info("{.pkg macrtools}: Administrative privileges required.")
-        password <- askpass::askpass("Please enter your password to continue:")
-    }
+    password <- force_password(password)
 
     # Create a progress bar
     if (verbose) {
