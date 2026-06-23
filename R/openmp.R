@@ -166,7 +166,6 @@ openmp_install <- function(password = base::getOption("macrtools.password"), ver
             "Xcode version: {.val {xcode_version}}",
             "i" = "Please check the package documentation for manual installation instructions."
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -190,7 +189,6 @@ openmp_install <- function(password = base::getOption("macrtools.password"), ver
             "{.pkg macrtools}: Failed to install OpenMP.",
             "i" = "Please check the package documentation for manual installation instructions."
         ))
-        return(base::invisible(FALSE))
     }
 
     # Automatically configure Makevars if requested
@@ -288,7 +286,6 @@ openmp_uninstall <- function(password = base::getOption("macrtools.password"),
                 "{.pkg macrtools}: We were not able to uninstall OpenMP.",
                 "i" = "Please check the package documentation for manual uninstall instructions."
             ))
-            return(base::invisible(FALSE))
         }
     }
 

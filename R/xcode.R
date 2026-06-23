@@ -276,7 +276,6 @@ xcode_cli_install <- function(password = base::getOption("macrtools.password"), 
             "{.pkg macrtools}: We were not able to install Xcode CLI.",
             "i" = "Please try to manually install using: https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html#xcode-cli-installation"
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -361,7 +360,6 @@ xcode_cli_uninstall <- function(password = base::getOption("macrtools.password")
             "{.pkg macrtools}: We were not able to uninstall Xcode CLI.",
             "i" = "Please try to manually uninstall using: https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html#uninstalling-xcode-cli"
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -421,7 +419,6 @@ xcode_cli_switch <- function(password = base::getOption("macrtools.password"), v
 
     if(base::isFALSE(xcli_switch_clean)) {
         cli::cli_abort("{.pkg macrtools}: Failed to switch Xcode CLI path.")
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -462,7 +459,6 @@ xcode_cli_reset <- function(password = base::getOption("macrtools.password"), ve
 
     if(base::isFALSE(xcli_reset_clean)) {
         cli::cli_abort("{.pkg macrtools}: Failed to reset Xcode CLI settings.")
-        return(base::invisible(FALSE))
     }
 
     if(verbose) {

@@ -281,7 +281,6 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
                     "i" = "Please upgrade R to version 4.1 or higher.",
                     "i" = "Visit https://cran.r-project.org/bin/macosx/ to download a compatible R version for Apple Silicon."
                 ))
-                return(base::invisible(FALSE))
             }
         } else {
             arch <- system_arch()
@@ -289,7 +288,6 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
                 "{.pkg macrtools}: Unsupported macOS architecture: {.val {arch}}",
                 "i" = "Only Intel (x86_64) and Apple Silicon (arm64/aarch64) architectures are supported."
             ))
-            return(base::invisible(FALSE))
         }
     }
 
@@ -305,7 +303,6 @@ gfortran_install <- function(password = base::getOption("macrtools.password"), v
             "i" = "R version: {.val {r_version}}",
             "i" = "Please try to manually install following the instructions at: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#installing-gfortran"
         ))
-        return(base::invisible(FALSE))
     }
 
     renviron_gfortran_path(path_variable)
@@ -392,7 +389,6 @@ gfortran_uninstall <- function(password = base::getOption("macrtools.password"),
             "{.pkg macrtools}: We were not able to uninstall gfortran.",
             "i" = "Please try to manually uninstall using: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#uninstalling-gfortran"
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -434,7 +430,6 @@ gfortran_update <- function(password = base::getOption("macrtools.password"), ve
     # Verify that the tool exists
     if (!base::file.exists(path_gfortran_update)) {
         cli::cli_abort("{.pkg macrtools}: Could not find gfortran-update-sdk at {.path {path_gfortran_update}}")
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -458,7 +453,6 @@ gfortran_update <- function(password = base::getOption("macrtools.password"), ve
             "{.pkg macrtools}: We were not able to update gfortran.",
             "i" = "Please try to manually update using: https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html#updating-gfortran"
         ))
-        return(base::invisible(FALSE))
     }
 
     if (verbose) {
@@ -520,7 +514,6 @@ install_gfortran_82_mojave <- function(password = base::getOption("macrtools.pas
 
     if (!success) {
         cli::cli_abort("{.pkg macrtools}: Error installing the gfortran package")
-        return(FALSE)
     }
 
     # Remove unused gfortran file
