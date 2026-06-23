@@ -17,6 +17,14 @@ test_that("assert_mac throws error on non-macOS", {
     expect_error(assert_mac(), regexp = "This function requires macOS")
 })
 
+test_that("assert_mac surfaces the guidance advice in the error message", {
+    mockery::stub(assert_mac, "is_macos", function() FALSE)
+    mockery::stub(assert_mac, "system_os", function() "linux")
+    # The advice line is folded into the message as an info bullet and must
+    # render (it was previously passed as a swallowed `advice=` argument).
+    expect_error(assert_mac(), regexp = "Intel or Apple Silicon processors")
+})
+
 test_that("assert_macos_supported succeeds on supported macOS version", {
     # Create a stub that correctly handles the call parameter
     mockery::stub(assert_macos_supported, "assert_mac", function(...) NULL)

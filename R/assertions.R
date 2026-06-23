@@ -25,10 +25,10 @@ assert_mac <- function(call = caller_env()) {
         current_os <- system_os()
         cli::cli_abort(c(
             "{.pkg macrtools}: This function requires macOS.",
-            "{.pkg macrtools}: The current operating system is {.val {current_os}}."
+            "{.pkg macrtools}: The current operating system is {.val {current_os}}.",
+            "i" = "macrtools only works on macOS systems with Intel or Apple Silicon processors."
         ),
-        call = call,
-        advice = "macrtools only works on macOS systems with Intel or Apple Silicon processors.")
+        call = call)
     }
 }
 
@@ -41,10 +41,10 @@ assert_macos_supported <- function(call = caller_env()) {
         mac_version <- shell_mac_version()
         cli::cli_abort(c(
             "{.pkg macrtools}: Your macOS version {.val {mac_version}} is not supported.",
-            "{.pkg macrtools}: Supported versions: macOS High Sierra (10.13) through macOS Tahoe (26.x)."
+            "{.pkg macrtools}: Supported versions: macOS High Sierra (10.13) through macOS Tahoe (26.x).",
+            "i" = "Please upgrade your macOS to a supported version or use an alternative method to install development tools."
         ),
-        call = call,
-        advice = "Please upgrade your macOS to a supported version or use an alternative method to install development tools.")
+        call = call)
     }
 }
 
@@ -55,10 +55,10 @@ assert_aarch64 <- function(call = caller_env()) {
         arch <- system_arch()
         cli::cli_abort(c(
             "{.pkg macrtools}: This function requires an Apple Silicon (M-series) Mac.",
-            "{.pkg macrtools}: Current architecture: {.val {arch}}."
+            "{.pkg macrtools}: Current architecture: {.val {arch}}.",
+            "i" = "This feature is specifically designed for Apple Silicon processors (M1, M2, M3, etc.). Intel Macs require different components."
         ),
-        call = call,
-        advice = "This feature is specifically designed for Apple Silicon processors (M1, M2, M3, etc.). Intel Macs require different components.")
+        call = call)
     }
 }
 
@@ -69,10 +69,10 @@ assert_x86_64 <- function(call = caller_env()) {
         arch <- system_arch()
         cli::cli_abort(c(
             "{.pkg macrtools}: This function requires an Intel-based Mac.",
-            "{.pkg macrtools}: Current architecture: {.val {arch}}."
+            "{.pkg macrtools}: Current architecture: {.val {arch}}.",
+            "i" = "This feature is specifically designed for Intel processors. Apple Silicon Macs require different components."
         ),
-        call = call,
-        advice = "This feature is specifically designed for Intel processors. Apple Silicon Macs require different components.")
+        call = call)
     }
 }
 
@@ -85,9 +85,9 @@ assert_r_version_supported <- function(call = caller_env()) {
         supported_max <- maximum_supported_r_version()
         cli::cli_abort(c(
             "{.pkg macrtools}: The installed R version {.val {version_number}} is not supported.",
-            "{.pkg macrtools}: Supported versions: R {supported_min}.x through R {supported_max}.x."
+            "{.pkg macrtools}: Supported versions: R {supported_min}.x through R {supported_max}.x.",
+            "i" = "Please upgrade or downgrade your R installation to a supported version."
         ),
-        call = call,
-        advice = "Please upgrade or downgrade your R installation to a supported version.")
+        call = call)
     }
 }
