@@ -25,8 +25,7 @@ Imports:
     sys,
     tools,
     utils,
-    cli, 
-    rlang
+    cli
 URL: https://mac.thecoatlessprofessor.com/macrtools/
 Suggests: 
     rstudioapi,
