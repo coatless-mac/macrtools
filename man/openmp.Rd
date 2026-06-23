@@ -85,7 +85,7 @@ runtime library based on the detected Xcode version.
 The installation process automatically detects your Xcode version and
 downloads the corresponding OpenMP runtime from the R-project repository:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{VERSION="19.1.0"
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{VERSION="19.1.5"
 
 # Download the appropriate version
 curl -O https://mac.r-project.org/openmp/openmp-$\{VERSION\}-darwin20-Release.tar.gz
