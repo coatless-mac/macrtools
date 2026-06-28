@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 462" width="400" height="462">
+  <defs>
+    <clipPath id="hex">
+      <path d="M200,0 L400,115.47 L400,346.53 L200,462 L0,346.53 L0,115.47 Z"/>
+    </clipPath>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#FBFDFF"/>
+      <stop offset="55%" stop-color="#EAF2FB"/>
+      <stop offset="100%" stop-color="#D6E5F5"/>
+    </radialGradient>
+    <linearGradient id="rfill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3F8AE4"/>
+      <stop offset="100%" stop-color="#17539C"/>
+    </linearGradient>
+    <linearGradient id="border" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5A93D8"/>
+      <stop offset="100%" stop-color="#1E5598"/>
+    </linearGradient>
+    <pattern id="gmin" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="translate(8,15)">
+      <path d="M24 0 H0 V24" fill="none" stroke="#BBD3EE" stroke-width="1" opacity="0.9"/>
+    </pattern>
+    <pattern id="gmaj" width="96" height="96" patternUnits="userSpaceOnUse" patternTransform="translate(8,15)">
+      <path d="M96 0 H0 V96" fill="none" stroke="#9CBEE6" stroke-width="1.4" opacity="0.8"/>
+    </pattern>
+    <filter id="rshadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="3" flood-color="#16407A" flood-opacity="0.22"/>
+    </filter>
+    <clipPath id="bitegap">
+      <path d="M323,194 C 324,212 324,240 320,266 A 37,37 0 0 1 323,194 Z"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#hex)">
+    <rect x="0" y="0" width="400" height="462" fill="url(#bg)"/>
+    <rect x="0" y="0" width="400" height="462" fill="url(#gmin)"/>
+    <rect x="0" y="0" width="400" height="462" fill="url(#gmaj)"/>
+
+    <!-- apple silhouette (blueprint hairline) with a natural bite on the upper-right -->
+    <path d="M200,150
+             C 214,124 240,112 262,120
+             C 300,132 320,160 323,194
+             A 37,37 0 0 0 320,266
+             C 322,300 292,352 244,360
+             C 230,362 214,356 200,344
+             C 186,356 170,362 156,360
+             C 108,352 76,300 76,225
+             C 76,150 96,128 138,120
+             C 162,114 186,124 200,150 Z"
+          fill="none" stroke="#1E5FA8" stroke-width="5" stroke-linejoin="round"/>
+
+    <!-- leaf (detached, floating well above the outline, nudged left) as blueprint line-work with a vein -->
+    <path d="M200,122 C 210,94 230,80 246,76 C 236,102 219,116 200,122 Z"
+          fill="none" stroke="#1E5FA8" stroke-width="3.4" stroke-linejoin="round"/>
+    <line x1="208" y1="117" x2="239" y2="85" stroke="#1E5FA8" stroke-width="1.5" opacity="0.85"/>
+    <!-- bite gap "filled in": dashed hatch clipped to the natural apple outline so nothing extends past it -->
+    <g clip-path="url(#bitegap)" stroke="#2E73BC" stroke-linecap="round" stroke-width="2" stroke-dasharray="2.5 3.5" opacity="0.95">
+      <line x1="284" y1="200" x2="332" y2="200"/>
+      <line x1="284" y1="208" x2="332" y2="208"/>
+      <line x1="284" y1="216" x2="332" y2="216"/>
+      <line x1="284" y1="224" x2="332" y2="224"/>
+      <line x1="284" y1="232" x2="332" y2="232"/>
+      <line x1="284" y1="240" x2="332" y2="240"/>
+      <line x1="284" y1="248" x2="332" y2="248"/>
+      <line x1="284" y1="256" x2="332" y2="256"/>
+      <line x1="284" y1="264" x2="332" y2="264"/>
+    </g>
+    <!-- the natural apple edge where the bite was taken (boundary of the fill) -->
+    <path d="M323,194 C 324,212 324,240 320,266" fill="none" stroke="#2E73BC" stroke-width="1.6" stroke-dasharray="3 5" stroke-linecap="round" opacity="0.7"/>
+
+    <!-- R hero -->
+    <text x="190" y="292" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+          font-weight="700" font-size="120" fill="url(#rfill)" text-anchor="middle"
+          filter="url(#rshadow)">R</text>
+
+    <!-- wordmark seated above the bottom hex border, clear of the edges -->
+    <text x="200" y="400" font-family="Avenir Next, Helvetica Neue, Arial, sans-serif"
+          font-weight="600" font-size="30" letter-spacing="1" fill="#194E86" text-anchor="middle">macrtools</text>
+  </g>
+
+  <path d="M200,8 L393,119.6 L393,342.4 L200,454 L7,342.4 L7,119.6 Z"
+        fill="none" stroke="url(#border)" stroke-width="9"/>
+</svg>
