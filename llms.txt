@@ -1,5 +1,8 @@
 # macrtools
 
+![macrtools hex
+logo](reference/figures/logo-macrtools-light-animated.svg)
+
 **This is a work in progress package. Features may be unstable.**
 
 **This is an *unofficial* project to support users on macOS.**

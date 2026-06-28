@@ -164,5 +164,5 @@ is_xcode_cli_installed()
 #> [1] FALSE
 # Determine the path location of Xcode CLI
 xcode_cli_path()
-#> [1] "/Applications/Xcode_16.4.app/Contents/Developer"
+#> [1] "/Applications/Xcode_26.5.app/Contents/Developer"
 ```
