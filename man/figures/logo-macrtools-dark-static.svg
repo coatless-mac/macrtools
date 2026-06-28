@@ -29,10 +29,15 @@
     <clipPath id="bitegap">
       <path d="M323,194 C 324,212 324,240 320,266 A 37,37 0 0 1 323,194 Z"/>
     </clipPath>
+    <clipPath id="inner">
+      <path d="M200,14 L388,122 L388,340 L200,448 L12,340 L12,122 Z"/>
+    </clipPath>
   </defs>
 
   <g clip-path="url(#hex)">
     <rect x="0" y="0" width="400" height="462" fill="url(#bg)"/>
+  </g>
+  <g clip-path="url(#inner)">
     <rect x="0" y="0" width="400" height="462" fill="url(#gmin)"/>
     <rect x="0" y="0" width="400" height="462" fill="url(#gmaj)"/>
 
