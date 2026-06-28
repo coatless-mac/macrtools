@@ -5,3 +5,5 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^man/figures/logo-drafts$
+^man/figures/logo-gallery\.html$

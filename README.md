@@ -1,6 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+<!-- hex logo: GitHub shows the dark- or light-theme animated version automatically -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="man/figures/logo-macrtools-dark-animated.svg">
+  <source media="(prefers-color-scheme: light)" srcset="man/figures/logo-macrtools-light-animated.svg">
+  <img src="man/figures/logo-macrtools-light-animated.svg" alt="macrtools hex logo" align="right" height="170" />
+</picture>
+
 # macrtools
 
 <!-- badges: start -->
