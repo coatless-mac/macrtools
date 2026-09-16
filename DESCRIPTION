@@ -1,6 +1,6 @@
 Package: macrtools
 Title: macOS Rtools package
-Version: 0.0.7
+Version: 0.0.8
 Authors@R: c(
     person(given = "James Joseph", 
            family = "Balamuta", 
@@ -30,6 +30,6 @@ URL: https://mac.thecoatlessprofessor.com/macrtools/
 Suggests: 
     rstudioapi,
     mockery,
-    testthat (>= 3.0.0)
+    testthat (>= 3.1.7)
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0

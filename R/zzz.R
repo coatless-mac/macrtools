@@ -17,8 +17,8 @@
     if (!is_macos_r_supported()) {
         mac_version <- shell_mac_version()
         supported_msg <- base::paste0(
-            "Supported macOS versions: ",
-            "High Sierra (10.13) through Tahoe (26.x)"
+            "Supported versions: ",
+            macos_support_range()
         )
 
         base::packageStartupMessage(cli::format_inline(

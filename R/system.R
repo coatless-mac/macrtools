@@ -64,14 +64,106 @@ exec_text <- function(command, args, fallback = "Unknown") {
     )
 }
 
+#' Pad a Version String to major.minor.patch
+#'
+#' @details
+#' `sw_vers -productVersion` reports only two components for a `.0` release:
+#' macOS 27.0 reports `"27.0"`, never `"27.0.0"`. [utils::compareVersion()]
+#' ranks a shorter string *below* an otherwise-equal longer one, so
+#' `compareVersion("10.13", "10.13.0")` is `-1`. Comparing an unpadded
+#' two-component version against three-component bounds therefore places every
+#' `.0` release in the *previous* release's range.
+#'
+#' Padding both the version and the bounds to three components removes that
+#' ambiguity. Versions with more than three components are left untouched.
+#'
+#' @param version A version string such as `"27"`, `"27.0"` or `"27.0.1"`.
+#' @return The version padded to at least three components.
+#' @keywords internal
+pad_version <- function(version) {
+    parts <- base::strsplit(base::trimws(version), ".", fixed = TRUE)[[1]]
+    parts <- parts[base::nzchar(parts)]
+
+    if (base::length(parts) == 0L) {
+        return(version)
+    }
+
+    base::paste(
+        c(parts, base::rep("0", base::max(0L, 3L - base::length(parts)))),
+        collapse = "."
+    )
+}
+
 #' Check if the macOS Version Falls in a Range
+#'
+#' @details
+#' The running version and both bounds are padded by [pad_version()] before
+#' comparison, so a bound may be written with two or three components
+#' interchangeably.
 #'
 #' @param lower Lower bound for the macOS version (inclusive).
 #' @param upper Upper bound for the macOS version (exclusive).
 #' @return TRUE if the running macOS version is in `[lower, upper)`.
 #' @keywords internal
 macos_version_in_range <- function(lower, upper) {
-    version_between(shell_mac_version(), lower, upper)
+    version_between(
+        pad_version(shell_mac_version()),
+        pad_version(lower),
+        pad_version(upper)
+    )
+}
+
+#' Supported macOS Version Window
+#'
+#' Single source of truth for the macOS versions whose toolchain `macrtools`
+#' supports.
+#'
+#' @details
+#' [first_unsupported_macos_version()] is an **exclusive** bound: it names the
+#' first macOS version that is *rejected*, not the newest one that is accepted.
+#' Supporting a new macOS release therefore means setting it to the *following*
+#' major version, e.g. supporting macOS 27 requires `"28.0"`.
+#'
+#' Naming the newest supported release here instead silently excludes that
+#' entire release. That mistake shipped twice: once for Tahoe
+#' ([#28](https://github.com/coatless-mac/macrtools/issues/28)) and again for
+#' macOS 27.
+#'
+#' @return A macOS version string.
+#' @keywords internal
+#' @name supported_macos_version
+minimum_supported_macos_version <- function() "10.13.0"
+
+#' @rdname supported_macos_version
+#' @keywords internal
+first_unsupported_macos_version <- function() "28.0"
+
+#' Marketing Name of the Newest Supported macOS Release
+#'
+#' @return The marketing name of the newest supported macOS release.
+#' @keywords internal
+newest_supported_macos_name <- function() "Golden Gate"
+
+#' Human-readable macOS Support Window
+#'
+#' Renders the supported macOS range for user-facing messages.
+#'
+#' @details
+#' The upper major version is derived from [first_unsupported_macos_version()]
+#' rather than written out, so the advertised range cannot disagree with the
+#' check it describes.
+#'
+#' @return A string naming the supported macOS range.
+#' @keywords internal
+macos_support_range <- function() {
+    newest_major <- base::as.integer(
+        base::sub("\\..*", "", first_unsupported_macos_version())
+    ) - 1L
+
+    base::paste0(
+        "macOS High Sierra (10.13) through macOS ",
+        newest_supported_macos_name(), " (", newest_major, ".x)"
+    )
 }
 
 #' Check if macOS Version is Supported for R
@@ -79,7 +171,25 @@ macos_version_in_range <- function(lower, upper) {
 #' @return TRUE if macOS version is supported, FALSE otherwise
 #' @keywords internal
 is_macos_r_supported <- function() {
-    macos_version_in_range("10.13.0", "27.0")
+    macos_version_in_range(
+        minimum_supported_macos_version(),
+        first_unsupported_macos_version()
+    )
+}
+
+#' Check if macOS Golden Gate
+#'
+#' Golden Gate is macOS 27.x, released in September 2026.
+#'
+#' @details
+#' macOS Golden Gate (version 27.x) is the successor to macOS Tahoe (version
+#' 26.x). It is the first macOS release to run exclusively on Apple Silicon;
+#' Tahoe was the last release to support Intel Macs.
+#'
+#' @return TRUE if system is macOS Golden Gate, FALSE otherwise
+#' @keywords internal
+is_macos_golden_gate <- function() {
+    macos_version_in_range("27.0", "28.0")
 }
 
 #' Check if macOS Tahoe
@@ -87,7 +197,9 @@ is_macos_r_supported <- function() {
 #' Tahoe is macOS 26.x, released in late 2025.
 #'
 #' @details
-#' macOS Tahoe (version 26.x) is the successor to macOS Sequoia (version 15.x).
+#' macOS Tahoe (version 26.x) is the successor to macOS Sequoia (version 15.x)
+#' and the predecessor of macOS Golden Gate (version 27.x). It is the last
+#' macOS release to support Intel Macs.
 #'
 #' @return TRUE if system is macOS Tahoe, FALSE otherwise
 #' @keywords internal

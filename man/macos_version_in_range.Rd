@@ -17,4 +17,9 @@ TRUE if the running macOS version is in \verb{[lower, upper)}.
 \description{
 Check if the macOS Version Falls in a Range
 }
+\details{
+The running version and both bounds are padded by \code{\link[=pad_version]{pad_version()}} before
+comparison, so a bound may be written with two or three components
+interchangeably.
+}
 \keyword{internal}

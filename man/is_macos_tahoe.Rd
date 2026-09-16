@@ -13,6 +13,8 @@ TRUE if system is macOS Tahoe, FALSE otherwise
 Tahoe is macOS 26.x, released in late 2025.
 }
 \details{
-macOS Tahoe (version 26.x) is the successor to macOS Sequoia (version 15.x).
+macOS Tahoe (version 26.x) is the successor to macOS Sequoia (version 15.x)
+and the predecessor of macOS Golden Gate (version 27.x). It is the last
+macOS release to support Intel Macs.
 }
 \keyword{internal}
