@@ -1,177 +1,69 @@
-# macrtools 0.0.9
-
-## Bug Fixes
-
-- Fixed Xcode toolchain detection when the tools are not in the default
-  location. `is_xcode_cli_installed()` and `is_xcode_app_installed()` compared
-  the active developer directory against a single hardcoded path with
-  `identical()`, so both returned `FALSE` whenever anything else was selected,
-  even with a perfectly usable toolchain installed:
-
-  ```r
-  is_xcode_cli_installed()
-  #> [1] FALSE
-  xcode_cli_path()
-  #> [1] "/Applications/Xcode_16.4.app/Contents/Developer"
-  ```
-
-  A versioned Xcode bundle like that is the normal multi-Xcode layout, and it
-  is what every GitHub-hosted macOS runner selects, so this affected the
-  package's own CI. `macos_rtools_install()` treated the two predicates as
-  exhaustive and would start a 10-15 minute `softwareupdate` install of Command
-  Line Tools that were already present.
-
-- `xcode_cli_uninstall()` now returns `FALSE` when the Command Line Tools were
-  not installed, instead of `TRUE`. `macos_rtools_uninstall()` reported "Xcode
-  CLI: Successfully removed" on that path even though nothing had been removed.
-  The summary now distinguishes a removal from a component that was absent.
-
-- `macos_rtools_install()` no longer reports the output of
-  `xcode-select --version` as the Command Line Tools version. That command
-  reports the version of `xcode-select` itself and never changes with the
-  toolchain. The version now comes from the package receipt.
-
-## Features
-
-- Added `xcode_toolchains()`, which lists every developer directory
-  `xcode-select` could be pointed at: the Command Line Tools plus each
-  installed Xcode bundle, with its version and whether it is active.
-
-  ```r
-  xcode_toolchains()
-  #>                                         path type             version active
-  #> 1 /Applications/Xcode.app/Contents/Developer  app                27.0   TRUE
-  #> 2        /Library/Developer/CommandLineTools  cli 27.0.0.0.1788430756  FALSE
-  ```
-
-  Xcode bundles are found by bundle identifier through Spotlight, so a renamed
-  or relocated install is still detected. A `/Applications/Xcode*.app` glob
-  covers machines where Spotlight indexing is disabled, which catches the
-  versioned names but not installs outside `/Applications`.
-  This lists developer directories, not `.xctoolchain` bundles, which are a
-  separate axis selected via `xcrun --toolchain` and `TOOLCHAINS`.
-
-- Added `is_xcode_toolchain_usable()`, which reports whether a compiler is
-  actually reachable via `xcrun --find clang`. This is the condition that
-  determines whether R can build a package, since R is configured with a bare
-  `clang` that resolves through the active developer directory. It is now what
-  gates the install step.
-
-- Added `developer_dir()`, which resolves the active developer directory and
-  honors `DEVELOPER_DIR`. That variable overrides the `xcode-select` selection
-  for `xcrun`, the `/usr/bin` shims and `xcodebuild`, and none of the package's
-  detection accounted for it.
-
-- Added `xcode_cli_version()`, reading the real Command Line Tools version from
-  the `com.apple.pkg.CLTools_Executables` receipt.
-
-- `xcode_cli_switch()` now takes a `path`, so a specific toolchain from
-  `xcode_toolchains()` can be selected rather than always forcing the Command
-  Line Tools. The target is validated before use, the displaced selection is
-  named, and a set `DEVELOPER_DIR` is flagged because it silently overrides the
-  stored selection.
-
-- `macos_rtools_install()` now reports which toolchain is active rather than
-  assuming it is a full Xcode at `/Applications/Xcode.app`, and reports a
-  failure, instead of "no action needed", when the Command Line Tools are on
-  disk but the active developer directory is stale so nothing can compile. It
-  also verifies that a compiler is reachable *after* installing, rather than
-  trusting the installer's return value, since a stale selection or a
-  `DEVELOPER_DIR` override still shadows freshly installed tools.
-
-- `xcode_cli_install()` no longer skips the installation merely because an
-  Xcode bundle exists somewhere on disk. An unselected Xcode provides no
-  compiler, so the skip now requires a toolchain that is actually active.
-
-## Breaking Changes
-
-- `is_xcode_cli_installed()` now reports whether the Command Line Tools
-  **package** is installed, rather than whether it is the selected developer
-  directory. Selection is a separate question, answered by `developer_dir()`
-  and `is_xcode_toolchain_usable()`. The split is deliberate: the destructive
-  path in `xcode_cli_uninstall()` must stay keyed on package presence, because
-  widening it to mean "a usable toolchain is selected" would let a machine with
-  Xcode selected delete the Command Line Tools.
-
-- `is_xcode_app_installed()` now reports whether any Xcode bundle is installed
-  anywhere, rather than whether `/Applications/Xcode.app` is the selected
-  developer directory.
-
-- `xcode_cli_switch()` takes `path` as its first argument, where `password`
-  used to be. A positional call such as `xcode_cli_switch(pw)` now fails with a
-  clear error rather than switching.
-
-## Internal
-
-- Path comparisons are normalized through `normalize_developer_dir()`, which
-  expands an `.app` bundle to its developer directory, strips trailing slashes
-  and resolves symlinks. macOS reports these paths in forms that `identical()`
-  would never match, for instance `/tmp` against `/private/tmp`.
-- Added tests covering non-standard, versioned and relocated toolchain layouts,
-  plus a test pinning the invariant that `xcode_cli_uninstall()` never derives
-  its removal target from the active selection.
-- The `xcode-select --switch` target is shell-quoted, so the caller-supplied
-  `path` cannot split on spaces. `xcode_cli_switch()` also declines to echo
-  that argument in its error message, because it took `password`'s position and
-  a legacy positional call would otherwise print a sudo password.
-
 # macrtools 0.0.8
 
-## Features
+## Breaking changes
 
-- Added support for macOS Golden Gate (27.x).
+- `is_xcode_cli_installed()` now reports whether the Command Line Tools package
+  is installed, rather than whether it is the selected developer directory. Use
+  `developer_dir()` or `is_xcode_toolchain_usable()` to ask about the selection.
 
-## Bug Fixes
+- `is_xcode_app_installed()` now reports whether any Xcode is installed
+  anywhere, rather than whether `/Applications/Xcode.app` is selected.
 
-- Fixed the macOS version check so that macOS 27 is recognized as supported.
-  `is_macos_r_supported()` compares against an *exclusive* upper bound, so the
-  previous value of `"27.0"` rejected every macOS 27 release, including 27.0
-  itself. On macOS 27 this aborted `macos_rtools_install()`, `gfortran_install()`
-  and `openmp_install()`, and printed an "unsupported" warning on attach.
-  This is the same off-by-one that affected Tahoe
-  ([#28](https://github.com/coatless-mac/macrtools/issues/28)).
+- `xcode_cli_switch()` takes `path` as its first argument, where `password`
+  used to be.
 
-- Fixed macOS version comparisons for `.0` releases. `sw_vers -productVersion`
-  reports only two components for a `.0` release (macOS 27.0 reports `"27.0"`,
-  never `"27.0.0"`), and `utils::compareVersion()` ranks a shorter string below
-  an otherwise-equal longer one. Comparing those against three-component bounds
-  placed every `.0` release in the *previous* release's range: `"12.0"` was
-  reported as Big Sur rather than Monterey, `"11.0"` matched nothing at all, and
-  `"10.13"` was rejected as unsupported by an error message that named 10.13 as
-  supported. Versions and bounds are now padded to three components before
-  comparison.
+## New features
 
-## Internal
+- Added support for macOS 27 (Golden Gate).
 
-- Centralized the macOS support window behind `minimum_supported_macos_version()`
-  and `first_unsupported_macos_version()`, mirroring the R version window added
-  in 0.0.7. The ceiling is now named for what it is, the first *rejected*
-  version, which is the distinction both previous off-by-one bugs got wrong.
-- The supported range shown by `assert_macos_supported()` and the startup
-  message is now rendered by a single `macos_support_range()` helper that
-  derives the version number from the bound. Previously the range was written
-  out as a literal in two files, with different wording, and neither was tested.
-- Added upper-bound tests for `is_macos_r_supported()`. The suite previously
-  exercised only the lower bound, which is why both off-by-one bugs shipped
-  without a test failure. Added a test asserting that exactly one named
-  `is_macos_*()` predicate matches any given release, so a new release cannot be
-  swallowed by its predecessor's range.
-- Added `is_macos_golden_gate()` for 27.x.
-- Added `pad_version()` to normalize version strings before comparison, and
-  extended the predicate test to cover the two-component `.0` form that
-  `sw_vers` actually emits.
-- Corrected the `recipes_binary_install()` documentation, which stated that the
-  `darwin` repository is chosen by comparing against the macOS version. It is
-  chosen by comparing against the Darwin kernel version, and the two are no
-  longer a fixed offset apart: Darwin stayed on 25 for macOS 26, then realigned
-  to 27 for macOS 27, skipping 26.
-- Noted in `R/openmp.R` that Apple renumbered Apple clang from 17.0.0
-  (`clang-1700.x`) to 21.0.0 (`clang-2100.x`) at Xcode 26.4, so Xcode 26.4 and
-  newer extrapolate onto the LLVM OpenMP 19.1.5 row. Upstream documents that
-  runtime only through Xcode 26.3, but 19.1.5 remains the newest build published
-  on mac.r-project.org, so the selection is unchanged and still correct.
-- Bumped the declared `testthat` minimum to 3.1.7, the version that introduced
-  `local_mocked_bindings()`, which the suite already relies on throughout.
+- `xcode_toolchains()` lists every developer directory `xcode-select` can be
+  pointed at, with its version and whether it is active.
+
+- `is_xcode_toolchain_usable()` reports whether a compiler is reachable through
+  the active developer directory, which is what decides whether R can build a
+  package.
+
+- `developer_dir()` resolves the active developer directory, honoring
+  `DEVELOPER_DIR`.
+
+- `xcode_cli_version()` reports the installed Command Line Tools version.
+
+- `xcode_cli_switch()` gained a `path` argument, so a toolchain from
+  `xcode_toolchains()` can be selected instead of always forcing the Command
+  Line Tools.
+
+## Bug fixes
+
+- Xcode is detected outside its default location. Both predicates compared the
+  active developer directory against a hardcoded path, so a versioned bundle
+  such as `/Applications/Xcode_16.4.app` reported nothing installed and
+  triggered a needless `softwareupdate` run.
+
+- macOS 27 is recognized as supported. The version ceiling is exclusive, so the
+  previous bound rejected every 27.x release and aborted
+  `macos_rtools_install()`, `gfortran_install()` and `openmp_install()`.
+
+- macOS versions ending in `.0` compare correctly. `sw_vers` reports only two
+  components for those releases, which placed each one in the previous
+  release's range: `"12.0"` read as Big Sur, `"11.0"` matched nothing, and
+  `"10.13"` was rejected as unsupported.
+
+- `xcode_cli_install()` no longer skips installation when an unselected Xcode
+  exists elsewhere on disk, since it provides no compiler.
+
+- `macos_rtools_install()` reports which toolchain is active instead of assuming
+  a full Xcode, and reports a failure rather than success when nothing can
+  compile.
+
+- `macos_rtools_uninstall()` no longer reports a component as removed when it
+  was not installed.
+
+- The Command Line Tools version no longer comes from `xcode-select --version`,
+  which reports the version of `xcode-select` itself.
+
+- `recipes_binary_install()` documentation now states that the `darwin`
+  repository is chosen by Darwin kernel version, not macOS version. The two are
+  no longer a fixed offset apart.
 
 # macrtools 0.0.7
 
