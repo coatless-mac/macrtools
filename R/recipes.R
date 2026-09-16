@@ -48,9 +48,16 @@
 #' | [darwin23/arm64](https://mac.r-project.org/bin/darwin23/arm64)   | /opt/R/arm64          | macOS 14 (Sonoma), Apple Silicon (arm64), used by R 4.6 |
 #'
 #' The correct repository is detected automatically: the highest `darwin`
-#' version less than or equal to your macOS is selected for your architecture.
-#' R 4.6 on Apple Silicon (macOS 14+) therefore resolves to `darwin23/arm64`,
-#' which installs to the same `/opt/R/arm64` prefix as `darwin20/arm64`.
+#' version less than or equal to your *Darwin kernel* version (`uname -r`) is
+#' selected for your architecture. R 4.6 on Apple Silicon (macOS 14+) therefore
+#' resolves to `darwin23/arm64`, which installs to the same `/opt/R/arm64`
+#' prefix as `darwin20/arm64`.
+#'
+#' Note that the Darwin version is not the macOS version, and the two are no
+#' longer a fixed offset apart. Darwin tracked `macOS + 9` through macOS 15
+#' (Darwin 24), stayed on 25 for macOS 26 (Tahoe), then realigned to match the
+#' marketing number for macOS 27 (Darwin 27), skipping Darwin 26 entirely.
+#' Always read the Darwin version from `uname -r` rather than deriving it.
 #'
 #' @section Differences:
 #' The official implementation uses `quiet` as a parameter to suppress output

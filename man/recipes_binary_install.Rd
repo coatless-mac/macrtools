@@ -62,9 +62,16 @@ repository and the install path are either:\tabular{lll}{
 
 
 The correct repository is detected automatically: the highest \code{darwin}
-version less than or equal to your macOS is selected for your architecture.
-R 4.6 on Apple Silicon (macOS 14+) therefore resolves to \code{darwin23/arm64},
-which installs to the same \verb{/opt/R/arm64} prefix as \code{darwin20/arm64}.
+version less than or equal to your \emph{Darwin kernel} version (\code{uname -r}) is
+selected for your architecture. R 4.6 on Apple Silicon (macOS 14+) therefore
+resolves to \code{darwin23/arm64}, which installs to the same \verb{/opt/R/arm64}
+prefix as \code{darwin20/arm64}.
+
+Note that the Darwin version is not the macOS version, and the two are no
+longer a fixed offset apart. Darwin tracked \code{macOS + 9} through macOS 15
+(Darwin 24), stayed on 25 for macOS 26 (Tahoe), then realigned to match the
+marketing number for macOS 27 (Darwin 27), skipping Darwin 26 entirely.
+Always read the Darwin version from \code{uname -r} rather than deriving it.
 }
 \section{Differences}{
 

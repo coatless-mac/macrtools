@@ -39,9 +39,10 @@ assert_macos_supported <- function(call = caller_env()) {
 
     if (!is_macos_r_supported()) {
         mac_version <- shell_mac_version()
+        supported_range <- macos_support_range()
         cli::cli_abort(c(
             "{.pkg macrtools}: Your macOS version {.val {mac_version}} is not supported.",
-            "{.pkg macrtools}: Supported versions: macOS High Sierra (10.13) through macOS Tahoe (26.x).",
+            "{.pkg macrtools}: Supported versions: {supported_range}.",
             "i" = "Please upgrade your macOS to a supported version or use an alternative method to install development tools."
         ),
         call = call)

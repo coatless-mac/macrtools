@@ -359,12 +359,22 @@ get_openmp_url_for_xcode <- function() {
     clang_info <- get_apple_clang_version()
     clang_version <- clang_info$build_number
 
-    # Version mapping based on the documentation
-    # Using the Release versions for stability
+    # Version mapping based on the documentation at
+    # https://mac.r-project.org/openmp/, using the Release versions for
+    # stability. The table is descending and the first row whose min_clang the
+    # detected build meets is selected, so a newer-than-documented Apple clang
+    # resolves to the newest known runtime rather than failing.
+    #
+    # Upstream documents 19.1.5 only through Xcode 26.3 (Apple clang 1700.x).
+    # Apple then renumbered Apple clang from 17.0.0 (clang-1700.x) to 21.0.0
+    # (clang-2100.x) at Xcode 26.4, so Xcode 26.4 and newer, including Xcode 27
+    # (Apple clang 2100.3.x), extrapolate onto that row. 19.1.5 is still the
+    # newest runtime published upstream, so it remains the best available
+    # choice. Revisit when mac.r-project.org publishes a newer build.
     openmp_mapping <- base::data.frame(
         min_clang = c(1700, 1600, 1500, 1403, 1400, 1316, 1300, 1205, 1200, 1103, 1100, 1001),
         filename = c(
-            "openmp-19.1.5-darwin20-Release.tar.gz",  # Xcode 16.3-26.x (Apple clang 1700.x and up)
+            "openmp-19.1.5-darwin20-Release.tar.gz",  # Xcode 16.3 and up (Apple clang 1700.x and up)
             "openmp-17.0.6-darwin20-Release.tar.gz",  # Xcode 16.0-16.2 (Apple clang 1600.x)
             "openmp-16.0.4-darwin20-Release.tar.gz",  # Xcode 15.x (Apple clang 1500.x)
             "openmp-15.0.7-darwin20-Release.tar.gz",  # Xcode 14.3.x (Apple clang 1403.x)

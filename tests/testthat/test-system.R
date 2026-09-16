@@ -106,3 +106,127 @@ test_that("supported R version window is the single source of truth", {
     expect_true(is_r_version_supported(version = minimum_supported_r_version()))
     expect_true(is_r_version_supported(version = maximum_supported_r_version()))
 })
+
+test_that("macOS support window is the single source of truth", {
+    expect_equal(minimum_supported_macos_version(), "10.13.0")
+    # The ceiling is EXCLUSIVE: it names the first version we reject, not the
+    # newest we support. Writing the newest supported release here instead is
+    # the off-by-one that shipped for Tahoe (#28) and again for macOS 27.
+    expect_equal(first_unsupported_macos_version(), "28.0")
+})
+
+test_that("is_macos_r_supported accepts every release below the ceiling", {
+    for (v in c("10.13.0", "10.15.7", "11.7.10", "14.7.2", "15.6.1",
+                "26.0", "26.4.1", "27.0", "27.0.1", "27.9.9")) {
+        local_mocked_bindings(shell_mac_version = function() v)
+        expect_true(is_macos_r_supported(), info = v)
+    }
+})
+
+test_that("is_macos_r_supported rejects releases outside the window", {
+    for (v in c("10.12.0", "10.12.6", "28.0", "28.0.1", "29.0")) {
+        local_mocked_bindings(shell_mac_version = function() v)
+        expect_false(is_macos_r_supported(), info = v)
+    }
+})
+
+test_that("is_macos_golden_gate identifies macOS 27", {
+    for (v in c("27.0", "27.0.1", "27.3.2")) {
+        local_mocked_bindings(shell_mac_version = function() v)
+        expect_true(is_macos_golden_gate(), info = v)
+    }
+    for (v in c("26.4.1", "28.0")) {
+        local_mocked_bindings(shell_mac_version = function() v)
+        expect_false(is_macos_golden_gate(), info = v)
+    }
+})
+
+macos_predicates <- function() {
+    base::list(
+        high_sierra = is_macos_high_sierra,
+        mojave      = is_macos_mojave,
+        catalina    = is_macos_catalina,
+        big_sur     = is_macos_big_sur,
+        monterey    = is_macos_monterey,
+        ventura     = is_macos_ventura,
+        sonoma      = is_macos_sonoma,
+        sequoia     = is_macos_sequoia,
+        tahoe       = is_macos_tahoe,
+        golden_gate = is_macos_golden_gate
+    )
+}
+
+test_that("exactly one named macOS predicate matches any given release", {
+    # Guards against a new release both widening its own range and being
+    # swallowed by its predecessor's (e.g. bumping is_macos_tahoe() to 28.0).
+    predicates <- macos_predicates()
+
+    samples <- c(
+        high_sierra = "10.13.6", mojave   = "10.14.6", catalina = "10.15.7",
+        big_sur     = "11.7.10", monterey = "12.7.6",  ventura  = "13.7.1",
+        sonoma      = "14.7.2",  sequoia  = "15.6.1",  tahoe    = "26.4.1",
+        golden_gate = "27.0.1"
+    )
+
+    for (nm in base::names(samples)) {
+        local_mocked_bindings(shell_mac_version = function() samples[[nm]])
+        matched <- base::names(base::Filter(function(f) f(), predicates))
+        expect_equal(matched, nm, info = samples[[nm]])
+    }
+})
+
+test_that("named macOS predicates handle the two-component form of a .0 release", {
+    # sw_vers -productVersion reports only two components for a .0 release:
+    # macOS 27.0 reports "27.0", never "27.0.0". compareVersion() ranks a
+    # shorter string BELOW an otherwise-equal longer one, so an unpadded
+    # two-component version compared against three-component bounds lands in
+    # the PREVIOUS release's range.
+    predicates <- macos_predicates()
+
+    samples <- c(
+        high_sierra = "10.13", mojave   = "10.14", catalina = "10.15",
+        big_sur     = "11.0",  monterey = "12.0",  ventura  = "13.0",
+        sonoma      = "14.0",  sequoia  = "15.0",  tahoe    = "26.0",
+        golden_gate = "27.0"
+    )
+
+    for (nm in base::names(samples)) {
+        local_mocked_bindings(shell_mac_version = function() samples[[nm]])
+        matched <- base::names(base::Filter(function(f) f(), predicates))
+        expect_equal(matched, nm, info = samples[[nm]])
+    }
+})
+
+test_that("is_macos_r_supported accepts the two-component form of its floor", {
+    # High Sierra GM reports "10.13". Rejecting it produces an error message
+    # that names 10.13 as supported in the same breath.
+    local_mocked_bindings(shell_mac_version = function() "10.13")
+    expect_true(is_macos_r_supported())
+})
+
+test_that("version_between handles double-digit majors", {
+    # 10.x-only coverage would hide a lexical-vs-numeric comparison mistake.
+    expect_true(version_between("27.0", "10.13.0", "28.0"))
+    expect_true(version_between("9.0", "9.0", "28.0"))
+    expect_false(version_between("28.0", "10.13.0", "28.0"))
+    expect_false(version_between("28.0.1", "10.13.0", "28.0"))
+})
+
+test_that("pad_version pads to three components without truncating", {
+    expect_equal(pad_version("27"), "27.0.0")
+    expect_equal(pad_version("27.0"), "27.0.0")
+    expect_equal(pad_version("27.0.1"), "27.0.1")
+    expect_equal(pad_version("10.13"), "10.13.0")
+    # Longer versions are left alone rather than cut down.
+    expect_equal(pad_version("27.0.1.2"), "27.0.1.2")
+    # Padding must make the .0 form compare equal to its padded self.
+    expect_equal(utils::compareVersion(pad_version("27.0"), pad_version("27.0.0")), 0L)
+})
+test_that("the advertised macOS window is derived from the enforced bound", {
+    # The range text must follow the bound rather than repeat it, which is how
+    # the advertised window silently went stale in past releases.
+    expect_match(macos_support_range(), "\\b27\\.x\\b")
+
+    local_mocked_bindings(first_unsupported_macos_version = function() "29.0")
+    expect_match(macos_support_range(), "\\b28\\.x\\b")
+})

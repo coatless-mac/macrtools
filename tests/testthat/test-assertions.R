@@ -72,3 +72,20 @@ test_that("assert_r_version_supported throws error on unsupported R version", {
     )
     expect_error(assert_r_version_supported(), regexp = "not supported")
 })
+
+test_that("assert_macos_supported runs the real predicate against the version", {
+    # The existing unsupported-version test stubs is_macos_r_supported() to a
+    # constant, so it can never detect a wrong bound. Mock only the version
+    # string and let the real range check run.
+    local_mocked_bindings(
+        assert_mac = function(...) NULL,
+        shell_mac_version = function() "27.0"
+    )
+    expect_no_error(assert_macos_supported())
+
+    local_mocked_bindings(
+        assert_mac = function(...) NULL,
+        shell_mac_version = function() "28.0"
+    )
+    expect_error(assert_macos_supported(), regexp = "not supported")
+})
