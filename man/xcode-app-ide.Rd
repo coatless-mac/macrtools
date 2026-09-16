@@ -7,22 +7,20 @@
 is_xcode_app_installed()
 }
 \description{
-Checks to see whether Xcode.app Integrated Developer Environment
-(IDE) was installed and is active under the default location.
+Checks whether an Xcode.app Integrated Developer Environment (IDE) is
+installed anywhere on the system.
 }
 \details{
-Checks to see if Xcode.app IDE is active by running:
+Installed, not \emph{selected}. Xcode is routinely installed under a versioned
+name such as \verb{/Applications/Xcode_26.6.app}, which is what every
+GitHub-hosted macOS runner does, and \verb{man xcode-select} documents
+non-default locations as supported. Bundles are therefore located by bundle
+identifier rather than by path, so a renamed or relocated install is still
+found.
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{xcode-select -p
-}\if{html}{\out{</div>}}
-
-If it returns:
-
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{/Applications/Xcode.app/Contents/Developer
-}\if{html}{\out{</div>}}
-
-We consider the full Xcode.app to be \strong{installed} and \strong{selected} as
-the command line tools to use.
+To ask instead which toolchain is \emph{active}, use \code{\link[=developer_dir]{developer_dir()}}; to ask
+whether a compiler can actually be reached, use
+\code{\link[=is_xcode_toolchain_usable]{is_xcode_toolchain_usable()}}.
 }
 \examples{
 # Check if Xcode.app IDE is on the path
