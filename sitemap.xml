@@ -15,6 +15,7 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_big_sur.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_catalina.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_golden_gate.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_high_sierra.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_mojave.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_monterey.html</loc></url>
@@ -28,8 +29,11 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_r_version_supported.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/is_x86_64.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/macos-rtools.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/macos_support_range.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/macos_version_in_range.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/newest_supported_macos_name.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/openmp.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/pad_version.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/print.cli.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/r_version_full.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/r_version_major_minor.html</loc></url>
@@ -39,6 +43,7 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/shell_execute.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/shell_mac_version.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/shell_sudo_command.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/supported_macos_version.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/supported_r_version.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/system_arch.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/system_os.html</loc></url>

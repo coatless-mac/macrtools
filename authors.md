@@ -12,13 +12,13 @@
 ## Citation
 
 Balamuta J (2026). *macrtools: macOS Rtools package*. R package version
-0.0.7, <https://mac.thecoatlessprofessor.com/macrtools/>.
+0.0.8, <https://mac.thecoatlessprofessor.com/macrtools/>.
 
     @Manual{,
       title = {macrtools: macOS Rtools package},
       author = {James Joseph Balamuta},
       year = {2026},
-      note = {R package version 0.0.7},
+      note = {R package version 0.0.8},
       url = {https://mac.thecoatlessprofessor.com/macrtools/},
     }
 

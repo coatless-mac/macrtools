@@ -1,5 +1,87 @@
 # Changelog
 
+## macrtools 0.0.8
+
+### Features
+
+- Added support for macOS Golden Gate (27.x).
+
+### Bug Fixes
+
+- Fixed the macOS version check so that macOS 27 is recognized as
+  supported.
+  [`is_macos_r_supported()`](https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_r_supported.md)
+  compares against an *exclusive* upper bound, so the previous value of
+  `"27.0"` rejected every macOS 27 release, including 27.0 itself. On
+  macOS 27 this aborted
+  [`macos_rtools_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/macos-rtools.md),
+  [`gfortran_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.md)
+  and
+  [`openmp_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/openmp.md),
+  and printed an “unsupported” warning on attach. This is the same
+  off-by-one that affected Tahoe
+  ([\#28](https://github.com/coatless-mac/macrtools/issues/28)).
+
+- Fixed macOS version comparisons for `.0` releases.
+  `sw_vers -productVersion` reports only two components for a `.0`
+  release (macOS 27.0 reports `"27.0"`, never `"27.0.0"`), and
+  [`utils::compareVersion()`](https://rdrr.io/r/utils/compareVersion.html)
+  ranks a shorter string below an otherwise-equal longer one. Comparing
+  those against three-component bounds placed every `.0` release in the
+  *previous* release’s range: `"12.0"` was reported as Big Sur rather
+  than Monterey, `"11.0"` matched nothing at all, and `"10.13"` was
+  rejected as unsupported by an error message that named 10.13 as
+  supported. Versions and bounds are now padded to three components
+  before comparison.
+
+### Internal
+
+- Centralized the macOS support window behind
+  [`minimum_supported_macos_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/supported_macos_version.md)
+  and
+  [`first_unsupported_macos_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/supported_macos_version.md),
+  mirroring the R version window added in 0.0.7. The ceiling is now
+  named for what it is, the first *rejected* version, which is the
+  distinction both previous off-by-one bugs got wrong.
+- The supported range shown by
+  [`assert_macos_supported()`](https://mac.thecoatlessprofessor.com/macrtools/reference/assert.md)
+  and the startup message is now rendered by a single
+  [`macos_support_range()`](https://mac.thecoatlessprofessor.com/macrtools/reference/macos_support_range.md)
+  helper that derives the version number from the bound. Previously the
+  range was written out as a literal in two files, with different
+  wording, and neither was tested.
+- Added upper-bound tests for
+  [`is_macos_r_supported()`](https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_r_supported.md).
+  The suite previously exercised only the lower bound, which is why both
+  off-by-one bugs shipped without a test failure. Added a test asserting
+  that exactly one named `is_macos_*()` predicate matches any given
+  release, so a new release cannot be swallowed by its predecessor’s
+  range.
+- Added
+  [`is_macos_golden_gate()`](https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_golden_gate.md)
+  for 27.x.
+- Added
+  [`pad_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/pad_version.md)
+  to normalize version strings before comparison, and extended the
+  predicate test to cover the two-component `.0` form that `sw_vers`
+  actually emits.
+- Corrected the
+  [`recipes_binary_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/recipes_binary_install.md)
+  documentation, which stated that the `darwin` repository is chosen by
+  comparing against the macOS version. It is chosen by comparing against
+  the Darwin kernel version, and the two are no longer a fixed offset
+  apart: Darwin stayed on 25 for macOS 26, then realigned to 27 for
+  macOS 27, skipping 26.
+- Noted in `R/openmp.R` that Apple renumbered Apple clang from 17.0.0
+  (`clang-1700.x`) to 21.0.0 (`clang-2100.x`) at Xcode 26.4, so Xcode
+  26.4 and newer extrapolate onto the LLVM OpenMP 19.1.5 row. Upstream
+  documents that runtime only through Xcode 26.3, but 19.1.5 remains the
+  newest build published on mac.r-project.org, so the selection is
+  unchanged and still correct.
+- Bumped the declared `testthat` minimum to 3.1.7, the version that
+  introduced `local_mocked_bindings()`, which the suite already relies
+  on throughout.
+
 ## macrtools 0.0.7
 
 ### Features

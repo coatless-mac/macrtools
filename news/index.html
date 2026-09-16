@@ -12,7 +12,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">macrtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,29 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.8" id="macrtools-008">macrtools 0.0.8<a class="anchor" aria-label="anchor" href="#macrtools-008"></a></h2>
+<div class="section level3">
+<h3 id="features-0-0-8">Features<a class="anchor" aria-label="anchor" href="#features-0-0-8"></a></h3>
+<ul><li>Added support for macOS Golden Gate (27.x).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-0-8">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-0-8"></a></h3>
+<ul><li><p>Fixed the macOS version check so that macOS 27 is recognized as supported. <code><a href="../reference/is_macos_r_supported.html">is_macos_r_supported()</a></code> compares against an <em>exclusive</em> upper bound, so the previous value of <code>"27.0"</code> rejected every macOS 27 release, including 27.0 itself. On macOS 27 this aborted <code><a href="../reference/macos-rtools.html">macos_rtools_install()</a></code>, <code><a href="../reference/gfortran.html">gfortran_install()</a></code> and <code><a href="../reference/openmp.html">openmp_install()</a></code>, and printed an “unsupported” warning on attach. This is the same off-by-one that affected Tahoe (<a href="https://github.com/coatless-mac/macrtools/issues/28" class="external-link">#28</a>).</p></li>
+<li><p>Fixed macOS version comparisons for <code>.0</code> releases. <code>sw_vers -productVersion</code> reports only two components for a <code>.0</code> release (macOS 27.0 reports <code>"27.0"</code>, never <code>"27.0.0"</code>), and <code><a href="https://rdrr.io/r/utils/compareVersion.html" class="external-link">utils::compareVersion()</a></code> ranks a shorter string below an otherwise-equal longer one. Comparing those against three-component bounds placed every <code>.0</code> release in the <em>previous</em> release’s range: <code>"12.0"</code> was reported as Big Sur rather than Monterey, <code>"11.0"</code> matched nothing at all, and <code>"10.13"</code> was rejected as unsupported by an error message that named 10.13 as supported. Versions and bounds are now padded to three components before comparison.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-0-0-8">Internal<a class="anchor" aria-label="anchor" href="#internal-0-0-8"></a></h3>
+<ul><li>Centralized the macOS support window behind <code><a href="../reference/supported_macos_version.html">minimum_supported_macos_version()</a></code> and <code><a href="../reference/supported_macos_version.html">first_unsupported_macos_version()</a></code>, mirroring the R version window added in 0.0.7. The ceiling is now named for what it is, the first <em>rejected</em> version, which is the distinction both previous off-by-one bugs got wrong.</li>
+<li>The supported range shown by <code><a href="../reference/assert.html">assert_macos_supported()</a></code> and the startup message is now rendered by a single <code><a href="../reference/macos_support_range.html">macos_support_range()</a></code> helper that derives the version number from the bound. Previously the range was written out as a literal in two files, with different wording, and neither was tested.</li>
+<li>Added upper-bound tests for <code><a href="../reference/is_macos_r_supported.html">is_macos_r_supported()</a></code>. The suite previously exercised only the lower bound, which is why both off-by-one bugs shipped without a test failure. Added a test asserting that exactly one named <code>is_macos_*()</code> predicate matches any given release, so a new release cannot be swallowed by its predecessor’s range.</li>
+<li>Added <code><a href="../reference/is_macos_golden_gate.html">is_macos_golden_gate()</a></code> for 27.x.</li>
+<li>Added <code><a href="../reference/pad_version.html">pad_version()</a></code> to normalize version strings before comparison, and extended the predicate test to cover the two-component <code>.0</code> form that <code>sw_vers</code> actually emits.</li>
+<li>Corrected the <code><a href="../reference/recipes_binary_install.html">recipes_binary_install()</a></code> documentation, which stated that the <code>darwin</code> repository is chosen by comparing against the macOS version. It is chosen by comparing against the Darwin kernel version, and the two are no longer a fixed offset apart: Darwin stayed on 25 for macOS 26, then realigned to 27 for macOS 27, skipping 26.</li>
+<li>Noted in <code>R/openmp.R</code> that Apple renumbered Apple clang from 17.0.0 (<code>clang-1700.x</code>) to 21.0.0 (<code>clang-2100.x</code>) at Xcode 26.4, so Xcode 26.4 and newer extrapolate onto the LLVM OpenMP 19.1.5 row. Upstream documents that runtime only through Xcode 26.3, but 19.1.5 remains the newest build published on mac.r-project.org, so the selection is unchanged and still correct.</li>
+<li>Bumped the declared <code>testthat</code> minimum to 3.1.7, the version that introduced <code>local_mocked_bindings()</code>, which the suite already relies on throughout.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.7" id="macrtools-007">macrtools 0.0.7<a class="anchor" aria-label="anchor" href="#macrtools-007"></a></h2>
 <div class="section level3">
@@ -201,11 +224,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://thecoatlessprofessor.com/" class="external-link">James Joseph Balamuta</a>. Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Developed by <a href="https://thecoatlessprofessor.com/" class="external-link">James Joseph Balamuta</a>. Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

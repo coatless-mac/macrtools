@@ -16,7 +16,7 @@ recipes system designed by Simon Urbanek."><script async src="https://pagead2.go
 
     <a class="navbar-brand me-2" href="../index.html">macrtools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -119,9 +119,15 @@ Default <code>TRUE</code>.</p></dd>
     <p>The function attempts to detect the appropriate repository and installation
 path for the binary packages when <code>"auto"</code> is set. By default, the
 repository and the install path are either:</p><table class="table table"><tr><td>Name</td><td>Installation Location</td><td>Target</td></tr><tr><td><a href="https://mac.r-project.org/bin/darwin17/x86_64" class="external-link">darwin17/x86_64</a></td><td>/usr/local</td><td>macOS 10.13, Intel (x86_64)</td></tr><tr><td><a href="https://mac.r-project.org/bin/darwin20/x86_64" class="external-link">darwin20/x86_64</a></td><td>/opt/R/x86_64</td><td>macOS 11, Intel (x86_64)</td></tr><tr><td><a href="https://mac.r-project.org/bin/darwin20/arm64" class="external-link">darwin20/arm64</a></td><td>/opt/R/arm64</td><td>macOS 11, Apple Silicon (arm64)</td></tr><tr><td><a href="https://mac.r-project.org/bin/darwin23/arm64" class="external-link">darwin23/arm64</a></td><td>/opt/R/arm64</td><td>macOS 14 (Sonoma), Apple Silicon (arm64), used by R 4.6</td></tr></table><p>The correct repository is detected automatically: the highest <code>darwin</code>
-version less than or equal to your macOS is selected for your architecture.
-R 4.6 on Apple Silicon (macOS 14+) therefore resolves to <code>darwin23/arm64</code>,
-which installs to the same <code>/opt/R/arm64</code> prefix as <code>darwin20/arm64</code>.</p>
+version less than or equal to your <em>Darwin kernel</em> version (<code>uname -r</code>) is
+selected for your architecture. R 4.6 on Apple Silicon (macOS 14+) therefore
+resolves to <code>darwin23/arm64</code>, which installs to the same <code>/opt/R/arm64</code>
+prefix as <code>darwin20/arm64</code>.</p>
+<p>Note that the Darwin version is not the macOS version, and the two are no
+longer a fixed offset apart. Darwin tracked <code>macOS + 9</code> through macOS 15
+(Darwin 24), stayed on 25 for macOS 26 (Tahoe), then realigned to match the
+marketing number for macOS 27 (Darwin 27), skipping Darwin 26 entirely.
+Always read the Darwin version from <code>uname -r</code> rather than deriving it.</p>
     </div>
     <div class="section level2">
     <h2 id="differences">Differences<a class="anchor" aria-label="anchor" href="#differences"></a></h2>
@@ -178,11 +184,11 @@ instead of <code>verbose</code>.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://thecoatlessprofessor.com/" class="external-link">James Joseph Balamuta</a>. Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Developed by <a href="https://thecoatlessprofessor.com/" class="external-link">James Joseph Balamuta</a>. Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
