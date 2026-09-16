@@ -49,6 +49,8 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">is_xcode_cli_installed</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">xcode_cli_version</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">xcode_cli_install</span><span class="op">(</span></span>
@@ -62,6 +64,7 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">xcode_cli_switch</span><span class="op">(</span></span>
+<span>  path <span class="op">=</span> <span class="fu"><a href="install-directory.html">install_directory_xcode_cli</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"macrtools.password"</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
@@ -83,15 +86,31 @@ allow XCode CLI to be installed, and removing XCode CLI.</p>
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Display status messages</p></dd>
 
+
+<dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
+<dd><p>Developer directory, or <code>Xcode.app</code> bundle, to make active.
+Defaults to the Command Line Tools location. Use <code><a href="xcode-toolchain.html">xcode_toolchains()</a></code> to
+see the available options.</p></dd>
+
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>The Command Line Tools version from the package receipt, or
+<code>NA_character_</code> when they are not installed.</p>
+    </div>
     <div class="section level2">
     <h2 id="check-if-xcode-cli-is-installed">Check if XCode CLI is installed<a class="anchor" aria-label="anchor" href="#check-if-xcode-cli-is-installed"></a></h2>
 
 
 
-<p>Checks to see if Xcode CLI returns a viable path to the default Xcode CLI
-location by checking the output of:</p>
-<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">xcode-select</span> <span class="at">-p</span></span></code></pre><p></p></div>
+<p><code>is_xcode_cli_installed()</code> reports whether the Command Line Tools <em>package</em>
+is present, by looking for the compiler it installs:</p>
+<p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">/Library/Developer/CommandLineTools/usr/bin/clang</span></span></code></pre><p></p></div>
+<p>This is independent of which developer directory is selected. The previous
+implementation compared <code>xcode-select -p</code> against that path with
+<code><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical()</a></code>, so it reported <code>FALSE</code> on every machine where anything else
+was active, including the versioned Xcode that CI runners select.</p>
+<p>For the selection, see <code><a href="xcode-toolchain.html">developer_dir()</a></code> and <code><a href="xcode-toolchain.html">is_xcode_toolchain_usable()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="xcode-cli-installation">XCode CLI Installation<a class="anchor" aria-label="anchor" href="#xcode-cli-installation"></a></h2>
@@ -156,13 +175,15 @@ app using the following steps:</p><ol><li><p>Make sure that Xcode is closed. Qui
     <h2 id="change-xcode-cli-location">Change Xcode CLI Location<a class="anchor" aria-label="anchor" href="#change-xcode-cli-location"></a></h2>
 
 
-<p>If the Xcode Application has been previously installed, the underlying
-path reported by <code>xcode-select</code> may not reflect the Xcode CLI location.
-The situation can be rectified by using the <code>xcode_cli_switch()</code> function,
-which changes the command line tool directory away from the Xcode application
-location to the Xcode CLI location. This uses the <em>default</em> Xcode CLI
-path.</p>
+<p>The path reported by <code>xcode-select</code> may not point at the toolchain you want
+to build against. <code>xcode_cli_switch()</code> changes it, defaulting to the
+Command Line Tools:</p>
 <p></p><div class="sourceCode sh"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">sudo</span> xcode-select <span class="at">--switch</span> /Library/Developer/CommandLineTools</span></code></pre><p></p></div>
+<p>Pass <code>path</code> to select something else, using a <code>path</code> from
+<code><a href="xcode-toolchain.html">xcode_toolchains()</a></code>. The target is validated first, and the selection being
+replaced is named, since the change is machine-wide and affects every build.</p>
+<p>Note that <code>DEVELOPER_DIR</code> overrides the stored selection, so this has no
+visible effect while that variable is set.</p>
 <p>If this does not fix the issue, we recommend using the <code>xcode_cli_reset()</code>
 function.</p>
     </div>
@@ -180,7 +201,10 @@ the default Xcode CLI settings.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Check if Xcode CLI is installed</span></span></span>
 <span class="r-in"><span><span class="fu">is_xcode_cli_installed</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="co"># Version of the installed Command Line Tools</span></span></span>
+<span class="r-in"><span><span class="fu">xcode_cli_version</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "26.6.0.0.1781586589"</span>
 <span class="r-in"><span><span class="co"># Determine the path location of Xcode CLI</span></span></span>
 <span class="r-in"><span><span class="fu">xcode_cli_path</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Applications/Xcode_26.6.app/Contents/Developer"</span>

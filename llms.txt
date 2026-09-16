@@ -219,6 +219,7 @@ Primary functions for installing and managing the complete R toolchain
 Functions for managing Xcode CLI installation and configuration
 
 - [`is_xcode_cli_installed()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
+  [`xcode_cli_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
   [`xcode_cli_path()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
   [`xcode_cli_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
   [`xcode_cli_uninstall()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
@@ -228,6 +229,11 @@ Functions for managing Xcode CLI installation and configuration
 
 - [`is_xcode_app_installed()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-app-ide.md)
   : Detect if the Xcode.app IDE is Installed
+
+- [`developer_dir()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  [`is_xcode_toolchain_usable()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  [`xcode_toolchains()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  : Inspect the Active Xcode Toolchain
 
 - [`xcode_select()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-select.md)
   [`xcode_select_path()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-select.md)

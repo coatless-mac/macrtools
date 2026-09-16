@@ -2,85 +2,84 @@
 
 ## macrtools 0.0.8
 
-### Features
+### Breaking changes
 
-- Added support for macOS Golden Gate (27.x).
+- [`is_xcode_cli_installed()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
+  now reports whether the Command Line Tools package is installed,
+  rather than whether it is the selected developer directory. Use
+  [`developer_dir()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  or
+  [`is_xcode_toolchain_usable()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  to ask about the selection.
 
-### Bug Fixes
+- [`is_xcode_app_installed()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-app-ide.md)
+  now reports whether any Xcode is installed anywhere, rather than
+  whether `/Applications/Xcode.app` is selected.
 
-- Fixed the macOS version check so that macOS 27 is recognized as
-  supported.
-  [`is_macos_r_supported()`](https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_r_supported.md)
-  compares against an *exclusive* upper bound, so the previous value of
-  `"27.0"` rejected every macOS 27 release, including 27.0 itself. On
-  macOS 27 this aborted
+- [`xcode_cli_switch()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
+  takes `path` as its first argument, where `password` used to be.
+
+### New features
+
+- Added support for macOS 27 (Golden Gate).
+
+- [`xcode_toolchains()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  lists every developer directory `xcode-select` can be pointed at, with
+  its version and whether it is active.
+
+- [`is_xcode_toolchain_usable()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  reports whether a compiler is reachable through the active developer
+  directory, which is what decides whether R can build a package.
+
+- [`developer_dir()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  resolves the active developer directory, honoring `DEVELOPER_DIR`.
+
+- [`xcode_cli_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
+  reports the installed Command Line Tools version.
+
+- [`xcode_cli_switch()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
+  gained a `path` argument, so a toolchain from
+  [`xcode_toolchains()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  can be selected instead of always forcing the Command Line Tools.
+
+### Bug fixes
+
+- Xcode is detected outside its default location. Both predicates
+  compared the active developer directory against a hardcoded path, so a
+  versioned bundle such as `/Applications/Xcode_16.4.app` reported
+  nothing installed and triggered a needless `softwareupdate` run.
+
+- macOS 27 is recognized as supported. The version ceiling is exclusive,
+  so the previous bound rejected every 27.x release and aborted
   [`macos_rtools_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/macos-rtools.md),
   [`gfortran_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.md)
   and
-  [`openmp_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/openmp.md),
-  and printed an “unsupported” warning on attach. This is the same
-  off-by-one that affected Tahoe
-  ([\#28](https://github.com/coatless-mac/macrtools/issues/28)).
+  [`openmp_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/openmp.md).
 
-- Fixed macOS version comparisons for `.0` releases.
-  `sw_vers -productVersion` reports only two components for a `.0`
-  release (macOS 27.0 reports `"27.0"`, never `"27.0.0"`), and
-  [`utils::compareVersion()`](https://rdrr.io/r/utils/compareVersion.html)
-  ranks a shorter string below an otherwise-equal longer one. Comparing
-  those against three-component bounds placed every `.0` release in the
-  *previous* release’s range: `"12.0"` was reported as Big Sur rather
-  than Monterey, `"11.0"` matched nothing at all, and `"10.13"` was
-  rejected as unsupported by an error message that named 10.13 as
-  supported. Versions and bounds are now padded to three components
-  before comparison.
+- macOS versions ending in `.0` compare correctly. `sw_vers` reports
+  only two components for those releases, which placed each one in the
+  previous release’s range: `"12.0"` read as Big Sur, `"11.0"` matched
+  nothing, and `"10.13"` was rejected as unsupported.
 
-### Internal
+- [`xcode_cli_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.md)
+  no longer skips installation when an unselected Xcode exists elsewhere
+  on disk, since it provides no compiler.
 
-- Centralized the macOS support window behind
-  [`minimum_supported_macos_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/supported_macos_version.md)
-  and
-  [`first_unsupported_macos_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/supported_macos_version.md),
-  mirroring the R version window added in 0.0.7. The ceiling is now
-  named for what it is, the first *rejected* version, which is the
-  distinction both previous off-by-one bugs got wrong.
-- The supported range shown by
-  [`assert_macos_supported()`](https://mac.thecoatlessprofessor.com/macrtools/reference/assert.md)
-  and the startup message is now rendered by a single
-  [`macos_support_range()`](https://mac.thecoatlessprofessor.com/macrtools/reference/macos_support_range.md)
-  helper that derives the version number from the bound. Previously the
-  range was written out as a literal in two files, with different
-  wording, and neither was tested.
-- Added upper-bound tests for
-  [`is_macos_r_supported()`](https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_r_supported.md).
-  The suite previously exercised only the lower bound, which is why both
-  off-by-one bugs shipped without a test failure. Added a test asserting
-  that exactly one named `is_macos_*()` predicate matches any given
-  release, so a new release cannot be swallowed by its predecessor’s
-  range.
-- Added
-  [`is_macos_golden_gate()`](https://mac.thecoatlessprofessor.com/macrtools/reference/is_macos_golden_gate.md)
-  for 27.x.
-- Added
-  [`pad_version()`](https://mac.thecoatlessprofessor.com/macrtools/reference/pad_version.md)
-  to normalize version strings before comparison, and extended the
-  predicate test to cover the two-component `.0` form that `sw_vers`
-  actually emits.
-- Corrected the
-  [`recipes_binary_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/recipes_binary_install.md)
-  documentation, which stated that the `darwin` repository is chosen by
-  comparing against the macOS version. It is chosen by comparing against
-  the Darwin kernel version, and the two are no longer a fixed offset
-  apart: Darwin stayed on 25 for macOS 26, then realigned to 27 for
-  macOS 27, skipping 26.
-- Noted in `R/openmp.R` that Apple renumbered Apple clang from 17.0.0
-  (`clang-1700.x`) to 21.0.0 (`clang-2100.x`) at Xcode 26.4, so Xcode
-  26.4 and newer extrapolate onto the LLVM OpenMP 19.1.5 row. Upstream
-  documents that runtime only through Xcode 26.3, but 19.1.5 remains the
-  newest build published on mac.r-project.org, so the selection is
-  unchanged and still correct.
-- Bumped the declared `testthat` minimum to 3.1.7, the version that
-  introduced `local_mocked_bindings()`, which the suite already relies
-  on throughout.
+- [`macos_rtools_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/macos-rtools.md)
+  reports which toolchain is active instead of assuming a full Xcode,
+  and reports a failure rather than success when nothing can compile.
+
+- [`macos_rtools_uninstall()`](https://mac.thecoatlessprofessor.com/macrtools/reference/macos-rtools.md)
+  no longer reports a component as removed when it was not installed.
+
+- The Command Line Tools version no longer comes from
+  `xcode-select --version`, which reports the version of `xcode-select`
+  itself.
+
+- [`recipes_binary_install()`](https://mac.thecoatlessprofessor.com/macrtools/reference/recipes_binary_install.md)
+  documentation now states that the `darwin` repository is chosen by
+  Darwin kernel version, not macOS version. The two are no longer a
+  fixed offset apart.
 
 ## macrtools 0.0.7
 

@@ -8,6 +8,8 @@ allow XCode CLI to be installed, and removing XCode CLI.
 ``` r
 is_xcode_cli_installed()
 
+xcode_cli_version()
+
 xcode_cli_path()
 
 xcode_cli_install(
@@ -21,6 +23,7 @@ xcode_cli_uninstall(
 )
 
 xcode_cli_switch(
+  path = install_directory_xcode_cli(),
   password = base::getOption("macrtools.password"),
   verbose = TRUE
 )
@@ -41,12 +44,35 @@ xcode_cli_reset(
 
   Display status messages
 
+- path:
+
+  Developer directory, or `Xcode.app` bundle, to make active. Defaults
+  to the Command Line Tools location. Use
+  [`xcode_toolchains()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+  to see the available options.
+
+## Value
+
+The Command Line Tools version from the package receipt, or
+`NA_character_` when they are not installed.
+
 ## Check if XCode CLI is installed
 
-Checks to see if Xcode CLI returns a viable path to the default Xcode
-CLI location by checking the output of:
+`is_xcode_cli_installed()` reports whether the Command Line Tools
+*package* is present, by looking for the compiler it installs:
 
-    xcode-select -p
+    /Library/Developer/CommandLineTools/usr/bin/clang
+
+This is independent of which developer directory is selected. The
+previous implementation compared `xcode-select -p` against that path
+with [`identical()`](https://rdrr.io/r/base/identical.html), so it
+reported `FALSE` on every machine where anything else was active,
+including the versioned Xcode that CI runners select.
+
+For the selection, see
+[`developer_dir()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md)
+and
+[`is_xcode_toolchain_usable()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md).
 
 ## XCode CLI Installation
 
@@ -135,14 +161,19 @@ app using the following steps:
 
 ## Change Xcode CLI Location
 
-If the Xcode Application has been previously installed, the underlying
-path reported by `xcode-select` may not reflect the Xcode CLI location.
-The situation can be rectified by using the `xcode_cli_switch()`
-function, which changes the command line tool directory away from the
-Xcode application location to the Xcode CLI location. This uses the
-*default* Xcode CLI path.
+The path reported by `xcode-select` may not point at the toolchain you
+want to build against. `xcode_cli_switch()` changes it, defaulting to
+the Command Line Tools:
 
     sudo xcode-select --switch /Library/Developer/CommandLineTools
+
+Pass `path` to select something else, using a `path` from
+[`xcode_toolchains()`](https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.md).
+The target is validated first, and the selection being replaced is
+named, since the change is machine-wide and affects every build.
+
+Note that `DEVELOPER_DIR` overrides the stored selection, so this has no
+visible effect while that variable is set.
 
 If this does not fix the issue, we recommend using the
 `xcode_cli_reset()` function.
@@ -161,7 +192,10 @@ We use an *R* sanitized *shell* version of:
 ``` r
 # Check if Xcode CLI is installed
 is_xcode_cli_installed()
-#> [1] FALSE
+#> [1] TRUE
+# Version of the installed Command Line Tools
+xcode_cli_version()
+#> [1] "26.6.0.0.1781586589"
 # Determine the path location of Xcode CLI
 xcode_cli_path()
 #> [1] "/Applications/Xcode_26.6.app/Contents/Developer"

@@ -6,6 +6,7 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/assert.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/binary_download.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/caller_env.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/developer_dir_is_app.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/exec_text.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/force_password.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/gfortran.html</loc></url>
@@ -32,6 +33,7 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/macos_support_range.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/macos_version_in_range.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/newest_supported_macos_name.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/normalize_developer_dir.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/openmp.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/pad_version.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/print.cli.html</loc></url>
@@ -53,6 +55,9 @@
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-app-ide.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-cli.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-select.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode-toolchain.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode_app_bundles.html</loc></url>
+<url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcode_app_version.html</loc></url>
 <url><loc>https://mac.thecoatlessprofessor.com/macrtools/reference/xcodebuild.html</loc></url>
 </urlset>
 
