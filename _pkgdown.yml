@@ -57,8 +57,12 @@ reference:
   - xcode_cli_switch
   - xcode_cli_reset
   - xcode_cli_path
+  - xcode_cli_version
   - is_xcode_cli_installed
   - is_xcode_app_installed
+  - developer_dir
+  - is_xcode_toolchain_usable
+  - xcode_toolchains
   - xcode_select
   - xcode_select_path
   - xcode_select_version

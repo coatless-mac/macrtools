@@ -2,6 +2,7 @@
 % Please edit documentation in R/xcode.R
 \name{is_xcode_cli_installed}
 \alias{is_xcode_cli_installed}
+\alias{xcode_cli_version}
 \alias{xcode_cli_path}
 \alias{xcode_cli_install}
 \alias{xcode_cli_uninstall}
@@ -10,6 +11,8 @@
 \title{Find, Install, or Uninstall XCode CLI}
 \usage{
 is_xcode_cli_installed()
+
+xcode_cli_version()
 
 xcode_cli_path()
 
@@ -24,6 +27,7 @@ xcode_cli_uninstall(
 )
 
 xcode_cli_switch(
+  path = install_directory_xcode_cli(),
   password = base::getOption("macrtools.password"),
   verbose = TRUE
 )
@@ -37,6 +41,14 @@ xcode_cli_reset(
 \item{password}{User password to access \code{sudo}.}
 
 \item{verbose}{Display status messages}
+
+\item{path}{Developer directory, or \code{Xcode.app} bundle, to make active.
+Defaults to the Command Line Tools location. Use \code{\link[=xcode_toolchains]{xcode_toolchains()}} to
+see the available options.}
+}
+\value{
+The Command Line Tools version from the package receipt, or
+\code{NA_character_} when they are not installed.
 }
 \description{
 Set of functions that seek to identify whether XCode CLI was installed,
@@ -45,11 +57,18 @@ allow XCode CLI to be installed, and removing XCode CLI.
 \section{Check if XCode CLI is installed}{
 
 
-Checks to see if Xcode CLI returns a viable path to the default Xcode CLI
-location by checking the output of:
+\code{is_xcode_cli_installed()} reports whether the Command Line Tools \emph{package}
+is present, by looking for the compiler it installs:
 
-\if{html}{\out{<div class="sourceCode sh">}}\preformatted{xcode-select -p
+\if{html}{\out{<div class="sourceCode sh">}}\preformatted{/Library/Developer/CommandLineTools/usr/bin/clang
 }\if{html}{\out{</div>}}
+
+This is independent of which developer directory is selected. The previous
+implementation compared \code{xcode-select -p} against that path with
+\code{identical()}, so it reported \code{FALSE} on every machine where anything else
+was active, including the versioned Xcode that CI runners select.
+
+For the selection, see \code{\link[=developer_dir]{developer_dir()}} and \code{\link[=is_xcode_toolchain_usable]{is_xcode_toolchain_usable()}}.
 }
 
 \section{XCode CLI Installation}{
@@ -142,15 +161,19 @@ app using the following steps:
 
 \section{Change Xcode CLI Location}{
 
-If the Xcode Application has been previously installed, the underlying
-path reported by \code{xcode-select} may not reflect the Xcode CLI location.
-The situation can be rectified by using the \code{\link[=xcode_cli_switch]{xcode_cli_switch()}} function,
-which changes the command line tool directory away from the Xcode application
-location to the Xcode CLI location. This uses the \emph{default} Xcode CLI
-path.
+The path reported by \code{xcode-select} may not point at the toolchain you want
+to build against. \code{\link[=xcode_cli_switch]{xcode_cli_switch()}} changes it, defaulting to the
+Command Line Tools:
 
 \if{html}{\out{<div class="sourceCode sh">}}\preformatted{sudo xcode-select --switch /Library/Developer/CommandLineTools
 }\if{html}{\out{</div>}}
+
+Pass \code{path} to select something else, using a \code{path} from
+\code{\link[=xcode_toolchains]{xcode_toolchains()}}. The target is validated first, and the selection being
+replaced is named, since the change is machine-wide and affects every build.
+
+Note that \code{DEVELOPER_DIR} overrides the stored selection, so this has no
+visible effect while that variable is set.
 
 If this does not fix the issue, we recommend using the \code{\link[=xcode_cli_reset]{xcode_cli_reset()}}
 function.
@@ -170,6 +193,8 @@ We use an \emph{R} sanitized \emph{shell} version of:
 \examples{
 # Check if Xcode CLI is installed
 is_xcode_cli_installed()
+# Version of the installed Command Line Tools
+xcode_cli_version()
 # Determine the path location of Xcode CLI
 xcode_cli_path()
 }

@@ -134,61 +134,112 @@ rtools_install_xcode_cli <- function(entered_password, verbose, describe_steps, 
     cli::cli_text("") # Add spacing
 
     result_xcode <- TRUE
-    if(!is_xcode_app_installed()) {
-        if(!is_xcode_cli_installed()) {
-            if (verbose) {
-                cli::cli_progress_update(id = pb_id, set = 10)
-                cli::cli_alert_info("{.pkg macrtools}: Need to install Xcode Command Line Tools.")
+    # Gate on whether a compiler is actually REACHABLE. The previous check
+    # compared the active developer directory against two hardcoded paths and
+    # so misread every non-standard layout, including the versioned Xcode that
+    # every GitHub runner selects, as "no toolchain installed".
+    if(is_xcode_toolchain_usable()) {
+        if(describe_steps) {
+            active_dir <- developer_dir()
+
+            if(developer_dir_is_app(active_dir)) {
+                bundle <- base::sub("/Contents/Developer$", "", active_dir)
+                active_version <- xcode_app_version(bundle)
+
+                cli::cli_alert_info("{.pkg macrtools}: Full Xcode.app IDE is active.")
                 cli::cli_bullets(c(
-                    "Source: Apple Software Update",
-                    "Installation method: softwareupdate command",
-                    "Status: Not installed",
-                    "Estimated time: 10-15 minutes"
+                    "Location: {.path {bundle}}",
+                    "Version: {.val {active_version}}",
+                    "Status: Pre-installed, skipping Command Line Tools installation"
                 ))
-                cli::cli_text("") # Add spacing
-            }
-
-            if (verbose) cli::cli_progress_update(id = pb_id, set = 20)
-            result_xcode <- xcode_cli_install(password = entered_password, verbose = describe_steps)
-
-            if(!result_xcode) {
-                cli::cli_abort(c(
-                    "{.pkg macrtools}: Failed to install Xcode Command Line Tools.",
-                    "This is a required component for R package development.",
-                    "Installation status: Failed",
-                    "i" = "Try installing manually by running 'sudo xcode-select --install' in Terminal."
-                ))
-            }
-
-            if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
-        } else {
-            if(describe_steps) {
-                # Get Xcode CLI version information
-                xcode_version <- exec_text('xcode-select', '--version')
+            } else {
+                active_location <- if(base::is.na(active_dir)) {
+                    install_directory_xcode_cli()
+                } else {
+                    active_dir
+                }
+                # xcode-select --version reports the version of xcode-select
+                # itself and never changes with the toolchain, so read the
+                # package receipt instead.
+                active_version <- xcode_cli_version()
 
                 cli::cli_alert_info("{.pkg macrtools}: Xcode Command Line Tools already installed.")
                 cli::cli_bullets(c(
-                    "Location: {.path {xcode_cli_path()}}",
-                    "Version: {.val {xcode_version}}",
+                    "Location: {.path {active_location}}",
+                    "Version: {.val {active_version}}",
                     "Status: Pre-installed, no action needed"
                 ))
-                cli::cli_text("") # Add spacing
             }
-            if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
+            cli::cli_text("") # Add spacing
         }
-    } else {
-        if(describe_steps) {
-            # Get full Xcode app version information
-            xcode_app_info <- exec_text('xcodebuild', '-version')
-
-            cli::cli_alert_info("{.pkg macrtools}: Full Xcode.app IDE is installed.")
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
+    } else if(!is_xcode_cli_installed()) {
+        if (verbose) {
+            cli::cli_progress_update(id = pb_id, set = 10)
+            cli::cli_alert_info("{.pkg macrtools}: Need to install Xcode Command Line Tools.")
             cli::cli_bullets(c(
-                "Location: {.path {'/Applications/Xcode.app'}}",
-                "Version information: {.val {xcode_app_info}}",
-                "Status: Pre-installed, skipping Command Line Tools installation"
+                "Source: Apple Software Update",
+                "Installation method: softwareupdate command",
+                "Status: Not installed",
+                "Estimated time: 10-15 minutes"
             ))
             cli::cli_text("") # Add spacing
         }
+
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 20)
+        result_xcode <- xcode_cli_install(password = entered_password, verbose = describe_steps)
+
+        if(!result_xcode) {
+            cli::cli_abort(c(
+                "{.pkg macrtools}: Failed to install Xcode Command Line Tools.",
+                "This is a required component for R package development.",
+                "Installation status: Failed",
+                "i" = "Try installing manually by running 'sudo xcode-select --install' in Terminal."
+            ))
+        }
+
+        # Installing does not guarantee the tools became REACHABLE: a stale
+        # selection or a DEVELOPER_DIR override still shadows them. Verify
+        # rather than trusting the installer's return value, so the summary
+        # cannot claim a working toolchain on a machine that cannot compile.
+        if(!is_xcode_toolchain_usable()) {
+            active_dir <- developer_dir()
+            selected <- if(base::is.na(active_dir)) "none selected" else active_dir
+
+            cli::cli_alert_warning(base::paste(
+                "{.pkg macrtools}: Xcode Command Line Tools were installed, but",
+                "no compiler is reachable yet."
+            ))
+            cli::cli_bullets(c(
+                "Active developer directory: {.val {selected}}",
+                "i" = "Run {.code macrtools::xcode_cli_switch()} to select them, then retry."
+            ))
+            cli::cli_text("") # Add spacing
+
+            result_xcode <- FALSE
+        }
+
+        if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
+    } else {
+        # The Command Line Tools are on disk but no compiler is reachable, so
+        # the active developer directory is stale or broken. Reinstalling does
+        # not fix a bad selection, and reporting success here would claim a
+        # working toolchain on a machine that cannot compile.
+        active_dir <- developer_dir()
+        selected <- if(base::is.na(active_dir)) "none selected" else active_dir
+
+        cli::cli_alert_warning(base::paste(
+            "{.pkg macrtools}: Xcode Command Line Tools are installed, but no",
+            "compiler is reachable."
+        ))
+        cli::cli_bullets(c(
+            "Command Line Tools: {.path {install_directory_xcode_cli()}}",
+            "Active developer directory: {.val {selected}}",
+            "i" = "Run {.code macrtools::xcode_cli_switch()} to select them, then retry."
+        ))
+        cli::cli_text("") # Add spacing
+
+        result_xcode <- FALSE
         if (verbose) cli::cli_progress_update(id = pb_id, set = 30)
     }
 
@@ -359,13 +410,15 @@ macos_rtools_uninstall <- function(
 
     # Step 1: Uninstall Xcode CLI
     result_xcode <- TRUE
+    removed_xcode <- FALSE
     if(is_xcode_cli_installed()) {
         if (verbose) {
             cli::cli_progress_update(id = pb_id, set = 30)
             cli::cli_alert_info("{.pkg macrtools}: Uninstalling Xcode CLI...")
             cli::cli_text("") # Add spacing
         }
-        result_xcode <- xcode_cli_uninstall(password = password, verbose = verbose)
+        removed_xcode <- xcode_cli_uninstall(password = password, verbose = verbose)
+        result_xcode <- removed_xcode
         if(!result_xcode) {
             cli::cli_abort("{.pkg macrtools}: Failed to uninstall Xcode CLI. Please see manual steps.")
         }
@@ -379,12 +432,14 @@ macos_rtools_uninstall <- function(
     # Step 2: Uninstall gfortran
     if (verbose) cli::cli_progress_update(id = pb_id, set = 70)
     result_gfortran <- TRUE
+    removed_gfortran <- FALSE
     if(is_gfortran_installed()) {
         if (verbose) {
             cli::cli_alert_info("{.pkg macrtools}: Uninstalling gfortran...")
             cli::cli_text("") # Add spacing
         }
-        result_gfortran <- gfortran_uninstall(password = password, verbose = verbose)
+        removed_gfortran <- gfortran_uninstall(password = password, verbose = verbose)
+        result_gfortran <- removed_gfortran
         if(!result_gfortran) {
             cli::cli_abort("{.pkg macrtools}: Failed to uninstall gfortran. Please see manual steps.")
         }
@@ -405,8 +460,8 @@ macos_rtools_uninstall <- function(
     if(clean) {
         cli::cli_alert_success("{.pkg macrtools}: Uninstallation complete.")
         cli::cli_bullets(c(
-            "Xcode CLI: Successfully removed",
-            "Gfortran: Successfully removed",
+            base::paste0("Xcode CLI: ", if (removed_xcode) "Successfully removed" else "Was not installed"),
+            base::paste0("Gfortran: ", if (removed_gfortran) "Successfully removed" else "Was not installed"),
             "Note: This did not uninstall any binaries from the recipes project"
         ))
     }

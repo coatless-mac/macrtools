@@ -1,6 +1,6 @@
 Package: macrtools
 Title: macOS Rtools package
-Version: 0.0.8
+Version: 0.0.9
 Authors@R: c(
     person(given = "James Joseph", 
            family = "Balamuta", 
