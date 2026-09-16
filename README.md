@@ -5,7 +5,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="man/figures/logo-macrtools-dark-animated.svg">
   <source media="(prefers-color-scheme: light)" srcset="man/figures/logo-macrtools-light-animated.svg">
-  <img src="man/figures/logo-macrtools-light-animated.svg" alt="macrtools hex logo" align="right" height="170" />
+  <img src="man/figures/logo-macrtools-light-animated.svg" alt="macrtools hex logo" align="right" width="150" />
 </picture>
 
 # macrtools
