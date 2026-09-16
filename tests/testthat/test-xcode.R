@@ -149,37 +149,64 @@ test_that("xcode_cli_install skips when Xcode app is installed", {
 })
 
 test_that("normalize_developer_dir expands a bundle path and strips trailing slashes", {
+    # Deliberately under a root that cannot exist. normalizePath() resolves
+    # symlinks for real paths, and on CI runners /Applications/Xcode.app is a
+    # symlink to the versioned default, so using real paths here would assert
+    # the filesystem rather than this function's own logic.
+    root <- "/nonexistent-macrtools-test"
+
     expect_equal(
-        normalize_developer_dir("/Applications/Xcode_16.4.app"),
-        "/Applications/Xcode_16.4.app/Contents/Developer"
+        normalize_developer_dir(base::file.path(root, "Xcode_16.4.app")),
+        base::file.path(root, "Xcode_16.4.app/Contents/Developer")
     )
     expect_equal(
-        normalize_developer_dir("/Library/Developer/CommandLineTools/"),
-        "/Library/Developer/CommandLineTools"
+        normalize_developer_dir(base::file.path(root, "CommandLineTools/")),
+        base::file.path(root, "CommandLineTools")
     )
     # An already-expanded developer directory is left alone.
     expect_equal(
-        normalize_developer_dir("/Applications/Xcode.app/Contents/Developer"),
-        "/Applications/Xcode.app/Contents/Developer"
+        normalize_developer_dir(base::file.path(root, "Xcode.app/Contents/Developer")),
+        base::file.path(root, "Xcode.app/Contents/Developer")
     )
 })
 
 test_that("normalize_developer_dir is vectorized", {
     # xcode_toolchains() normalizes a whole column at once, so a scalar-only
     # implementation errors with "the condition has length > 1".
+    root <- "/nonexistent-macrtools-test"
+
     expect_equal(
-        normalize_developer_dir(c(
-            "/Applications/Xcode_16.4.app",
-            "/Library/Developer/CommandLineTools",
-            "/Applications/Xcode.app/Contents/Developer"
-        )),
-        c(
-            "/Applications/Xcode_16.4.app/Contents/Developer",
-            "/Library/Developer/CommandLineTools",
-            "/Applications/Xcode.app/Contents/Developer"
-        )
+        normalize_developer_dir(base::file.path(root, c(
+            "Xcode_16.4.app",
+            "CommandLineTools",
+            "Xcode.app/Contents/Developer"
+        ))),
+        base::file.path(root, c(
+            "Xcode_16.4.app/Contents/Developer",
+            "CommandLineTools",
+            "Xcode.app/Contents/Developer"
+        ))
     )
     expect_equal(normalize_developer_dir(base::character(0)), base::character(0))
+})
+
+test_that("normalize_developer_dir resolves a symlinked bundle", {
+    # This is what makes exact path equality unusable: a runner's
+    # /Applications/Xcode.app is a symlink to the versioned bundle it defaults
+    # to, so the two spellings must compare equal after normalization.
+    scratch <- base::file.path(base::tempdir(), "macrtools-symlink-test")
+    base::dir.create(base::file.path(scratch, "Real.app", "Contents", "Developer"),
+                     recursive = TRUE, showWarnings = FALSE)
+    on.exit(base::unlink(scratch, recursive = TRUE), add = TRUE)
+
+    link <- base::file.path(scratch, "Link.app")
+    skip_if_not(base::file.symlink(base::file.path(scratch, "Real.app"), link),
+                "could not create a symlink")
+
+    expect_equal(
+        normalize_developer_dir(link),
+        normalize_developer_dir(base::file.path(scratch, "Real.app"))
+    )
 })
 
 test_that("developer_dir prefers DEVELOPER_DIR over the stored selection", {
