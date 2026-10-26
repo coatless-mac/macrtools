@@ -25,9 +25,12 @@ home:
 
 navbar:
   structure:
-    left:  [intro, reference, news]
+    left:  [intro, reference, news, blog]
     right: [search, github]
   components:
+    blog:
+      text: Blog posts
+      href: https://blog.thecoatlessprofessor.com/projects/macrtools/
     home:
       icon: fas fa-home fa-lg
       href: index.html
