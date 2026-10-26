@@ -195,7 +195,7 @@ is_xcode_cli_installed()
 #> [1] TRUE
 # Version of the installed Command Line Tools
 xcode_cli_version()
-#> [1] "26.6.0.0.1781586589"
+#> [1] "27.0.0.0.1788430756"
 # Determine the path location of Xcode CLI
 xcode_cli_path()
 #> [1] "/Applications/Xcode_26.6.app/Contents/Developer"

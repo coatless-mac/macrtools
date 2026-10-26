@@ -73,7 +73,7 @@ xcode_toolchains()
 #> 5 /Applications/Xcode_26.4.1.app/Contents/Developer  app              26.4.1
 #> 6   /Applications/Xcode_26.5.app/Contents/Developer  app                26.5
 #> 7   /Applications/Xcode_26.6.app/Contents/Developer  app                26.6
-#> 8               /Library/Developer/CommandLineTools  cli 26.6.0.0.1781586589
+#> 8               /Library/Developer/CommandLineTools  cli 27.0.0.0.1788430756
 #>   active
 #> 1  FALSE
 #> 2  FALSE
